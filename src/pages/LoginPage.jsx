@@ -41,7 +41,7 @@ const LoginComponent = () => {
                         <TabPane tab="Sign Up" key="2">
                             {/* Sign Up form can be added here */}
                         </TabPane>
-                    </Tabs>
+                    </Tabs> 
                 </div>
             </div>
         </div>
