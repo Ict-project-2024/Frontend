@@ -3,6 +3,7 @@ import { Input, Button, Checkbox, Tabs } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import ParticlesComponent from '../components/ParticlesComponent';
 import './Login.css'; // Adjust the path as needed
+import RegistrationComponent from './SignUpPage'; // Adjust the path as needed
 
 const { TabPane } = Tabs;
 
@@ -18,28 +19,32 @@ const LoginComponent = () => {
                 <div className="login-form-container">
                     <Tabs defaultActiveKey="1" centered>
                         <TabPane tab="Login" key="1">
-                            <div className="login-form">
-                                <Input
-                                    size="large"
-                                    placeholder="Username"
-                                    prefix={<UserOutlined />}
-                                    className="login-input"
-                                />
-                                <Input.Password
-                                    size="large"
-                                    placeholder="Password"
-                                    prefix={<LockOutlined />}
-                                    className="login-input"
-                                />
-                                <div className="login-options">
-                                    <Checkbox>Remember username</Checkbox>
-                                    <a href="#" className="forgot-password-link">Forgot Password</a>
+                            <div className="tab-content">
+                                <div className="login-form">
+                                    <Input
+                                        size="large"
+                                        placeholder="Username"
+                                        prefix={<UserOutlined />}
+                                        className="login-input"
+                                    />
+                                    <Input.Password
+                                        size="large"
+                                        placeholder="Password"
+                                        prefix={<LockOutlined />}
+                                        className="login-input"
+                                    />
+                                    <div className="login-options">
+                                        <Checkbox>Remember username</Checkbox>
+                                        <a href="#" className="forgot-password-link">Forgot Password</a>
+                                    </div>
+                                    <Button type="primary" size="large" className="login-button">Login</Button>
                                 </div>
-                                <Button type="primary" size="large" className="login-button">Login</Button>
                             </div>
                         </TabPane>
                         <TabPane tab="Sign Up" key="2">
-                            {/* Sign Up form can be added here */}
+                            <div className="tab-content">
+                                <RegistrationComponent />
+                            </div>
                         </TabPane>
                     </Tabs> 
                 </div>
