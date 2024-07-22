@@ -64,7 +64,7 @@ const ParticlesComponent = () => {
                         default: "bounce",
                     },
                     random: false,
-                    speed: 6,
+                    speed: 3, // Reduced speed
                     straight: false,
                 },
                 number: {
@@ -80,13 +80,14 @@ const ParticlesComponent = () => {
                     type: "circle",
                 },
                 size: {
-                    value: { min: 1, max: 5 },
+                    value: { min: 1, max: 3 }, // Reduced size
                 },
             },
             detectRetina: true,
         }),
         [],
     );
+    
 
     return (
         init && (

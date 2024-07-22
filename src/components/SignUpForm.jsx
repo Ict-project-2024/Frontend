@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button, Row, Col } from 'antd';
-import './Signup.css'; // Adjust the path as needed
+import '../assets/css/Signup.css'
 
 const RegistrationComponent = () => {
     const [form, setForm] = useState({

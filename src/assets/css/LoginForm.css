@@ -1,0 +1,25 @@
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-input {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.forgot-password-link {
+    color: #1890ff;
+}
+
+.login-button {
+    width: 40%;
+}
