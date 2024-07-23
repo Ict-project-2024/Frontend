@@ -1,53 +1,43 @@
 import React from 'react';
-import { Layout, Menu, Row, Col, Card, Progress, Typography, Button, Checkbox } from 'antd';
-import { UserOutlined, BellOutlined } from '@ant-design/icons';
-import NavigatorBar from '../components/NavigatorBar'; // Adjust the path as needed
+import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox } from 'antd';
+import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
+import '../assets/css/Dashboard.css'; // Ensure you have the correct path
 
-const { Header, Content } = Layout;
+
+const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
   return (
     <Layout>
-      <Header>
-        <div className="logo" />
-        <NavigatorBar />
-        <Menu mode="horizontal" style={{ float: 'right' }}>
-          <Menu.Item key="notifications" icon={<BellOutlined />}>
-            13
-          </Menu.Item>
-          <Menu.Item key="user" icon={<UserOutlined />}>
-            Serati Ma
-          </Menu.Item>
-        </Menu>
-      </Header>
-      <Content style={{ padding: '0 50px' }}>
+      <Content style={{ padding: '0 50px', overflow: 'auto' }}>
+        <GreetingSection />
         <div className="site-layout-content">
           <Row gutter={16}>
             <Col span={6}>
               <Card title="Student Canteen" extra={<span style={{ color: 'red' }}>Very crowded</span>}>
-                <Progress type="circle" percent={86} />
+                <Progress type="circle" percent={86} width={80} />
                 <p>Around 35+ people</p>
                 <p>Last update was 10min ago</p>
               </Card>
             </Col>
             <Col span={6}>
               <Card title="Staff Canteen" extra={<span style={{ color: 'orange' }}>Moderately crowded</span>}>
-                <Progress type="circle" percent={55} />
+                <Progress type="circle" percent={55} width={80} />
                 <p>Around 15-25 people</p>
                 <p>Last update was 5min ago</p>
               </Card>
             </Col>
             <Col span={6}>
               <Card title="Library" extra={<span style={{ color: 'blue' }}>Crowded</span>}>
-                <Progress type="circle" percent={28} />
+                <Progress type="circle" percent={28} width={80} />
                 <p>Exactly 5 people</p>
                 <p>Last update was 5min ago</p>
               </Card>
             </Col>
             <Col span={6}>
               <Card title="Medical Center" extra={<span style={{ color: 'green' }}>Not crowded</span>}>
-                <Progress type="circle" percent={12} />
+                <Progress type="circle" percent={12} width={80} />
                 <p>Exactly 5 people</p>
                 <p>Last update was 1hr ago</p>
               </Card>
@@ -74,10 +64,15 @@ const Dashboard = () => {
             </Col>
             <Col span={12}>
               <Card title="This week's Canteen Heroes">
-                {/* Placeholder for hero content */}
-                <p>The Super Hero</p>
+                <p>Dining Dynamo</p>
+                <p>Jhonne Doe</p>
+                <p>98 Entries in a row</p>
+                <p>Canteen Champion</p>
                 <p>Jhonne Doe</p>
                 <p>154 Entries in a row</p>
+                <p>Foodie Forecaster</p>
+                <p>Jhonne Doe</p>
+                <p>54 Entries in a row</p>
               </Card>
             </Col>
           </Row>
