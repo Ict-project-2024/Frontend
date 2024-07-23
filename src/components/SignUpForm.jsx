@@ -1,42 +1,67 @@
 import React, { useState } from 'react';
 import { Input, Button, Row, Col } from 'antd';
-import '../assets/css/Signup.css'
+import '../assets/css/Signup.css';
+import RegistrationSuccessPopup from '../components/RegistrationSuccessPopup';
 
-const RegistrationComponent = () => {
-    const [form, setForm] = useState({
-      firstName: '',
-      lastName: '',
-      password: '',
-      confirmPassword: '',
-      phoneNumber: '',
-      universityEmail: '',
-      verificationCode: ''
-    });
-  
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setForm(prevForm => ({
-        ...prevForm,
-        [name]: value
-      }));
-    };
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      // Handle form submission here
-      console.log(form);
-    };
-  
-    const handleGetCode = () => {
-      // Handle getting verification code
-      console.log("Getting verification code for:", form.universityEmail);
-    };
+const RegistrationComponent = ({ onSwitchToLogin }) => {
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    password: '',
+    confirmPassword: '',
+    phoneNumber: '',
+    universityEmail: '',
+  });
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
+  const validateForm = () => {
+    const { firstName, lastName, password, confirmPassword, phoneNumber, universityEmail } = form;
+    if (!firstName || !lastName || !password || !confirmPassword || !phoneNumber || !universityEmail) {
+      return 'One or more details you entered were incorrect. Please try again.';
+    }
+    if (password !== confirmPassword) {
+      return 'Passwords do not match.';
+    }
+    // Add more validation as needed
+    return '';
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
+    }
+    setErrorMessage('');
+    setIsModalVisible(true); // Show the popup when the form is submitted successfully
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    onSwitchToLogin();
+  };
 
   return (
     <div className="registration-container">
       <div className="registration-content">
         <div className="registration-form-container">
           <form onSubmit={handleSubmit} className="registration-form">
+            {errorMessage && (
+              <div className="error-message">
+                {errorMessage}
+              </div>
+            )}
             <Row gutter={16} style={{ marginBottom: '16px' }}>
               <Col span={12}>
                 <Input
@@ -77,26 +102,11 @@ const RegistrationComponent = () => {
               onChange={handleInputChange}
               addonBefore="+94"
             />
-            <Row gutter={16} style={{ marginBottom: '16px' }}>
-              <Col span={18}>
-                <Input
-                  name="universityEmail"
-                  placeholder="University Email"
-                  value={form.universityEmail}
-                  onChange={handleInputChange}
-                />
-              </Col>
-              <Col span={6}>
-                <Button onClick={handleGetCode} className="get-code-button" block>
-                  Get Code
-                </Button>
-              </Col>
-            </Row>
             <Input
               style={{ marginBottom: '16px' }}
-              name="verificationCode"
-              placeholder="Verification code"
-              value={form.verificationCode}
+              name="universityEmail"
+              placeholder="University Email"
+              value={form.universityEmail}
               onChange={handleInputChange}
             />
             <Button type="primary" htmlType="submit" className="register-button" block>
@@ -105,9 +115,12 @@ const RegistrationComponent = () => {
           </form>
         </div>
       </div>
+      <RegistrationSuccessPopup
+        isVisible={isModalVisible}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
 
 export default RegistrationComponent;
-
