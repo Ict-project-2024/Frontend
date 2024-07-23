@@ -1,0 +1,59 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Style for the overall layout */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #001529; /* Default Ant Design dark color */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+}
+
+/* Style for the menu within the header */
+.nav-menu {
+    line-height: 64px;
+    background: none;
+    border-bottom: none;
+}
+
+/* Ensure menu items are properly aligned */
+.nav-menu .ant-menu-item {
+    color: white;
+}
+
+.nav-menu .ant-menu-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-menu .ant-menu-item-selected {
+    background: rgba(255, 255, 255, 0.4);
+    color: #1890ff; /* Selected item color */
+}
+
+/* Additional styling for notifications and user menu */
+.user-menu {
+    display: flex;
+    align-items: center;
+}
+
+.user-menu .ant-menu-item {
+    color: white;
+}
+
+.user-menu .ant-menu-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.user-menu .ant-menu-item-selected {
+    background: rgba(255, 255, 255, 0.4);
+    color: #1890ff;
+}
