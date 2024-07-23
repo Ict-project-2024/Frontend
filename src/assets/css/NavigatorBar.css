@@ -1,0 +1,89 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Style for the overall layout */
+.header {
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Navigator bar styling */
+.navigator-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 24px;
+}
+
+/* Logo styling */
+.logo {
+    background: url('src/assets/images/logo.png') no-repeat center center;
+    background-size: contain;
+    width: 150px; /* Adjust based on your logo size */
+    height: 60px; /* Adjust based on your logo size */
+    margin-right: 20px; /* Add some space between logo and nav menu */
+}
+
+/* Style for the menu within the header */
+.nav-menu {
+    line-height: 64px;
+    background: none;
+    border-bottom: none;
+    display: flex;
+    flex-grow: 1;
+}
+
+/* Ensure menu items are properly aligned */
+.nav-menu .ant-menu-item {
+    color: black;
+}
+
+.nav-menu .ant-menu-item:hover {
+    color: #1890ff;
+    background: transparent;
+}
+
+.nav-menu .ant-menu-item-selected {
+    color: #1890ff;
+    background: transparent;
+    border-bottom: 2px solid #1890ff;
+}
+
+/* Additional styling for user section */
+.user-section {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push the user section to the far right */
+}
+
+.notification-badge {
+    margin-right: 16px;
+}
+
+.icon {
+    font-size: 20px;
+    margin-right: 16px;
+    color: black;
+}
+
+.icon:hover {
+    color: #1890ff;
+}
+
+.avatar {
+    margin-right: 8px;
+}
+
+.username {
+    margin-right: 16px;
+    color: black;
+}
+
+.username:hover {
+    color: #1890ff;
+}
