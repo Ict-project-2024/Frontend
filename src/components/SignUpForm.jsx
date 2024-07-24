@@ -25,6 +25,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
   };
 
   const validateForm = () => {
+    const emailRegex = /^[a-z]+[0-9]+@fot\.sjp\.ac\.lk$/;
     const { firstName, lastName, password, confirmPassword, phoneNumber, universityEmail } = form;
     if (!firstName || !lastName || !password || !confirmPassword || !phoneNumber || !universityEmail) {
       return 'One or more details you entered were incorrect. Please try again.';
@@ -32,7 +33,9 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
     if (password !== confirmPassword) {
       return 'Passwords do not match.';
     }
-    // Add more validation as needed
+    if (!emailRegex.test(universityEmail)) {
+      return 'Invalid email format. Please use your university email.';
+    }
     return '';
   };
 

@@ -1,71 +1,71 @@
 html, body, #root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .home-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  .content-container {
-    flex: 1;
-    padding: 20px;
-    overflow: auto;
-  }
-  
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-container {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+.footer-container {
+  width: 100%;
+  background-color: #FAFAFA;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  position: relative; /* Ensures the footer stays within the flex container */
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box; /* Ensure padding and border are included in the total width and height */
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-description {
+  font-size: 10px;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
   .footer-container {
-    width: 100%;
-    background-color: #FAFAFA;
-    border-top: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: center;
-    padding: 16px;
-    position: relative; /* Change from absolute to relative */
-    text-align: center;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-container {
     font-size: 12px;
-    color: #888;
-    font-family: Roboto, sans-serif;
+    padding: 8px;
   }
-  
-  .footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .footer-text {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .footer-icons {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .footer-description {
-    font-size: 10px;
-    color: #666;
-    margin-top: 8px;
-  }
-  
-  /* Responsive Styles */
-  @media (max-width: 768px) {
-    .footer-container {
-      font-size: 14px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .footer-container {
-      font-size: 12px;
-      padding: 8px;
-    }
-  }
-  
+}

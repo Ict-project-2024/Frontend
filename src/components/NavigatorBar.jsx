@@ -23,7 +23,7 @@ const NavigatorBar = () => {
         <Badge count={11} className="notification-badge">
           <BellOutlined className="icon" />
         </Badge>
-        <Avatar src="src/assets/images/avatar.webp" className="avatar" />
+        <Avatar src="src/assets/images/avatar.png" className="avatar" />
         <span className="username">Serati Ma</span>
         <LogoutOutlined className="icon" />
       </div>

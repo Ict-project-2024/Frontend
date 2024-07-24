@@ -1,11 +1,11 @@
 import React from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox } from 'antd';
+import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/Dashboard.css'; // Ensure you have the correct path
 
-
 const { Content } = Layout;
-const { Title, Text } = Typography;
+const { Text, Title, Link } = Typography;
 
 const Dashboard = () => {
   return (
@@ -45,49 +45,116 @@ const Dashboard = () => {
           </Row>
           <Row gutter={16} style={{ marginTop: '20px' }}>
             <Col span={12}>
-              <Card title="Tell us what you see to become a savior">
-                <Text>Where are you at?</Text>
-                <Button.Group>
-                  <Button>Student Canteen</Button>
-                  <Button>Staff Canteen</Button>
-                </Button.Group>
-                <Text>How many people you see?</Text>
-                <Button.Group>
-                  <Button>0-15</Button>
-                  <Button>15-25</Button>
-                  <Button>25-35</Button>
-                  <Button>35+</Button>
-                </Button.Group>
-                <Checkbox>I agree that I'm submitting true data only</Checkbox>
-                <Button type="primary">Submit</Button>
+              <Card title={<span>Tell us what you see to become a savior <a href="/data-policy" className="data-policy-link">Data Policy</a></span>}>
+                <div className="form-item">
+                  <Text>Where are you at?</Text>
+                  <Button.Group>
+                    <Button type="primary">Student Canteen</Button>
+                    <Button>Staff Canteen</Button>
+                  </Button.Group>
+                </div>
+                <div className="form-item">
+                  <Text>How many people you see?</Text>
+                  <Button.Group>
+                    <Button type="primary">0-15</Button>
+                    <Button>15-25</Button>
+                    <Button>25-35</Button>
+                    <Button>35+</Button>
+                  </Button.Group>
+                </div>
+                <div className="form-item">
+                  <Checkbox>I agree that I’m submitting true data only</Checkbox>
+                </div>
+                <Button type="primary" className="submit-button">Submit</Button>
               </Card>
             </Col>
             <Col span={12}>
               <Card title="This week's Canteen Heroes">
-                <p>Dining Dynamo</p>
-                <p>Jhonne Doe</p>
-                <p>98 Entries in a row</p>
-                <p>Canteen Champion</p>
-                <p>Jhonne Doe</p>
-                <p>154 Entries in a row</p>
-                <p>Foodie Forecaster</p>
-                <p>Jhonne Doe</p>
-                <p>54 Entries in a row</p>
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Card cover={<img src="src\assets\images\badge.png" alt="Dining Dynamo" />}>
+                      <Card.Meta title="Dining Dynamo" description="Jhonne Doe" />
+                      <Text>98 Entries in a row</Text>
+                    </Card>
+                  </Col>
+                  <Col span={8}>
+                    <Card cover={<img src="src\assets\images\badge.png" alt="Canteen Champion" />}>
+                      <Card.Meta title="Canteen Champion" description="Jhonne Doe" />
+                      <Text>154 Entries in a row</Text>
+                    </Card>
+                  </Col>
+                  <Col span={8}>
+                    <Card cover={<img src="src\assets\images\badge.png" alt="Foodie Forecaster" />}>
+                      <Card.Meta title="Foodie Forecaster" description="Jhonne Doe" />
+                      <Text>54 Entries in a row</Text>
+                    </Card>
+                  </Col>
+                </Row>
               </Card>
             </Col>
           </Row>
           <Row gutter={16} style={{ marginTop: '20px' }}>
             <Col span={12}>
-              <Card>
-                <Text>How close are you to your next badge?</Text>
+              <Card className="badge-card">
+                <Text>How close you are to your next badge?</Text>
                 <Progress percent={20} />
+                <Link href="/profile" className="profile-link">See your badges in profile</Link>
+              </Card>
+              <Card className="first-step-card">
+                <div className="first-step-content">
+                  <img src="src/assets/images/image.png" alt="Placeholder" className="placeholder-image" />
+                  <div>
+                    <Title level={4}>First Step</Title>
+                    <Text>Congratulations on making your first occupancy update!</Text>
+                    <Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
+                  </div>
+                </div>
               </Card>
             </Col>
             <Col span={12}>
-              <Card>
-                <Title level={4}>First Step</Title>
-                <Text>Congratulations on making your first occupancy update!</Text>
-                <Button type="primary">Claim now!</Button>
+              <Card title="Your next badges">
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Card cover={<img src="src\assets\images\badge.png" alt="First Step" />}>
+                      <Card.Meta title="First Step" />
+                    </Card>
+                  </Col>
+                  <Col span={8}>
+                    <Card cover={<img src="src\assets\images\badge.png" alt="Frequent Contributor" />}>
+                      <Card.Meta title="Frequent Contributor" />
+                    </Card>
+                  </Col>
+                  <Col span={8}>
+                    <Card cover={<img src="src\assets\images\badge.png" alt="Daily Contributor" />}>
+                      <Card.Meta title="Daily Contributor" />
+                    </Card>
+                  </Col>
+                </Row>
+                <Link href="/badges" className="view-all-link">View all</Link>
+              </Card>
+              <Card title="Your Ranking">
+                <Row>
+                  <Col span={12}>
+                    <ol>
+                      <li>Gongzhuan No.1 shop</li>
+                      <li>Gongzhuan No.2 shop</li>
+                      <li>Gongzhuan No.3 shop</li>
+                      <li>Gongzhuan No.4 shop</li>
+                      <li>Gongzhuan No.5 shop</li>
+                      <li>Gongzhuan No.6 shop</li>
+                    </ol>
+                  </Col>
+                  <Col span={12}>
+                    <ul>
+                      <li>323,234</li>
+                      <li>323,234</li>
+                      <li>323,234</li>
+                      <li>323,234</li>
+                      <li>323,234</li>
+                      <li>323,234</li>
+                    </ul>
+                  </Col>
+                </Row>
               </Card>
             </Col>
           </Row>

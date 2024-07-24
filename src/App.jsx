@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage.jsx';
 import Home from './pages/Home.jsx'; // Adjust the path as needed
 import ProtectedRoute from './components/ProtectedRoute.jsx'; // Adjust the path as needed
 import './App.css';
+import FooterComponent from './components/FooterComponent.jsx'; // Adjust the path as needed
 
 const App = () => {
   return (
