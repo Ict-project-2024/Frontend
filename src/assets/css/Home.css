@@ -1,3 +1,30 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.home-content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+.footer {
+  width: 100%;
+  background: #f8f9fa; /* Adjust to your desired background color */
+  padding: 1em 0; /* Adjust padding as needed */
+  text-align: center; /* Center the footer text */
+  flex-shrink: 0; /* Ensure the footer doesn't shrink */
+}
+
+/* Additional form and component styles */
 .form-item {
   margin-bottom: 16px;
 }
@@ -89,4 +116,18 @@
 
 .ranking-list li {
   margin-bottom: 8px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .footer {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    font-size: 12px;
+    padding: 8px;
+  }
 }

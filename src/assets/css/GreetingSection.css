@@ -2,7 +2,6 @@
   width: 100%; /* Take full width of the page */
   padding: 20px;
   background-color: #fff;
-  
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
@@ -92,10 +91,36 @@
   .greeting-section {
     flex-direction: column;
     align-items: flex-start;
+    padding: 15px; /* Reduce padding for smaller screens */
   }
 
   .greeting-left {
     margin-bottom: 15px; /* Adjust spacing for smaller screens */
+  }
+
+  .avatar {
+    width: 40px; /* Reduce avatar size for smaller screens */
+    height: 40px; /* Reduce avatar size for smaller screens */
+    margin-right: 10px;
+  }
+
+  .greeting-text h2 {
+    font-size: 20px; /* Reduce font size for smaller screens */
+  }
+
+  .greeting-text p {
+    font-size: 14px; /* Reduce font size for smaller screens */
+  }
+
+  .quick-links a {
+    font-size: 14px; /* Reduce font size for smaller screens */
+    margin-right: 10px; /* Adjust margin for smaller screens */
+  }
+
+  .quick-links a svg {
+    width: 14px; /* Reduce icon size for smaller screens */
+    height: 14px; /* Reduce icon size for smaller screens */
+    margin-right: 3px;
   }
 
   .greeting-right {
@@ -109,5 +134,14 @@
 
   .date-time p {
     text-align: left; /* Align text to the left */
+    font-size: 12px; /* Reduce font size for smaller screens */
+  }
+
+  .date-time p strong {
+    font-size: 12px; /* Reduce font size for smaller screens */
+  }
+
+  .date-time p span {
+    font-size: 14px; /* Reduce font size for smaller screens */
   }
 }

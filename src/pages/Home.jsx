@@ -11,15 +11,14 @@ const Home = () => {
   return (
     <div className="home-container">
       <NavigatorBar />
-      <div>
+      <div className="home-content">
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/news" element={<News />} />
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
-        
       </div>
-      <FooterComponent />
+      <FooterComponent className="footer" />
     </div>
   );
 };

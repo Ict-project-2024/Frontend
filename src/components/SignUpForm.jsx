@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button, Row, Col } from 'antd';
+import axios from 'axios';
 import '../assets/css/Signup.css';
 import RegistrationSuccessPopup from '../components/RegistrationSuccessPopup';
 
@@ -39,7 +40,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
     return '';
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationError = validateForm();
     if (validationError) {
@@ -47,8 +48,35 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
       return;
     }
     setErrorMessage('');
-    setIsModalVisible(true); // Show the popup when the form is submitted successfully
+  
+    try {
+      const response = await axios.post('http://localhost:3000/api/auth/register', form, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      console.log('Backend POST Request Details:', {
+        url: 'http://localhost:3000/api/auth/register',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: form,
+        response: response.data,
+      });
+  
+      if (response.status !== 200) {
+        throw new Error('Registration failed. Status: ' + response.status);
+      }
+  
+      setIsModalVisible(true); // Show the popup when registration is successful
+    } catch (error) {
+      console.error('Registration Error:', error);
+      setErrorMessage('Failed to register. Please try again later.');
+    }
   };
+  
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
