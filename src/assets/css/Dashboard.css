@@ -9,16 +9,19 @@
 
 .form-item .ant-btn-group {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .form-item .ant-btn {
   flex: 1;
   text-align: center;
+  margin-bottom: 8px; /* Adjusts the spacing for mobile */
 }
 
 .form-item .ant-btn:first-child {
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
+  
 }
 
 .form-item .ant-btn:last-child {
@@ -35,11 +38,13 @@
   display: block;
   width: 100px;
   margin: 0 auto;
+  
 }
 
 .data-policy-link {
   float: right;
   font-size: 14px;
+  color: #1890ff;
 }
 
 .badge-card,
@@ -64,6 +69,7 @@
   display: block;
   margin-top: 10px;
   font-size: 14px;
+  color: #1890ff;
 }
 
 .ranking-section {
@@ -78,4 +84,17 @@
 
 .ranking-list li {
   margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .submit-button {
+    width: 100%; /* Full width button for mobile screens */
+  }
+  .form-item .ant-btn-group {
+    flex-direction: column;
+  }
+  .form-item .ant-btn {
+    width: 100%;
+    margin-bottom: 8px; /* Adjust spacing */
+  }
 }

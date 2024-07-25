@@ -22,3 +22,6 @@ html, body, #root {
   padding: 0 50px;
   overflow: auto;
 }
+:where(.css-dev-only-do-not-override-1uq9j6g).ant-layout {
+  background: none !important;
+}

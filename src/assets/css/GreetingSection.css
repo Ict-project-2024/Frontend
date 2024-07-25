@@ -1,16 +1,20 @@
 .greeting-section {
+  width: 100%; /* Take full width of the page */
   padding: 20px;
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap; /* Allow wrapping of child elements on smaller screens */
 }
 
 .greeting-left {
   display: flex;
   align-items: center;
+  flex: 1 1 100%; /* Full width on smaller screens */
+  margin-bottom: 20px; /* Add margin for spacing */
 }
 
 .avatar {
@@ -57,11 +61,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  flex: 1 1 auto; /* Allow to shrink on smaller screens */
 }
 
 .date-time {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap; /* Allow wrapping of date-time elements on smaller screens */
+  justify-content: flex-end;
 }
 
 .date-time p {
@@ -79,4 +86,28 @@
 .date-time p span {
   font-size: 16px;
   color: #000;
+}
+
+@media (max-width: 768px) {
+  .greeting-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .greeting-left {
+    margin-bottom: 15px; /* Adjust spacing for smaller screens */
+  }
+
+  .greeting-right {
+    align-items: flex-start; /* Align to start on smaller screens */
+  }
+
+  .date-time {
+    gap: 10px; /* Reduce gap for smaller screens */
+    justify-content: flex-start;
+  }
+
+  .date-time p {
+    text-align: left; /* Align text to the left */
+  }
 }

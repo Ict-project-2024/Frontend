@@ -3,6 +3,7 @@ import { Tabs } from 'antd';
 import ParticlesComponent from '../components/ParticlesComponent';
 import LoginForm from '../components/LoginForm'; // Adjust the path as needed
 import RegistrationComponent from '../components/SignUpForm'; // Adjust the path as needed
+import FooterComponent from '../components/FooterComponent'; // Import FooterComponent
 import '../assets/css/Login.css';
 
 const { TabPane } = Tabs;
@@ -39,6 +40,7 @@ const LoginComponent = () => {
                     </div>
                 </div>
             </div>
+            <FooterComponent /> {/* Add FooterComponent here */}
         </div>
     );
 };

@@ -1,89 +1,81 @@
-/* General reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Style for the overall layout */
-.header {
-    width: 100%;
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Navigator bar styling */
 .navigator-bar {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    padding: 0 24px;
-}
-
-/* Logo styling */
-.logo {
-    background: url('src/assets/images/logo.png') no-repeat center center;
-    background-size: contain;
-    width: 150px; /* Adjust based on your logo size */
-    height: 60px; /* Adjust based on your logo size */
-    margin-right: 20px; /* Add some space between logo and nav menu */
-}
-
-/* Style for the menu within the header */
-.nav-menu {
-    line-height: 64px;
-    background: none;
-    border-bottom: none;
+    padding: 0 20px;
+    background-color: #fff;
+    
+  }
+  
+  .logo img {
+    height: 40px; /* Adjust based on your logo's design */
+  }
+  
+  .nav-menu {
     display: flex;
-    flex-grow: 1;
-}
-
-/* Ensure menu items are properly aligned */
-.nav-menu .ant-menu-item {
-    color: black;
-}
-
-.nav-menu .ant-menu-item:hover {
-    color: #1890ff;
-    background: transparent;
-}
-
-.nav-menu .ant-menu-item-selected {
-    color: #1890ff;
-    background: transparent;
-
-}
-
-/* Additional styling for user section */
-.user-section {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .nav-menu .ant-menu-item {
+    margin: 0 15px;
+  }
+  
+  .user-section {
     display: flex;
     align-items: center;
-    margin-left: auto; /* Push the user section to the far right */
-}
-
-.notification-badge {
-    margin-right: 16px;
-}
-
-.icon {
+  }
+  
+  .notification-badge {
+    margin-right: 15px;
+  }
+  
+  .icon {
     font-size: 20px;
-    margin-right: 16px;
-    color: black;
-}
-
-.icon:hover {
-    color: #1890ff;
-}
-
-.avatar {
-    margin-right: 8px;
-}
-
-.username {
-    margin-right: 16px;
-    color: black;
-}
-
-.username:hover {
-    color: #1890ff;
-}
+    cursor: pointer;
+    margin-right: 15px;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .username {
+    margin-right: 15px;
+  }
+  
+  @media (max-width: 768px) {
+    .nav-menu {
+      display: none; /* Hide the menu on smaller screens */
+    }
+  
+    .navigator-bar {
+      justify-content: space-between;
+    }
+  
+    .logo img {
+      height: 30px; /* Adjust for smaller screens */
+    }
+  
+    .user-section {
+      display: flex;
+      align-items: center;
+    }
+  
+    .icon {
+      margin-right: 10px;
+    }
+  
+    .avatar {
+      width: 30px;
+      height: 30px;
+      margin-right: 5px;
+    }
+  
+    .username {
+      display: none; /* Hide username on smaller screens */
+    }
+  }
+  
