@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs } from 'antd';
 import ParticlesComponent from '../components/ParticlesComponent';
 import LoginForm from '../components/LoginForm'; // Adjust the path as needed
 import RegistrationComponent from '../components/SignUpForm'; // Adjust the path as needed
+import FooterComponent from '../components/FooterComponent'; // Import FooterComponent
 import '../assets/css/Login.css';
 
 const { TabPane } = Tabs;
 
 const LoginComponent = () => {
+    const [activeTab, setActiveTab] = useState('1');
+
+    const handleTabChange = (key) => {
+        setActiveTab(key);
+    };
+
     return (
         <div className="page-container">
             <ParticlesComponent />
@@ -18,7 +25,7 @@ const LoginComponent = () => {
                         <p className="login-subtitle">Access real-time updates on faculty facilities from wherever you're at.<br />Run by students for students.</p>
                     </div>
                     <div className="login-form-container">
-                        <Tabs defaultActiveKey="1" centered>
+                        <Tabs activeKey={activeTab} onChange={handleTabChange} centered>
                             <TabPane tab="Login" key="1">
                                 <div className="tab-content">
                                     <LoginForm />
@@ -26,13 +33,14 @@ const LoginComponent = () => {
                             </TabPane>
                             <TabPane tab="Sign Up" key="2">
                                 <div className="tab-content">
-                                    <RegistrationComponent />
+                                    <RegistrationComponent onSwitchToLogin={() => setActiveTab('1')} />
                                 </div>
                             </TabPane>
                         </Tabs> 
                     </div>
                 </div>
             </div>
+            <FooterComponent /> {/* Add FooterComponent here */}
         </div>
     );
 };
