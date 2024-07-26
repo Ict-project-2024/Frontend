@@ -13,13 +13,13 @@ const Home = () => {
       <NavigatorBar />
       <div>
         <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard /> } />
           <Route path="/news" element={<News />} />
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
-        
+       
       </div>
-      <FooterComponent />
+     <FooterComponent />
     </div>
   );
 };

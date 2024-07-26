@@ -1,3 +1,70 @@
+.site-layout-content {
+  background: #fff;
+  padding: 24px;
+  margin: 0;
+ 
+}
+
+.hero-card {
+  text-align: center;
+}
+
+.hero-card img {
+  height: 150px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.hero-card-big {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+
+
+.hero-card .ant-card-meta {
+  margin-top: 8px;
+}
+
+.hero-card .ant-card-meta-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.hero-card .ant-card-meta-description {
+  font-size: 14px;
+  color: #888;
+}
+
+@media (max-width: 768px) {
+  .heroes-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero-card-big {
+    transform: scale(1.1);
+  }
+}
+
+.footer {
+  width: 100%;
+  background-color: #f0f2f5;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  position: sticky !important;
+  bottom: 0;
+  left: 0;
+  padding: 16px 20px; /* Adjust padding as needed */
+  display: flex;
+  justify-content: center;
+}
+
 .form-item {
   margin-bottom: 16px;
 }
@@ -21,7 +88,6 @@
 .form-item .ant-btn:first-child {
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  
 }
 
 .form-item .ant-btn:last-child {
@@ -38,7 +104,6 @@
   display: block;
   width: 100px;
   margin: 0 auto;
-  
 }
 
 .data-policy-link {

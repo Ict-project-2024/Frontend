@@ -2,59 +2,61 @@
     position: relative;
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     overflow: hidden;
     font-family: Roboto, sans-serif;
     font-size: 14px;
-}
-
-.login-container {
-    position: relative;
+    min-height: 100vh; /* Ensures the footer stays at the bottom */
+  }
+  
+  .login-container {
     z-index: 1;
     width: 100%;
     text-align: center;
     padding: 20px;
-}
-
-.login-content {
+  }
+  
+  .login-content {
     padding: 20px;
     border-radius: 8px;
     background-color: #ffffff;
     max-width: 500px;
     width: 100%;
-}
-
-.login-header {
+  }
+  
+  .login-header {
     margin-bottom: 20px;
-}
-
-.login-logo {
+  }
+  
+  .login-logo {
     height: 50px;
     margin-bottom: 10px;
-}
-
-.login-title {
+  }
+  
+  .login-title {
     font-size: 24px;
     font-weight: bold;
-}
-
-.login-subtitle {
+  }
+  
+  .login-subtitle {
     font-size: 14px;
     color: #888;
-}
-
-.login-form-container {
+  }
+  
+  .login-form-container {
     width: 100%;
-}
-
-.tab-content {
+  }
+  
+  .tab-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-/* Button Styles */
-.login-button {
+  }
+  
+  /* Button Styles */
+  .login-button {
     display: flex;
     height: 40px;
     padding: 6.4px 56px;
@@ -67,74 +69,75 @@
     box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.04);
     color: #ffffff; /* Ensure text color is white */
     font-size: 16px; /* Adjust as needed */
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
     .login-container {
-        padding: 10px;
-        margin-top: 150px; /* Adjust margin for smaller screens */
+      padding: 10px;
+      margin-top: 150px; /* Adjust margin for smaller screens */
     }
-
+  
     .login-content {
-        max-width: 100%;
-        padding: 15px;
+      max-width: 100%;
+      padding: 15px;
     }
-
+  
     .login-logo {
-        height: 40px;
+      height: 40px;
     }
-
+  
     .login-title {
-        font-size: 20px;
+      font-size: 20px;
     }
-
+  
     .login-subtitle {
-        font-size: 12px;
+      font-size: 12px;
     }
-
+  
     .login-input {
-        margin-bottom: 10px;
+      margin-bottom: 10px;
     }
-
+  
     .login-options {
-        flex-direction: column;
-        align-items: flex-start;
+      flex-direction: column;
+      align-items: flex-start;
     }
-
+  
     .forgot-password-link {
-        margin-top: 10px;
+      margin-top: 10px;
     }
-
+  
     .login-button {
-        font-size: 14px; /* Adjust font size for smaller screens */
-        padding: 6.4px 40px; /* Adjust padding for smaller screens */
+      font-size: 14px; /* Adjust font size for smaller screens */
+      padding: 6.4px 40px; /* Adjust padding for smaller screens */
     }
-}
-
-@media (max-width: 480px) {
+  }
+  
+  @media (max-width: 480px) {
     .login-container {
-        margin-top: 150px; /* Further adjust margin for smaller screens */
+      margin-top: 150px; /* Further adjust margin for smaller screens */
     }
-
+  
     .login-logo {
-        height: 30px;
+      height: 30px;
     }
-
+  
     .login-title {
-        font-size: 18px;
+      font-size: 18px;
     }
-
+  
     .login-subtitle {
-        font-size: 10px;
+      font-size: 10px;
     }
-
+  
     .login-input {
-        font-size: 14px;
+      font-size: 14px;
     }
-
+  
     .login-button {
-        font-size: 12px; /* Adjust font size for very small screens */
-        padding: 6.4px 30px; /* Adjust padding for very small screens */
+      font-size: 12px; /* Adjust font size for very small screens */
+      padding: 6.4px 30px; /* Adjust padding for very small screens */
     }
-}
+  }
+  

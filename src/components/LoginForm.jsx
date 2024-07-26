@@ -25,7 +25,7 @@ const LoginForm = () => {
         <div className="login-form">
             <Input
                 size="large"
-                placeholder="Username"
+                placeholder="Email"
                 prefix={<UserOutlined />}
                 className="login-input"
                 value={username}
@@ -40,7 +40,7 @@ const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
             />
             <div className="login-options">
-                <Checkbox>Remember username</Checkbox>
+                <Checkbox>Remember email</Checkbox>
                 <a href="#" className="forgot-password-link">Forgot Password</a>
             </div>
             <Button

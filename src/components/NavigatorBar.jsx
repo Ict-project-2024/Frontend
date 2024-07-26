@@ -15,12 +15,26 @@ const NavigatorBar = () => {
 
   useEffect(() => {
     // Simulate fetching user data from backend
-    // You can replace this with an actual API call
-    const fetchUserData = () => {
-      // Dummy values
-      setUsername('FirstName');
-      setNotifications(11);
-      setAvatarUrl('src/assets/images/avatar.png');
+    // Replace this with an actual API call to fetch user data
+    const fetchUserData = async () => {
+      try {
+        // Uncomment and replace with your API endpoint
+        // const response = await fetch('/api/userdata');
+        // const data = await response.json();
+        
+        // Replace these dummy values with actual data from the response
+        const data = {
+          username: 'John Doe',
+          notifications: 5,
+          avatarUrl: 'src/assets/images/avatar.png'
+        };
+
+        setUsername(data.username);
+        setNotifications(data.notifications);
+        setAvatarUrl(data.avatarUrl);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     };
 
     fetchUserData();
