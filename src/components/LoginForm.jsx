@@ -2,22 +2,39 @@ import React, { useState } from 'react';
 import { Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/context/AuthContext';
+import axios from 'axios';
 import '../assets/css/LoginForm.css';
 
 const LoginForm = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth();
 
-    const handleLogin = () => {
-        // Replace this with your actual authentication logic
-        if (username === 'admin' && password === 'password') {
-            login();
-            navigate('/dashboard');
-        } else {
-            message.error('Invalid username or password');
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('http://localhost:3000/api/auth/login', {
+                email,
+                password
+            });
+
+            console.log('Login Response:', response.data);
+
+            if (response.status === 200) {
+               
+                if (response.data.success) {
+                    console.log('Login successful');
+                    navigate('/dashboard');
+                } else {
+                    console.log('Login failed:', response.data.message);
+                    message.error('Invalid email or password');
+                }
+            } else {
+                console.log('Unexpected response status:', response.status);
+                message.error('Failed to login. Please try again.');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            message.error('Failed to login. Please try again.');
         }
     };
 
@@ -28,8 +45,8 @@ const LoginForm = () => {
                 placeholder="Email"
                 prefix={<UserOutlined />}
                 className="login-input"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
             />
             <Input.Password
                 size="large"

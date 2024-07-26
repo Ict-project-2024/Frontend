@@ -236,6 +236,7 @@ const Dashboard = () => {
           </Row>
         </div>
       </Content>
+      
     </Layout>
   );
 };

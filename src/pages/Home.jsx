@@ -11,15 +11,20 @@ const Home = () => {
   return (
     <div className="home-container">
       <NavigatorBar />
-      <div>
+      <div className="home-content">
         <Routes>
           <Route path="/dashboard" element={<Dashboard /> } />
           <Route path="/news" element={<News />} />
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
+<<<<<<< HEAD
        
       </div>
      <FooterComponent />
+=======
+      </div>
+      <FooterComponent className="footer" />
+>>>>>>> b8951fe0705282ae3e86af16389dfe4e89581081
     </div>
   );
 };
