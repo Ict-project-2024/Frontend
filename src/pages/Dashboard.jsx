@@ -236,7 +236,7 @@ const Dashboard = () => {
           </Row>
         </div>
       </Content>
-      
+      <FooterComponent />
     </Layout>
   );
 };

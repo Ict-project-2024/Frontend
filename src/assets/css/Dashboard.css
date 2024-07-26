@@ -48,22 +48,7 @@
   }
 }
 
-.footer {
-  width: 100%;
-  background-color: #f0f2f5;
-  border-top: 1px solid #f0f0f0;
-  text-align: center;
-  font-size: 12px;
-  color: #888;
-  font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
-  position: sticky !important;
-  bottom: 0;
-  left: 0;
-  padding: 16px 20px; /* Adjust padding as needed */
-  display: flex;
-  justify-content: center;
-}
+
 
 .form-item {
   margin-bottom: 16px;

@@ -17,14 +17,9 @@ const Home = () => {
           <Route path="/news" element={<News />} />
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
-<<<<<<< HEAD
        
       </div>
-     <FooterComponent />
-=======
-      </div>
-      <FooterComponent className="footer" />
->>>>>>> b8951fe0705282ae3e86af16389dfe4e89581081
+
     </div>
   );
 };
