@@ -36,7 +36,7 @@ const NavigatorBar = () => {
       <div className="logo">
         <img src="src/assets/images/logo.png" alt="Unimo Logo" />
       </div>
-      <Menu mode="horizontal" className="nav-menu">
+      <Menu mode="horizontal" className="nav-menu" defaultSelectedKeys={['live-status']}>
         <Menu.Item key="live-status">
           <Link to="/dashboard">Live Status</Link>
         </Menu.Item>

@@ -50,16 +50,18 @@
 }
 
 @media (max-width: 768px) {
-  .nav-menu {
-    display: none; /* Hide the menu on smaller screens */
-  }
-
   .navigator-bar {
     justify-content: space-between;
+    padding: 5px 20px; /* Add padding for mobile screens */
+    height: 50px; /* Increase the height for mobile screens */
   }
 
   .logo img {
     height: 30px; /* Adjust for smaller screens */
+  }
+
+  .nav-menu {
+    display: none; /* Hide the menu on smaller screens */
   }
 
   .user-section {
@@ -79,5 +81,36 @@
 
   .username {
     display: none; /* Hide username on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .navigator-bar {
+    justify-content: space-between;
+    padding: 5px 20px; /* Add more padding for smaller screens */
+    height: 50px; /* Further increase the height for smaller screens */
+  }
+
+  .logo img {
+    height: 40px; /* Further adjust for very small screens */
+  }
+
+  .user-section {
+    display: flex;
+    align-items: center;
+  }
+
+  .icon {
+    margin-right: 8px;
+  }
+
+  .avatar {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+  }
+
+  .username {
+    display: none; /* Hide username on very small screens */
   }
 }

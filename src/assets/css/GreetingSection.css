@@ -72,18 +72,18 @@
 
 .date-time p {
   margin: 0;
-  font-size: 14px;
+  font-size: 18px; /* Increase font size */
   text-align: right;
 }
 
 .date-time p strong {
   display: block;
-  font-size: 14px;
+  font-size: 18px; /* Increase font size */
   color: #888;
 }
 
 .date-time p span {
-  font-size: 16px;
+  font-size: 20px; /* Increase font size */
   color: #000;
 }
 
@@ -134,14 +134,14 @@
 
   .date-time p {
     text-align: left; /* Align text to the left */
-    font-size: 12px; /* Reduce font size for smaller screens */
+    font-size: 16px; /* Adjust font size */
   }
 
   .date-time p strong {
-    font-size: 12px; /* Reduce font size for smaller screens */
+    font-size: 16px; /* Adjust font size */
   }
 
   .date-time p span {
-    font-size: 14px; /* Reduce font size for smaller screens */
+    font-size: 18px; /* Adjust font size */
   }
 }
