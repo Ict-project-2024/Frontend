@@ -1,81 +1,83 @@
 .navigator-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    background-color: #fff;
-    
-  }
-  
-  .logo img {
-    height: 40px; /* Adjust based on your logo's design */
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #fff;
+}
+
+.logo {
+  cursor: pointer;
+}
+
+.logo img {
+  height: 40px; /* Adjust based on your logo's design */
+}
+
+.nav-menu {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-menu .ant-menu-item {
+  margin: 0 15px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+}
+
+.notification-badge {
+  margin-right: 15px;
+}
+
+.icon {
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 15px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.username {
+  margin-right: 15px;
+}
+
+@media (max-width: 768px) {
   .nav-menu {
-    display: flex;
-    flex: 1;
-    justify-content: center;
+    display: none; /* Hide the menu on smaller screens */
   }
-  
-  .nav-menu .ant-menu-item {
-    margin: 0 15px;
+
+  .navigator-bar {
+    justify-content: space-between;
   }
-  
+
+  .logo img {
+    height: 30px; /* Adjust for smaller screens */
+  }
+
   .user-section {
     display: flex;
     align-items: center;
   }
-  
-  .notification-badge {
-    margin-right: 15px;
-  }
-  
+
   .icon {
-    font-size: 20px;
-    cursor: pointer;
-    margin-right: 15px;
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
     margin-right: 10px;
   }
-  
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+  }
+
   .username {
-    margin-right: 15px;
+    display: none; /* Hide username on smaller screens */
   }
-  
-  @media (max-width: 768px) {
-    .nav-menu {
-      display: none; /* Hide the menu on smaller screens */
-    }
-  
-    .navigator-bar {
-      justify-content: space-between;
-    }
-  
-    .logo img {
-      height: 30px; /* Adjust for smaller screens */
-    }
-  
-    .user-section {
-      display: flex;
-      align-items: center;
-    }
-  
-    .icon {
-      margin-right: 10px;
-    }
-  
-    .avatar {
-      width: 30px;
-      height: 30px;
-      margin-right: 5px;
-    }
-  
-    .username {
-      display: none; /* Hide username on smaller screens */
-    }
-  }
-  
+}

@@ -42,9 +42,9 @@ const GreetingSection = () => {
               <h2>Good morning {user.name}!</h2>
               <p>Here are some quick links</p>
               <div className="quick-links">
-                <a href="/lms"><HomeOutlined /> LMS</a>
-                <a href="/usj-web"><DesktopOutlined /> USJ Web</a>
-                <a href="/e-library"><BookOutlined /> E-Library</a>
+                <a href="https://lms.tech.sjp.ac.lk/"><HomeOutlined /> LMS</a>
+                <a href="https://www.sjp.ac.lk/"><DesktopOutlined /> USJ Web</a>
+                <a href="https://lib.sjp.ac.lk/"><BookOutlined /> E-Library</a>
               </div>
             </div>
           </div>

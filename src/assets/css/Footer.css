@@ -4,31 +4,36 @@ html, body, #root {
   padding: 0;
 }
 
-.home-container {
+.page-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.content-container {
+.login-container {
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
-  overflow: auto;
 }
 
 .footer-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #f0f2f5;
   width: 100%;
   background-color: #FAFAFA;
   border-top: 1px solid #f0f0f0;
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-  position: relative; 
-  text-align: center;
-  font-size: 12px;
   color: #888;
   font-family: 'Roboto', sans-serif;
-  box-sizing: border-box; 
+  box-sizing: border-box;
+  font-size: 12px;
+  z-index: 1;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  margin-top: auto;
 }
 
 .footer-content {
@@ -38,24 +43,11 @@ html, body, #root {
   gap: 8px;
 }
 
-
-
-.footer-container {
-  text-align: center;
-  padding: 20px;
-  background-color: #f0f2f5;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-}
-
 .footer-container p {
   margin: 5px 0;
   color: #888;
   font-size: 14px;
 }
-
 
 .footer-text {
   display: flex;

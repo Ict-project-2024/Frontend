@@ -3,6 +3,7 @@ import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/Dashboard.css'; // Ensure you have the correct path
+import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
 
 const { Content } = Layout;
 const { Text, Title, Link } = Typography;
@@ -145,21 +146,21 @@ const Dashboard = () => {
             </Col>
             <Col xs={24} md={12}>
               <Card title="This week's Canteen Heroes">
-                <Row gutter={[16, 16]}>
+                <Row gutter={[16, 16]} className="heroes-row">
                   <Col xs={24} sm={8}>
-                    <Card cover={<img src="src/assets/images/badge.png" alt="Dining Dynamo" />}>
+                    <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Dining Dynamo" />}>
                       <Card.Meta title="Dining Dynamo" description="Jhonne Doe" />
                       <Text>98 Entries in a row</Text>
                     </Card>
                   </Col>
-                  <Col xs={24} sm={8}>
-                    <Card cover={<img src="src/assets/images/badge.png" alt="Canteen Champion" />}>
+                  <Col xs={24} sm={8} className="hero-card-big">
+                    <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Canteen Champion" />}>
                       <Card.Meta title="Canteen Champion" description="Jhonne Doe" />
                       <Text>154 Entries in a row</Text>
                     </Card>
                   </Col>
                   <Col xs={24} sm={8}>
-                    <Card cover={<img src="src/assets/images/badge.png" alt="Foodie Forecaster" />}>
+                    <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Foodie Forecaster" />}>
                       <Card.Meta title="Foodie Forecaster" description="Jhonne Doe" />
                       <Text>54 Entries in a row</Text>
                     </Card>
@@ -235,6 +236,7 @@ const Dashboard = () => {
           </Row>
         </div>
       </Content>
+      <FooterComponent />
     </Layout>
   );
 };
