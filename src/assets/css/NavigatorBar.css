@@ -12,8 +12,7 @@
 
 .logo {
   cursor: pointer;
-  text-align: center; /* Center the logo */
-  flex: 1;
+  /* Align logo to the left by default */
 }
 
 .logo img {
@@ -81,6 +80,12 @@
     justify-content: space-between;
     padding: 5px 20px; /* Add padding for mobile screens */
     height: 50px; /* Increase the height for mobile screens */
+  }
+
+  .logo {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Center the logo in the available space */
   }
 
   .logo img {
