@@ -82,10 +82,7 @@
       max-width: 100%;
       padding: 15px;
     }
-  
-    .login-logo {
-      height: 40px;
-    }
+
   
     .login-title {
       font-size: 20px;
@@ -119,9 +116,7 @@
       margin-top: 150px; /* Further adjust margin for smaller screens */
     }
   
-    .login-logo {
-      height: 30px;
-    }
+
   
     .login-title {
       font-size: 18px;
