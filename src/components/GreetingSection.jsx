@@ -41,7 +41,7 @@ const GreetingSection = () => {
       <Row align="middle" justify="space-between" style={{ width: '100%' }}>
         <Col xs={24} sm={12}>
           <div className="greeting-left">
-            <img src={user.avatar} alt="avatar" className="avatar" />
+            <img src={user.avatar} alt="avatar" className="greet-avatar" />
             <div className="greeting-text">
               <h2>Good morning {user.name}!</h2>
               <p>Here are some quick links</p>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
 .greeting-section {
   width: 100%; /* Take full width of the page */
   padding: 20px;
@@ -6,19 +8,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Allow wrapping of child elements on smaller screens */
+  flex-wrap: nowrap; /* Prevent wrapping of child elements on larger screens */
 }
 
 .greeting-left {
   display: flex;
   align-items: center;
-  flex: 1 1 100%; /* Full width on smaller screens */
-  margin-bottom: 20px; /* Add margin for spacing */
+  flex: 1;
 }
 
-.avatar {
-  width: 50px;
-  height: 50px;
+.greet-avatar {
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   margin-right: 15px;
 }
@@ -26,6 +27,7 @@
 .greeting-text {
   display: flex;
   flex-direction: column;
+  text-align: left;
 }
 
 .greeting-text h2 {
@@ -36,16 +38,17 @@
 
 .greeting-text p {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   color: #888;
 }
 
 .quick-links {
   margin-top: 5px;
+  display: flex;
 }
 
 .quick-links a {
-  margin-right: 15px;
+  margin-right: 10px;
   color: #1890ff;
   display: inline-flex;
   align-items: center;
@@ -60,20 +63,19 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  flex: 1 1 auto; /* Allow to shrink on smaller screens */
+  flex: 1;
 }
 
 .date-time {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap; /* Allow wrapping of date-time elements on smaller screens */
   justify-content: flex-end;
+  text-align: right;
 }
 
 .date-time p {
   margin: 0;
   font-size: 18px; /* Increase font size */
-  text-align: right;
 }
 
 .date-time p strong {
@@ -90,18 +92,25 @@
 @media (max-width: 768px) {
   .greeting-section {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     padding: 15px; /* Reduce padding for smaller screens */
   }
 
   .greeting-left {
     margin-bottom: 15px; /* Adjust spacing for smaller screens */
+    flex-direction: column;
+    text-align: center;
   }
 
-  .avatar {
-    width: 40px; /* Reduce avatar size for smaller screens */
-    height: 40px; /* Reduce avatar size for smaller screens */
+  .greeting-section .greet-avatar {
+    width: 60px !important; /* Reduce avatar size for smaller screens */
+    height: 60px !important; /* Reduce avatar size for smaller screens */
+    margin-bottom: 10px;
     margin-right: 10px;
+  }
+
+  .greeting-text {
+    text-align: center;
   }
 
   .greeting-text h2 {
@@ -112,9 +121,15 @@
     font-size: 14px; /* Reduce font size for smaller screens */
   }
 
+  .quick-links {
+    margin-top: 5px;
+    gap: 5px;
+    justify-content: center;
+  }
+
   .quick-links a {
     font-size: 14px; /* Reduce font size for smaller screens */
-    margin-right: 10px; /* Adjust margin for smaller screens */
+    margin-right: 5px; /* Adjust margin for smaller screens */
   }
 
   .quick-links a svg {
@@ -124,16 +139,17 @@
   }
 
   .greeting-right {
-    align-items: flex-start; /* Align to start on smaller screens */
+    align-items: center; /* Align to center on smaller screens */
   }
 
   .date-time {
     gap: 10px; /* Reduce gap for smaller screens */
-    justify-content: flex-start;
+    justify-content: center;
+    text-align: center;
   }
 
   .date-time p {
-    text-align: left; /* Align text to the left */
+    text-align: center; /* Align text to the center */
     font-size: 16px; /* Adjust font size */
   }
 
