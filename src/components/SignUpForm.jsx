@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Row, Col } from 'antd';
+import { Input, Button, Row, Col, Radio } from 'antd';
 import axios from 'axios';
 import '../assets/css/Signup.css';
 import RegistrationSuccessPopup from '../components/RegistrationSuccessPopup';
@@ -8,6 +8,8 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
+    gender: '',
+    registrationNumber: '',
     password: '',
     confirmPassword: '',
     phoneNumber: '',
@@ -25,10 +27,17 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
     }));
   };
 
+  const handleGenderChange = (e) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      gender: e.target.value,
+    }));
+  };
+
   const validateForm = () => {
     const emailRegex = /^[a-z]+[0-9]+@fot\.sjp\.ac\.lk$/;
-    const { firstName, lastName, password, confirmPassword, phoneNumber, universityEmail } = form;
-    if (!firstName || !lastName || !password || !confirmPassword || !phoneNumber || !universityEmail) {
+    const { firstName, lastName, gender, registrationNumber, password, confirmPassword, phoneNumber, universityEmail } = form;
+    if (!firstName || !lastName || !gender || !registrationNumber || !password || !confirmPassword || !phoneNumber || !universityEmail) {
       return 'One or more details you entered were incorrect. Please try again.';
     }
     if (password !== confirmPassword) {
@@ -48,14 +57,14 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
       return;
     }
     setErrorMessage('');
-  
+
     try {
       const response = await axios.post('http://localhost:3000/api/auth/register', form, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-  
+
       console.log('Backend POST Request Details:', {
         url: 'http://localhost:3000/api/auth/register',
         method: 'POST',
@@ -65,18 +74,17 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
         body: form,
         response: response.data,
       });
-  
+
       if (response.status !== 200) {
         throw new Error('Registration failed. Status: ' + response.status);
       }
-  
+
       setIsModalVisible(true); // Show the popup when registration is successful
     } catch (error) {
       console.error('Registration Error:', error);
       setErrorMessage('Failed to register. Please try again later.');
     }
   };
-  
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
@@ -111,6 +119,20 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
                 />
               </Col>
             </Row>
+            <div style={{ marginBottom: '16px' }}>
+              <Radio.Group onChange={handleGenderChange} value={form.gender}>
+                <Radio value="Male">Male</Radio>
+                <Radio value="Female">Female</Radio>
+                <Radio value="Other">Other</Radio>
+              </Radio.Group>
+            </div>
+            <Input
+              style={{ marginBottom: '16px' }}
+              name="registrationNumber"
+              placeholder="University registration number (TE218993)"
+              value={form.registrationNumber}
+              onChange={handleInputChange}
+            />
             <Input.Password
               style={{ marginBottom: '16px' }}
               name="password"

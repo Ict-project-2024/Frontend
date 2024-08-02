@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
 .site-layout-content {
   background: #fff;
-  padding: 24px;
   margin: 0;
- 
 }
 
 .hero-card {
@@ -19,8 +19,6 @@
   transform: scale(1.1);
   z-index: 1;
 }
-
-
 
 .hero-card .ant-card-meta {
   margin-top: 8px;
@@ -47,8 +45,6 @@
     transform: scale(1.1);
   }
 }
-
-
 
 .form-item {
   margin-bottom: 16px;
@@ -141,10 +137,142 @@
     width: 100%; /* Full width button for mobile screens */
   }
   .form-item .ant-btn-group {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
   }
   .form-item .ant-btn {
-    width: 100%;
+    flex: 1 1 48%;
     margin-bottom: 8px; /* Adjust spacing */
+  }
+}
+
+/* Add these new styles for the dashboard cards */
+.ant-card {
+  margin-bottom: 20px; /* Add margin between cards */
+  width: 100%; /* Ensure the card takes full width */
+}
+
+.ant-card-head-title {
+  font-size: 14px; /* Reduce card title font size */
+}
+
+.ant-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ant-card-body .ant-progress {
+  margin-bottom: 20px; /* Add margin below the progress circle */
+}
+
+@media (max-width: 768px) {
+  .ant-col {
+    width: 100% !important; /* Ensure full width for columns on mobile */
+  }
+
+  .ant-card-head-title {
+    font-size: 12px; /* Further reduce card title font size on mobile */
+  }
+
+  .form-item {
+    margin-bottom: 12px;
+  }
+
+  .form-item .ant-typography {
+    margin-bottom: 6px;
+  }
+
+  .form-item .ant-btn-group {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .form-item .ant-btn {
+    flex: 1 1 auto;
+    margin-right: 4px; /* Adjust margin for spacing */
+  }
+
+  .form-item .ant-btn:last-child {
+    margin-right: 0;
+  }
+
+  .form-item .ant-checkbox-wrapper {
+    justify-content: center;
+  }
+
+  .data-policy-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .submit-button {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  /* Styles for the "How close you are to your next badge" section */
+  .badge-card {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .badge-card .ant-progress {
+    margin-bottom: 10px;
+  }
+
+  .badge-card .ant-typography {
+    font-size: 14px;
+    color: #888;
+  }
+
+  .badge-card .placeholder-image {
+    width: 100%;
+    height: auto;
+    margin: 10px 0;
+  }
+
+  .badge-card .ant-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .profile-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #1890ff;
+  }
+
+  /* Styles for the "Canteen Heroes" section */
+  .heroes-card {
+    margin-bottom: 20px; /* Add margin between cards */
+  }
+
+  .heroes-card .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .heroes-card .ant-card-meta-title {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .heroes-card .ant-card-meta-description {
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+  }
+
+  .heroes-row .ant-col {
+    display: flex;
+    justify-content: center;
   }
 }

@@ -1,13 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
 .navigator-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
   background-color: #fff;
+  height: 60px; /* Adjust the height as needed */
+  position: relative;
 }
 
 .logo {
   cursor: pointer;
+  /* Align logo to the left by default */
 }
 
 .logo img {
@@ -40,8 +45,8 @@
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 40px !important;
+  height: 40px!important;
   margin-right: 10px;
 }
 
@@ -49,35 +54,65 @@
   margin-right: 15px;
 }
 
-@media (max-width: 768px) {
-  .nav-menu {
-    display: none; /* Hide the menu on smaller screens */
-  }
+.hamburger-menu {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+}
 
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dropdown-menu.visible {
+  display: block;
+}
+
+@media (max-width: 768px) {
   .navigator-bar {
     justify-content: space-between;
+    padding: 5px 20px; /* Add padding for mobile screens */
+    height: 50px; /* Increase the height for mobile screens */
+  }
+
+  .logo {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Center the logo in the available space */
   }
 
   .logo img {
     height: 30px; /* Adjust for smaller screens */
   }
 
+  .nav-menu {
+    display: none; /* Hide the menu on smaller screens */
+  }
+
   .user-section {
-    display: flex;
-    align-items: center;
+    display: none; /* Hide the user section on smaller screens */
   }
 
-  .icon {
-    margin-right: 10px;
+  .hamburger-menu {
+    display: block; /* Show hamburger menu on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .navigator-bar {
+    justify-content: space-between;
+    padding: 5px 20px; /* Add more padding for smaller screens */
+    height: 50px; /* Further increase the height for smaller screens */
   }
 
-  .avatar {
-    width: 30px;
-    height: 30px;
-    margin-right: 5px;
-  }
-
-  .username {
-    display: none; /* Hide username on smaller screens */
+  .logo img {
+    height: 40px; /* Further adjust for very small screens */
   }
 }

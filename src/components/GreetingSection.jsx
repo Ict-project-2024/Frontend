@@ -9,27 +9,31 @@ const GreetingSection = () => {
     avatar: 'src/assets/images/avatar.png'
   });
   const [dateTime, setDateTime] = useState({
-    date: '13/August',
-    day: 'Monday',
-    time: '10:33 AM'
+    date: '',
+    day: '',
+    time: ''
   });
 
   useEffect(() => {
-    // Simulate fetching data from backend
-    const fetchUserData = () => {
-      // Dummy values
-      setUser({
-        name: 'Amanda',
-        avatar: 'src/assets/images/avatar.png'
-      });
-      setDateTime({
-        date: '13/August',
-        day: 'Monday',
-        time: '10:33 AM'
-      });
+    // Function to update date, day, and time
+    const updateDateTime = () => {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const date = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+      const day = now.toLocaleDateString('en-GB', { weekday: 'long' });
+      const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      setDateTime({ date, day, time });
     };
 
-    fetchUserData();
+    // Initial call to set the date and time
+    updateDateTime();
+
+    // Update the date and time every second
+    const intervalId = setInterval(updateDateTime, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -37,7 +41,7 @@ const GreetingSection = () => {
       <Row align="middle" justify="space-between" style={{ width: '100%' }}>
         <Col xs={24} sm={12}>
           <div className="greeting-left">
-            <img src={user.avatar} alt="avatar" className="avatar" />
+            <img src={user.avatar} alt="avatar" className="greet-avatar" />
             <div className="greeting-text">
               <h2>Good morning {user.name}!</h2>
               <p>Here are some quick links</p>
