@@ -143,9 +143,24 @@ const Dashboard = () => {
                   Submit
                 </Button>
               </Card>
+              <Card className="badge-card">
+                <Text>How close you are to your next badge?</Text>
+                <Progress percent={20} />
+                <Link href="/profile" className="profile-link">See your badges in profile</Link>
+              </Card>
+              <Card className="first-step-card">
+                <div className="first-step-content">
+                  <img src="src/assets/images/badge.png" alt="Placeholder" className="placeholder-image" />
+                  <div>
+                    <Title level={4}>First Step</Title>
+                    <Text>Congratulations on making your first occupancy update!</Text>
+                    <Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
+                  </div>
+                </div>
+              </Card>
             </Col>
             <Col xs={24} md={12}>
-              <Card title="This week's Canteen Heroes">
+              <Card title="This week's Canteen Heroes" className="canteen-heroes-card">
                 <Row gutter={[16, 16]} className="heroes-row">
                   <Col xs={24} sm={8}>
                     <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Dining Dynamo" />}>
@@ -153,7 +168,7 @@ const Dashboard = () => {
                       <Text>98 Entries in a row</Text>
                     </Card>
                   </Col>
-                  <Col xs={24} sm={8} className="hero-card-big">
+                  <Col xs={24} sm={8}>
                     <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Canteen Champion" />}>
                       <Card.Meta title="Canteen Champion" description="Jhonne Doe" />
                       <Text>154 Entries in a row</Text>
@@ -167,61 +182,20 @@ const Dashboard = () => {
                   </Col>
                 </Row>
               </Card>
-            </Col>
-          </Row>
-          <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
-            <Col xs={24} md={12}>
-              <Card className="badge-card">
-                <Text>How close you are to your next badge?</Text>
-                <Progress percent={20} />
-                <Link href="/profile" className="profile-link">See your badges in profile</Link>
-              </Card>
-              <Card className="first-step-card">
-                <div className="first-step-content">
-                  <img src="src/assets/images/image.png" alt="Placeholder" className="placeholder-image" />
-                  <div>
-                    <Title level={4}>First Step</Title>
-                    <Text>Congratulations on making your first occupancy update!</Text>
-                    <Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} md={12}>
-              <Card title="Your next badges">
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} sm={8}>
-                    <Card cover={<img src="src/assets/images/badge.png" alt="First Step" />}>
-                      <Card.Meta title="First Step" />
-                    </Card>
-                  </Col>
-                  <Col xs={24} sm={8}>
-                    <Card cover={<img src="src/assets/images/badge.png" alt="Frequent Contributor" />}>
-                      <Card.Meta title="Frequent Contributor" />
-                    </Card>
-                  </Col>
-                  <Col xs={24} sm={8}>
-                    <Card cover={<img src="src/assets/images/badge.png" alt="Daily Contributor" />}>
-                      <Card.Meta title="Daily Contributor" />
-                    </Card>
-                  </Col>
-                </Row>
-                <Link href="/badges" className="view-all-link">View all</Link>
-              </Card>
-              <Card title="Your Ranking">
+              <Card title="Your Ranking" className='rank-'>
                 <Row>
                   <Col xs={12}>
                     <ol className="ranking-list">
                       <li>Gongzhuan No.1 shop</li>
                       <li>Gongzhuan No.2 shop</li>
                       <li>Gongzhuan No.3 shop</li>
-                      <li>Gongzhuan No.4 shop</li>
+                      <li>Amanda Joe</li>
                       <li>Gongzhuan No.5 shop</li>
                       <li>Gongzhuan No.6 shop</li>
                     </ol>
                   </Col>
-                  <Col xs={12}>
-                    <ul className="ranking-list">
+                  <Col xs={12} className="sales-list">
+                    <ul className="sales-list">
                       <li>323,234</li>
                       <li>323,234</li>
                       <li>323,234</li>
@@ -231,6 +205,26 @@ const Dashboard = () => {
                     </ul>
                   </Col>
                 </Row>
+              </Card>
+              <Card title="Your next badges" className="last-row-card">
+                <Row gutter={[16, 16]} className="badges-row">
+                  <Col xs={8} sm={8} md={8}>
+                    <Card cover={<img src="src/assets/images/badge.png" alt="First Step" />}>
+                      <Card.Meta title="First Step" />
+                    </Card>
+                  </Col>
+                  <Col xs={8} sm={8} md={8}>
+                    <Card cover={<img src="src/assets/images/badge.png" alt="Frequent Contributor" />}>
+                      <Card.Meta title="Frequent Contributor" />
+                    </Card>
+                  </Col>
+                  <Col xs={8} sm={8} md={8}>
+                    <Card cover={<img src="src/assets/images/badge.png" alt="Daily Contributor" />}>
+                      <Card.Meta title="Daily Contributor" />
+                    </Card>
+                  </Col>
+                </Row>
+                <Link href="/badges" className="view-all-link">View all</Link>
               </Card>
             </Col>
           </Row>
