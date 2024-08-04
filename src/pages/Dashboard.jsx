@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
+import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message, Table } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/Dashboard.css'; // Ensure you have the correct path
@@ -69,23 +69,38 @@ const Dashboard = () => {
     message.success('Data submitted successfully.');
   };
 
+  // Ranking Data
+  const rankingData = [
+    { key: 1, rank: 1, name: 'Gongzhuan No.1 shop', entries: 323234 },
+    { key: 2, rank: 2, name: 'Gongzhuan No.2 shop', entries: 323234 },
+    { key: 3, rank: 3, name: 'Gongzhuan No.3 shop', entries: 323234 },
+    { key: 4, rank: 4, name: 'Amanda Joe', entries: 323234 },
+    { key: 5, rank: 5, name: 'Gongzhuan No.5 shop', entries: 323234 },
+    { key: 6, rank: 6, name: 'Gongzhuan No.6 shop', entries: 323234 }
+  ];
+
+  const columns = [
+    {
+      title: '',
+      dataIndex: 'rank',
+      key: 'rank',
+      render: (text, record) => (
+        <span style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ fontWeight: record.rank === 4 ? 'bold' : 'normal', color: record.rank === 4 ? '#1890ff' : 'inherit' }}>{record.rank}</span>
+        </span>
+      ),
+      responsive: ['md'],
+    },
+    { title: 'Your Ranking', dataIndex: 'name', key: 'name' },
+    { title: 'Entries', dataIndex: 'entries', key: 'entries' }
+  ];
+
   return (
     <Layout>
       <Content style={{ padding: '0 50px', overflow: 'auto' }}>
         <GreetingSection />
         <div className="site-layout-content">
           <Row gutter={[16, 16]}>
-            {canteenData.map(canteen => (
-              <Col xs={24} sm={12} md={6} key={canteen.id}>
-                <Card title={canteen.name} extra={<span style={{ color: getColor(canteen.percent) }}>{canteen.status}</span>}>
-                  <Progress type="circle" percent={canteen.percent} width={80} strokeColor={getColor(canteen.percent)} />
-                  <p>{canteen.description}</p>
-                  <p>Last update was {canteen.lastUpdate}</p>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
             <Col xs={24} md={12}>
               <Card title={<span>Tell us what you see to become a savior <a href="/data-policy" className="data-policy-link">Data Policy</a></span>}>
                 <div className="form-item">
@@ -153,7 +168,7 @@ const Dashboard = () => {
                   <img src="src/assets/images/badge.png" alt="Placeholder" className="placeholder-image" />
                   <div>
                     <Title level={4}>First Step</Title>
-                    <Text>Congratulations on making your first occupancy update!</Text>
+                    <Text>Congratulations on making your first occupancy update! </Text>
                     <Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
                   </div>
                 </div>
@@ -162,19 +177,19 @@ const Dashboard = () => {
             <Col xs={24} md={12}>
               <Card title="This week's Canteen Heroes" className="canteen-heroes-card">
                 <Row gutter={[16, 16]} className="heroes-row">
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={8} md={8}>
                     <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Dining Dynamo" />}>
                       <Card.Meta title="Dining Dynamo" description="Jhonne Doe" />
                       <Text>98 Entries in a row</Text>
                     </Card>
                   </Col>
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={8} md={8}>
                     <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Canteen Champion" />}>
                       <Card.Meta title="Canteen Champion" description="Jhonne Doe" />
                       <Text>154 Entries in a row</Text>
                     </Card>
                   </Col>
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={8} md={8}>
                     <Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Foodie Forecaster" />}>
                       <Card.Meta title="Foodie Forecaster" description="Jhonne Doe" />
                       <Text>54 Entries in a row</Text>
@@ -182,29 +197,8 @@ const Dashboard = () => {
                   </Col>
                 </Row>
               </Card>
-              <Card title="Your Ranking" className='rank-'>
-                <Row>
-                  <Col xs={12}>
-                    <ol className="ranking-list">
-                      <li>Gongzhuan No.1 shop</li>
-                      <li>Gongzhuan No.2 shop</li>
-                      <li>Gongzhuan No.3 shop</li>
-                      <li>Amanda Joe</li>
-                      <li>Gongzhuan No.5 shop</li>
-                      <li>Gongzhuan No.6 shop</li>
-                    </ol>
-                  </Col>
-                  <Col xs={12} className="sales-list">
-                    <ul className="sales-list">
-                      <li>323,234</li>
-                      <li>323,234</li>
-                      <li>323,234</li>
-                      <li>323,234</li>
-                      <li>323,234</li>
-                      <li>323,234</li>
-                    </ul>
-                  </Col>
-                </Row>
+              <Card title="Your Ranking" className="ranking-card">
+                <Table dataSource={rankingData} columns={columns} pagination={false} />
               </Card>
               <Card title="Your next badges" className="last-row-card">
                 <Row gutter={[16, 16]} className="badges-row">
