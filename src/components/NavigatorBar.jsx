@@ -5,7 +5,7 @@ import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-
 import { useAuth } from '../components/context/AuthContext.jsx';
 import '../assets/css/NavigatorBar.css'; // Ensure you have the correct path
 
-const NavigatorBar = () => {
+const NavigatorBar = ({ userName }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [username, setUsername] = useState('FirstName');
@@ -70,7 +70,7 @@ const NavigatorBar = () => {
           <BellOutlined className="icon" />
         </Badge>
         <Avatar src={avatarUrl} className="avatar" />
-        <span className="username">{username}</span>
+        <span className="username">{userName.first} {userName.last}</span>
         <LogoutOutlined className="icon" onClick={handleLogout} />
       </div>
     </div>
