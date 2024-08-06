@@ -15,11 +15,16 @@ const LoginForm = () => {
             const response = await axios.post('http://localhost:3000/api/auth/login', {
                 email,
                 password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
 
             console.log('Login Response:', response.data);
 
             if (response.status === 200) {
+                console.log(response.data)
                
                 if (response.data.success) {
                     console.log('Login successful');
