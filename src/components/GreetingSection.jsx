@@ -3,10 +3,10 @@ import { Row, Col } from 'antd';
 import { HomeOutlined, BookOutlined, DesktopOutlined } from '@ant-design/icons';
 import '../assets/css/GreetingSection.css'; // Ensure you have the correct path
 
-const GreetingSection = () => {
+const GreetingSection = ({ name, profieImage }) => {
   const [user, setUser] = useState({
-    name: 'Amanda',
-    avatar: 'src/assets/images/avatar.png'
+    name: name ? name : "Guest",
+    avatar: profieImage ? profieImage : 'src/assets/images/avatar.png'
   });
   const [dateTime, setDateTime] = useState({
     date: '',

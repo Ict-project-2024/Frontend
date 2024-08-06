@@ -15,15 +15,19 @@ const LoginForm = () => {
             const response = await axios.post('http://localhost:3000/api/auth/login', {
                 email,
                 password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
 
             console.log('Login Response:', response.data);
 
-            if (response.status === 200) {
-               
+            if (response.status === 200) {               
                 if (response.data.success) {
                     console.log('Login successful');
-                    navigate('/dashboard');
+
+                    navigate('/dashboard', { state: response.data });
                 } else {
                     console.log('Login failed:', response.data.message);
                     message.error('Invalid email or password');
