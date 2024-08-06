@@ -23,12 +23,11 @@ const LoginForm = () => {
 
             console.log('Login Response:', response.data);
 
-            if (response.status === 200) {
-                console.log(response.data)
-               
+            if (response.status === 200) {               
                 if (response.data.success) {
                     console.log('Login successful');
-                    navigate('/dashboard');
+
+                    navigate('/dashboard', { state: response.data });
                 } else {
                     console.log('Login failed:', response.data.message);
                     message.error('Invalid email or password');

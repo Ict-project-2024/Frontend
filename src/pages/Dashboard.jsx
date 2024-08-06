@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/Dashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
+import { useLocation } from 'react-router-dom';
 
 const { Content } = Layout;
 const { Text, Title, Link } = Typography;
@@ -46,6 +47,10 @@ const Dashboard = () => {
   ];
 
   // Form state
+  const locationState = useLocation();
+  const data = locationState.state;
+  console.log(data)
+
   const [location, setLocation] = useState(null);
   const [peopleCount, setPeopleCount] = useState(null);
   const [agreement, setAgreement] = useState(false);
@@ -72,7 +77,7 @@ const Dashboard = () => {
   return (
     <Layout>
       <Content style={{ padding: '0 50px', overflow: 'auto' }}>
-        <GreetingSection />
+        <GreetingSection name={data.firstName} profileImage={data.profileImage} />
         <div className="site-layout-content">
           <Row gutter={[16, 16]}>
             {canteenData.map(canteen => (
