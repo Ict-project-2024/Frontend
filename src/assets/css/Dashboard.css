@@ -18,11 +18,13 @@ body {
 .site-layout-content {
   background: #fff;
   margin: 0;
+  padding: 0 16px;
 }
 
 .ant-card {
   border-radius: var(--border-radius);
   margin-bottom: 16px;
+  overflow: hidden;
 }
 
 .ant-card-head {
@@ -62,7 +64,7 @@ body {
 }
 
 .hero-card img {
-  height: 100%;
+  height: auto;
   width: 100%;
   object-fit: cover;
   border-radius: var(--border-radius);
@@ -70,17 +72,21 @@ body {
 
 .form-item {
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .form-item .ant-typography {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
+  text-align: left;
+  width: 100%;
 }
 
 .form-item .ant-btn-group {
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .form-item .ant-btn {
@@ -88,6 +94,9 @@ body {
   text-align: center;
   margin: 0 2px 8px;
   border-radius: var(--border-radius);
+  white-space: normal; /* Allow text to wrap */
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .submit-button {
@@ -115,7 +124,7 @@ body {
 .placeholder-image {
   width: 100%;
   height: auto;
-  margin-bottom: 16px;
+  
 }
 
 .profile-link,
@@ -126,39 +135,59 @@ body {
   color: var(--primary-color);
 }
 
-.ranking-list,
-.sales-list {
-  padding-left: 0;
-  list-style: none;
-  font-size: var(--small-font-size);
+.ranking-card .ant-table-wrapper {
+  margin: 0 auto;
+  width: 100%;
 }
 
-.ranking-list li,
-.sales-list li {
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
+.ranking-card .ant-table-thead > tr > th {
+  text-align: left;
 }
 
-.ranking-list li::before {
-  content: counter(item) '. ';
-  counter-increment: item;
-  color: #888;
-  margin-right: 8px;
+.ranking-card .ant-table-tbody > tr > td {
+  text-align: left;
+}
+
+.ranking-card .ant-table-thead > tr > th,
+.ranking-card .ant-table-tbody > tr > td {
+  padding: 12px 16px;
+  white-space: normal; /* Allow text to wrap */
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.last-row-card .ant-card-body {
+  padding: var(--card-padding-small);
+}
+
+.last-row-card .ant-col {
+  padding: 4px;
+}
+
+.last-row-card .ant-card-meta-title {
+  font-size: var(--smaller-font-size);
 }
 
 @media (max-width: 768px) {
   .site-layout-content {
-    padding: 0 16px;
+    padding: 0 8px; /* Reduced padding */
+  }
+
+  .ant-card {
+    width: 100%; /* Make cards fit the screen width */
   }
 
   .ant-card-head-title {
     font-size: var(--small-font-size);
   }
 
+  .ant-card-body {
+    padding: var(--card-padding-small);
+  }
+
   .form-item .ant-btn {
     font-size: var(--smaller-font-size);
-    padding: 4px 8px;
+    padding: 4px 4px; /* Reduced padding */
     height: auto;
   }
 
@@ -170,18 +199,26 @@ body {
 
   .heroes-row {
     display: flex;
-    overflow-x: auto;
-    padding-bottom: 16px;
+    flex-wrap: wrap;
+    margin-left: -8px;
+    margin-right: -8px;
   }
 
   .heroes-row .ant-col {
-    flex: 0 0 80%;
-    max-width: 80%;
-    margin-right: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-bottom: 8px; /* Reduced margin */
   }
 
-  .heroes-row .ant-col:last-child {
-    margin-right: 0;
+  .heroes-row .ant-col:first-child {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .heroes-row .ant-col:nth-child(2),
+  .heroes-row .ant-col:nth-child(3) {
+    flex: 0 0 50%;
+    max-width: 50%;
   }
 
   .last-row-card .ant-card-body {
@@ -189,10 +226,34 @@ body {
   }
 
   .last-row-card .ant-col {
-    padding: 4px;
+    padding: 2px; /* Reduced padding */
   }
 
   .last-row-card .ant-card-meta-title {
     font-size: var(--smaller-font-size);
+  }
+
+  .ranking-card .ant-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Specific CSS for first-step-card on mobile */
+  .first-step-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row; /* Ensure image and text are side by side */
+  }
+
+  .first-step-content img {
+    width: 55%; /* Take half the width */
+    height: 100%; /* Take full height */
+    object-fit: cover; /* Cover the container */
+  }
+
+  .first-step-content > div {
+    flex: 1; /* Take the remaining space */
+    padding-left: 8px; /* Add some space between image and text */
   }
 }
