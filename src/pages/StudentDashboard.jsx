@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
-import '../assets/css/Dashboard.css'; // Ensure you have the correct path
+import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
 import { useLocation } from 'react-router-dom';
 
 const { Content } = Layout;
 const { Text, Title, Link } = Typography;
 
-const Dashboard = ({ userName }) => {
+const StudentDashboard = ({ userName }) => {
   // Dummy data
   const canteenData = [
     {
@@ -229,4 +229,4 @@ const Dashboard = ({ userName }) => {
   );
 };
 
-export default Dashboard;
+export default StudentDashboard;
