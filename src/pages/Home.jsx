@@ -16,7 +16,7 @@ const Home = () => {
       <NavigatorBar userName={{first: userData.firstName, last: userData.lastName}} />
       <div className="home-content">
         <Routes>
-          <Route path="/dashboard" element={<Dashboard userName={{first: userData.firstName, last: userData.lastName}} /> } />
+          <Route path="/dashboard" element={<Dashboard userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} /> } />
           <Route path="/news" element={<News />} />
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
