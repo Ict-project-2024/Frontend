@@ -10,9 +10,16 @@
   position: relative;
 }
 
+.hamburger-menu {
+  font-size: 24px;
+  cursor: pointer;
+  display: none; /* Hide by default */
+}
+
 .logo {
   cursor: pointer;
-  /* Align logo to the left by default */
+  display: flex;
+  align-items: center;
 }
 
 .logo img {
@@ -23,6 +30,7 @@
   display: flex;
   flex: 1;
   justify-content: center;
+  align-items: center;
 }
 
 .nav-menu .ant-menu-item {
@@ -46,18 +54,12 @@
 
 .avatar {
   width: 40px !important;
-  height: 40px!important;
+  height: 40px !important;
   margin-right: 10px;
 }
 
 .username {
   margin-right: 15px;
-}
-
-.hamburger-menu {
-  display: none;
-  font-size: 24px;
-  cursor: pointer;
 }
 
 .dropdown-menu {
@@ -94,6 +96,18 @@
 
   .nav-menu {
     display: none; /* Hide the menu on smaller screens */
+  }
+
+  .nav-menu.visible {
+    display: flex; /* Show the menu when visible class is added */
+    flex-direction: column;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
   }
 
   .user-section {

@@ -1,278 +1,259 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
+:root {
+  --base-font-size: 16px;
+  --small-font-size: 14px;
+  --smaller-font-size: 12px;
+  --card-padding: 8px; /* Reduced padding */
+  --card-padding-small: 4px; /* Reduced padding */
+  --primary-color: #1890ff;
+  --border-radius: 8px;
+}
+
+body {
+  font-size: var(--base-font-size);
+  font-family: 'Roboto', sans-serif;
+}
+
 .site-layout-content {
   background: #fff;
   margin: 0;
+  padding: 0 16px;
+}
+
+.ant-card {
+  border-radius: var(--border-radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.ant-card-head {
+  border-bottom: none;
+}
+
+.ant-card-head-title {
+  font-size: var(--small-font-size);
+  font-weight: 500;
+}
+
+.ant-card-body {
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.canteen-heroes-card .ant-card-body {
+  padding: var(--card-padding-small);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-card {
   text-align: center;
+  margin-bottom: 16px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .hero-card img {
-  height: 150px;
+  height: auto;
   width: 100%;
   object-fit: cover;
-}
-
-.hero-card-big {
-  transform: scale(1.1);
-  z-index: 1;
-}
-
-.hero-card .ant-card-meta {
-  margin-top: 8px;
-}
-
-.hero-card .ant-card-meta-title {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.hero-card .ant-card-meta-description {
-  font-size: 14px;
-  color: #888;
-}
-
-@media (max-width: 768px) {
-  .heroes-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .hero-card-big {
-    transform: scale(1.1);
-  }
+  border-radius: var(--border-radius);
 }
 
 .form-item {
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .form-item .ant-typography {
   display: block;
   margin-bottom: 8px;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
 }
 
 .form-item .ant-btn-group {
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .form-item .ant-btn {
-  flex: 1;
+  flex: 1 1 calc(50% - 4px);
   text-align: center;
-  margin-bottom: 8px; /* Adjusts the spacing for mobile */
-}
-
-.form-item .ant-btn:first-child {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-}
-
-.form-item .ant-btn:last-child {
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-
-.form-item .ant-checkbox-wrapper {
-  display: flex;
-  align-items: center;
+  margin: 0 2px 8px;
+  border-radius: var(--border-radius);
+  white-space: normal; /* Allow text to wrap */
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .submit-button {
   display: block;
-  width: 100px;
-  margin: 0 auto;
+  width: 100%;
+  border-radius: var(--border-radius);
 }
 
 .data-policy-link {
   float: right;
-  font-size: 14px;
-  color: #1890ff;
+  font-size: var(--smaller-font-size);
+  color: var(--primary-color);
 }
 
 .badge-card,
 .first-step-card {
-  text-align: left;
-  height: 170px; /* Set the height of the cards */
+  text-align: center;
+  height: auto;
 }
 
-.first-step-card {
-  display: flex;
-  align-items: center;
+.badge-card .ant-progress {
+  margin: 16px 0;
 }
 
 .placeholder-image {
-  width: 130px; /* Set the width of the placeholder image */
-  height: 170px; /* Set the height of the placeholder image */
-  margin-right: 10px;
+  width: 100%;
+  height: auto;
+  
 }
 
 .profile-link,
 .view-all-link {
   display: block;
   margin-top: 10px;
-  font-size: 14px;
-  color: #1890ff;
+  font-size: var(--smaller-font-size);
+  color: var(--primary-color);
 }
 
-.ranking-section {
-  margin-top: 20px;
+.ranking-card .ant-table-wrapper {
+  margin: 0 auto;
+  width: 100%;
 }
 
-.ranking-list {
-  padding-left: 0;
-  list-style: none;
-  font-size: 14px;
+.ranking-card .ant-table-thead > tr > th {
+  text-align: left;
 }
 
-.ranking-list li {
-  margin-bottom: 8px;
+.ranking-card .ant-table-tbody > tr > td {
+  text-align: left;
 }
 
-@media (max-width: 768px) {
-  .submit-button {
-    width: 100%; /* Full width button for mobile screens */
-  }
-  .form-item .ant-btn-group {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-  .form-item .ant-btn {
-    flex: 1 1 48%;
-    margin-bottom: 8px; /* Adjust spacing */
-  }
+.ranking-card .ant-table-thead > tr > th,
+.ranking-card .ant-table-tbody > tr > td {
+  padding: 12px 16px;
+  white-space: normal; /* Allow text to wrap */
+  overflow: visible;
+  text-overflow: clip;
 }
 
-/* Add these new styles for the dashboard cards */
-.ant-card {
-  margin-bottom: 20px; /* Add margin between cards */
-  width: 100%; /* Ensure the card takes full width */
+.last-row-card .ant-card-body {
+  padding: var(--card-padding-small);
 }
 
-.ant-card-head-title {
-  font-size: 14px; /* Reduce card title font size */
+.last-row-card .ant-col {
+  padding: 4px;
 }
 
-.ant-card-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.ant-card-body .ant-progress {
-  margin-bottom: 20px; /* Add margin below the progress circle */
+.last-row-card .ant-card-meta-title {
+  font-size: var(--smaller-font-size);
 }
 
 @media (max-width: 768px) {
-  .ant-col {
-    width: 100% !important; /* Ensure full width for columns on mobile */
+  .site-layout-content {
+    padding: 0 8px; /* Reduced padding */
+  }
+
+  .ant-card {
+    width: 100%; /* Make cards fit the screen width */
   }
 
   .ant-card-head-title {
-    font-size: 12px; /* Further reduce card title font size on mobile */
+    font-size: var(--small-font-size);
   }
 
-  .form-item {
-    margin-bottom: 12px;
-  }
-
-  .form-item .ant-typography {
-    margin-bottom: 6px;
-  }
-
-  .form-item .ant-btn-group {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: nowrap;
+  .ant-card-body {
+    padding: var(--card-padding-small);
   }
 
   .form-item .ant-btn {
-    flex: 1 1 auto;
-    margin-right: 4px; /* Adjust margin for spacing */
-  }
-
-  .form-item .ant-btn:last-child {
-    margin-right: 0;
-  }
-
-  .form-item .ant-checkbox-wrapper {
-    justify-content: center;
-  }
-
-  .data-policy-link {
-    display: block;
-    text-align: center;
-    margin-top: 10px;
+    font-size: var(--smaller-font-size);
+    padding: 4px 4px; /* Reduced padding */
+    height: auto;
   }
 
   .submit-button {
-    width: 100%;
-    max-width: 200px;
-  }
-
-  /* Styles for the "How close you are to your next badge" section */
-  .badge-card {
-    text-align: center;
-    padding: 20px;
-  }
-
-  .badge-card .ant-progress {
-    margin-bottom: 10px;
-  }
-
-  .badge-card .ant-typography {
-    font-size: 14px;
-    color: #888;
-  }
-
-  .badge-card .placeholder-image {
-    width: 100%;
+    font-size: var(--small-font-size);
     height: auto;
-    margin: 10px 0;
+    padding: 8px 0;
   }
 
-  .badge-card .ant-btn {
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  .profile-link {
-    display: block;
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #1890ff;
-  }
-
-  /* Styles for the "Canteen Heroes" section */
-  .heroes-card {
-    margin-bottom: 20px; /* Add margin between cards */
-  }
-
-  .heroes-card .ant-card-body {
+  .heroes-row {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-  }
-
-  .heroes-card .ant-card-meta-title {
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-  }
-
-  .heroes-card .ant-card-meta-description {
-    font-size: 12px;
-    color: #888;
-    text-align: center;
+    flex-wrap: wrap;
+    margin-left: -8px;
+    margin-right: -8px;
   }
 
   .heroes-row .ant-col {
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-bottom: 8px; /* Reduced margin */
+  }
+
+  .heroes-row .ant-col:first-child {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .heroes-row .ant-col:nth-child(2),
+  .heroes-row .ant-col:nth-child(3) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .last-row-card .ant-card-body {
+    padding: var(--card-padding-small);
+  }
+
+  .last-row-card .ant-col {
+    padding: 2px; /* Reduced padding */
+  }
+
+  .last-row-card .ant-card-meta-title {
+    font-size: var(--smaller-font-size);
+  }
+
+  .ranking-card .ant-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Specific CSS for first-step-card on mobile */
+  .first-step-content {
     display: flex;
+    align-items: center;
     justify-content: center;
+    flex-direction: row; /* Ensure image and text are side by side */
+  }
+
+  .first-step-content img {
+    width: 55%; /* Take half the width */
+    height: 100%; /* Take full height */
+    object-fit: cover; /* Cover the container */
+  }
+
+  .first-step-content > div {
+    flex: 1; /* Take the remaining space */
+    padding-left: 8px; /* Add some space between image and text */
   }
 }

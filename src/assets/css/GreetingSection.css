@@ -36,7 +36,8 @@
   font-weight: 400;
 }
 
-.greeting-text p {
+.greeting-text p,
+.smallLetters {
   margin: 0;
   font-size: 14px;
   color: #888;
@@ -84,11 +85,14 @@
   color: #888;
 }
 
-.date-time p span {
+.date-time p span:not(.smallLetters) {
   font-size: 20px; /* Increase font size */
   color: #000;
 }
 
+.date-time .uppercaseText {
+  text-transform: uppercase;
+}
 @media (max-width: 768px) {
   .greeting-section {
     flex-direction: column;
