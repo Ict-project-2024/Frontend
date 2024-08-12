@@ -1,0 +1,36 @@
+.checking-officer-dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+  }
+  
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .check-button {
+    width: 300px;
+    height: 80px;
+    font-size: 24px;
+  }
+  
+  .scanning-card {
+    width: 340px;
+    text-align: center;
+  }
+  
+  .scanning-card p {
+    font-size: 18px;
+    margin-top: 20px;
+  }
+  
+  .scanning-card button {
+    margin-top: 20px;
+    width: 100%;
+  }
+  
