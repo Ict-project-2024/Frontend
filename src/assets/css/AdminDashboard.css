@@ -1,0 +1,16 @@
+.admin-dashboard {
+    padding: 20px;
+  }
+  
+  .admin-dashboard .ant-card {
+    text-align: center;
+  }
+  
+  .admin-dashboard .ant-progress-circle {
+    margin-bottom: 10px;
+  }
+  
+  .statistics-section .ant-card {
+    margin-top: 20px;
+  }
+  
