@@ -10,32 +10,55 @@ import { formatDistanceToNow } from 'date-fns';
 const { Content } = Layout;
 const { Text, Title, Link } = Typography;
 
+// Calculate the overall crowdedness percentage based on the votes: nivindulakshitha
+const overallCrowdednessPercentage = (votes) => {
+	let weights = {
+		"0-15": 0.2,
+		"15-25": 0.4,
+		"25-35": 0.6,
+		"35+": 1.0
+	};
+
+	let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+	let weightedSum = Object.keys(votes).reduce((sum, range) => sum + votes[range] * weights[range], 0);
+	return ((totalVotes > 0) ? (weightedSum / totalVotes) * 100 : 0).toFixed(0);
+}
+
+// Determine the crowdedness based on the percentage: nivindulakshitha
+const determineCrowdedness = (percent) => {
+	if (percent > 75) return 'Very crowded';
+	if (percent > 50) return 'Moderately crowded';
+	if (percent > 25) return 'Crowded';
+	return 'Not crowded';
+}
+
 const Dashboard = ({ userId, userName }) => {
-	let canteenTraffic = {};
+	const [locationTraffic, setLocationTraffic] = useState({});
 
 	useEffect(() => {
-		const canteenList = ['Student Canteen', 'Staff Canteen'];
+		// Fetch the canteen data for each location: nivindulakshitha
+		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
+		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
+		let draftData = {};
 
-		for (let canteen of canteenList) {
-			newApiRequest(`http://localhost:3000/api/canteen/status`, 'POST', { "canteen": canteen })
+		for (let location of locationsList) {
+			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
-						if (!Object.keys(canteenTraffic).includes(canteen)) {
-							canteenTraffic[canteen] = {}
-						}
-						canteenTraffic[canteen].id = canteenList.indexOf(canteen);
-						canteenTraffic[canteen].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
-						canteenTraffic[canteen].percent = 12;
-						canteenTraffic[canteen].status = "Not crowded";
-						canteenTraffic[canteen].name = canteen;
-						canteenTraffic[canteen].description = 'Exactly 5 people';
+						draftData[location] = {}
+						draftData[location].id = locationsList.indexOf(location);
+						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
+						draftData[location].percent = overallCrowdednessPercentage(response.data.votes);
+						draftData[location].status = determineCrowdedness(draftData[location].percent);
+						draftData[location].name = location;
+						draftData[location].description = 'Exactly 5 people';
 					}
-
-					console.log('Canteen Traffic:', canteenTraffic);
-
 				})
 				.catch(error => {
-					console.error('Error fetching canteen data:', error);
+					console.error('Error fetching location data:', error);
+				})
+				.finally(() => {
+					setLocationTraffic(draftData);
 				});
 		}
 
@@ -137,15 +160,18 @@ const Dashboard = ({ userId, userName }) => {
 				<GreetingSection name={userName.first} />
 				<div className="site-layout-content">
 					<Row gutter={[16, 16]}>
-						{canteenData.map(canteen => (
-							<Col xs={24} sm={12} md={6} key={canteen.id}>
-								<Card title={canteen.name} extra={<span style={{ color: getColor(canteen.percent) }}>{canteen.status}</span>}>
-									<Progress type="circle" percent={canteen.percent} size={80} strokeColor={getColor(canteen.percent)} />
-									<p>{canteen.description}</p>
-									<p>Last update was {canteen.lastUpdate}</p>
-								</Card>
-							</Col>
-						))}
+						{
+							//Display the location data: nivindulakshitha
+							Object.keys(locationTraffic).map(location => (
+								<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
+									<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].percent) }}>{locationTraffic[location].status}</span>}>
+										<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].percent)} />
+										<p>{locationTraffic[location].description}</p>
+										<p>Last update was {locationTraffic[location].lastModified}</p>
+									</Card>
+								</Col>
+							))
+						}
 					</Row>
 					<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
 						<Col xs={24} md={12}>
