@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
-import '../assets/css/Dashboard.css'; // Ensure you have the correct path
+import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
 import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
@@ -328,5 +328,5 @@ const Dashboard = ({ userId, userName }) => {
 		</Layout>
 	);
 };
-
 export default Dashboard;
+

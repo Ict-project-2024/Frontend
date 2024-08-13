@@ -1,0 +1,81 @@
+.success-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%; /* Ensure it takes the full width of the screen */
+    padding: 20px;
+    box-sizing: border-box; /* Include padding in the element's width/height */
+    background-color: #fff;
+  }
+  
+  .success-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .success-icon .circle {
+    width: 80px;
+    height: 80px;
+    background-color: #4caf50;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .success-icon .checkmark {
+    color: #fff;
+    font-size: 50px;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #333;
+    text-align: center; /* Ensure the text is centered on all screen sizes */
+    width: 100%; /* Ensure the heading takes full width */
+  }
+  
+  button {
+    width: 100%; /* Full width button for mobile responsiveness */
+    max-width: 300px; /* Optionally, limit the max width */
+    background-color: #4285f4;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center; /* Center the button text */
+  }
+  
+  button:hover {
+    background-color: #357ae8;
+  }
+  
+  /* Mobile-specific adjustments */
+  @media (max-width: 768px) {
+    .success-container {
+      padding: 10px;
+    }
+  
+    .success-icon .circle {
+      width: 70px;
+      height: 70px;
+      font-size: 45px;
+    }
+  
+    h2 {
+      font-size: 16px;
+    }
+  
+    button {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+  }
+  
