@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
-import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
+import '../assets/css/Dashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
 import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
@@ -63,42 +63,7 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 	}, [userName])
-
-	const canteenData = [
-		{
-			id: 1,
-			name: "Student Canteen",
-			percent: 86,
-			status: "Very crowded",
-			description: "Around 35+ people",
-			lastUpdate: "10min ago"
-		},
-		{
-			id: 2,
-			name: "Staff Canteen",
-			percent: 55,
-			status: "Moderately crowded",
-			description: "Around 15-25 people",
-			lastUpdate: "5min ago"
-		},
-		{
-			id: 3,
-			name: "Library",
-			percent: 28,
-			status: "Crowded",
-			description: "Exactly 5 people",
-			lastUpdate: "5min ago"
-		},
-		{
-			id: 4,
-			name: "Medical Center",
-			percent: 12,
-			status: "Not crowded",
-			description: "Exactly 5 people",
-			lastUpdate: "1hr ago"
-		}
-	];
-
+	
 	const [canteen, setCanteen] = useState(null);
 	const [peopleRange, setPeopleRange] = useState(null);
 	const [agreement, setAgreement] = useState(false);
@@ -328,5 +293,5 @@ const Dashboard = ({ userId, userName }) => {
 		</Layout>
 	);
 };
-export default Dashboard;
 
+export default Dashboard;
