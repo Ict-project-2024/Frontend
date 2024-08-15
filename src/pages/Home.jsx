@@ -9,25 +9,26 @@ import News from './News'; // Adjust the path as needed
 import AboutUs from './AboutUs'; // Ensure you have the correct path
 import '../assets/css/Home.css'; // Ensure you have the correct path
 
-const Home = () => {
-  const location = useLocation();
-  // const userData = location.state;  
+  const Home = () => {
+    const location = useLocation();
+    const userData = location.state;  
 
     // Temporary hardcoded user data for development
-    const userData = {
+    /* const userData = {
+    _id: "45eytbu8bq7iyn9oqefmlik",
       firstName: 'John',
       lastName: 'Doe',
-      role: 'Admin', // Hardcoded as 'Admin' to render AdminDashboard
-    };
+      role: 'CheckingOfficer', // Hardcoded as 'Admin' to render AdminDashboard
+    }; */
   // Determine which dashboard to display based on the user's role
   const renderDashboard = () => {
     switch(userData.role) {
       case 'Admin':
-        return <AdminDashboard userName={{first: userData.firstName, last: userData.lastName}} />;
+        return <AdminDashboard userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} />;
       case 'CheckingOfficer':
-        return <CheckingOfficerDashboard userName={{first: userData.firstName, last: userData.lastName}} />;
+        return <CheckingOfficerDashboard userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} />;
       default:
-        return <StudentDashboard userName={{first: userData.firstName, last: userData.lastName}} />;
+        return <StudentDashboard userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} />;
     }
   };
 

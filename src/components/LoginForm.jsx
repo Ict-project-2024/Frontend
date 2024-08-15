@@ -23,10 +23,8 @@ const LoginForm = () => {
 
             console.log('Login Response:', response.data);
 
-            if (response.status === 200) {               
+            if (response.status === 200) {
                 if (response.data.success) {
-                    console.log('Login successful');
-
                     navigate('/dashboard', { state: response.data });
                 } else {
                     console.log('Login failed:', response.data.message);

@@ -11,6 +11,15 @@
   flex-wrap: nowrap; /* Prevent wrapping of child elements on larger screens */
 }
 
+.flex {
+  display: flex;
+  gap: 24px;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
 .greeting-left {
   display: flex;
   align-items: center;
@@ -36,7 +45,13 @@
   font-weight: 400;
 }
 
-.greeting-text p,
+.greeting-text p:not(.smallLetters) {
+  margin: 0;
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
 .smallLetters {
   margin: 0;
   font-size: 14px;
@@ -46,6 +61,7 @@
 .quick-links {
   margin-top: 5px;
   display: flex;
+  gap: 16px;
 }
 
 .quick-links a {
