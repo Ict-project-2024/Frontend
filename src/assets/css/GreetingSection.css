@@ -76,17 +76,17 @@
 
 .date-time p {
   margin: 0;
-  font-size: 18px; /* Increase font size */
+  font-size: 16px; /* Increase font size */
 }
 
 .date-time p strong {
   display: block;
-  font-size: 18px; /* Increase font size */
+  font-size: 16px; /* Increase font size */
   color: #888;
 }
 
 .date-time p span:not(.smallLetters) {
-  font-size: 20px; /* Increase font size */
+  font-size: 17px; /* Increase font size */
   color: #000;
 }
 
