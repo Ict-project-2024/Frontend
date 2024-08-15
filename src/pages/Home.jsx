@@ -9,17 +9,17 @@ import News from './News'; // Adjust the path as needed
 import AboutUs from './AboutUs'; // Ensure you have the correct path
 import '../assets/css/Home.css'; // Ensure you have the correct path
 
-const Home = () => {
-  const location = useLocation();
-  //const userData = location.state;  
+  const Home = () => {
+    const location = useLocation();
+    const userData = location.state;  
 
     // Temporary hardcoded user data for development
-    const userData = {
+    /* const userData = {
     _id: "45eytbu8bq7iyn9oqefmlik",
       firstName: 'John',
       lastName: 'Doe',
       role: 'CheckingOfficer', // Hardcoded as 'Admin' to render AdminDashboard
-    };
+    }; */
   // Determine which dashboard to display based on the user's role
   const renderDashboard = () => {
     switch(userData.role) {
