@@ -15,6 +15,10 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.width-full {
+  width: 100% !important;
+}
+
 .site-layout-content {
   background: #fff;
   margin: 0;
