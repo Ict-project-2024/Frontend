@@ -11,25 +11,45 @@ const { Content } = Layout;
 const { Text, Title, Link } = Typography;
 
 // Calculate the overall crowdedness percentage based on the votes: nivindulakshitha
-const overallCrowdednessPercentage = (votes) => {
-	let weights = {
-		"0-15": 0.2,
-		"15-25": 0.4,
-		"25-35": 0.6,
-		"35+": 1.0
-	};
+const overallCrowdednessPercentage = (data) => {
+	if (typeof data == 'object') { // For canteeen data
+		let weights = {
+			"0-15": 0.2,
+			"15-25": 0.4,
+			"25-35": 0.6,
+			"35+": 1.0
+		};
 
-	let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
-	let weightedSum = Object.keys(votes).reduce((sum, range) => sum + votes[range] * weights[range], 0);
-	return ((totalVotes > 0) ? (weightedSum / totalVotes) * 100 : 0).toFixed(0);
+		let totalVotes = Object.values(data).reduce((sum, count) => sum + count, 0);
+		let weightedSum = Object.keys(data).reduce((sum, range) => sum + data[range] * weights[range], 0);
+		return ((totalVotes > 0) ? (weightedSum / totalVotes) * 100 : 0).toFixed(0);
+	} else { // For library and medical center data
+		return ((data / 50) * 100).toFixed(0);
+	}
 }
 
 // Determine the crowdedness based on the percentage: nivindulakshitha
-const determineCrowdedness = (percent) => {
-	if (percent > 75) return 'Very crowded';
-	if (percent > 50) return 'Moderately crowded';
-	if (percent > 25) return 'Crowded';
-	return 'Not crowded';
+const determineCrowdedness = (percent, location = null) => {
+	switch (location) {
+		case 'Library': {
+			if (percent > 40) return 'Very crowded';
+			if (percent > 30) return 'Moderately crowded';
+			if (percent > 20) return 'Crowded';
+			return 'Not crowded';
+		}
+		case 'Medical Center': {
+			if (percent > 10) return 'Very crowded';
+			if (percent > 5) return 'Moderately crowded';
+			if (percent > 3) return 'Crowded';
+			return 'Not crowded';
+		}
+		default: {
+			if (percent > 75) return 'Very crowded';
+			if (percent > 50) return 'Moderately crowded';
+			if (percent > 25) return 'Crowded';
+			return 'Not crowded';
+		}
+	}
 }
 
 // Determine the major crowd count based on the votes: nivindulakshitha
@@ -47,8 +67,21 @@ const esimateCrowd = (votes) => {
 	return estimatedCount.toFixed(0);
 }
 
+// Calculate the next badge level based on the current badge level: nivindulakshitha
+const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
+	if (frequentContributorLevel == null) {
+		setNextBadgeLevel(10 * currentVotes);
+	} else if (frequentContributorLevel == "Bronze") {
+		setNextBadgeLevel(2 * currentVotes);
+	} else {
+		setNextBadgeLevel(1 * currentVotes);
+	}
+}
+
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
+
+	// User badges data: nivindulakshitha
 	const [userBadges, setUserBadges] = useState({})
 	const badgeNames = {
 		"firstStep": "First Step",
@@ -64,6 +97,10 @@ const Dashboard = ({ userId, userName }) => {
 		"frequentContributor": "Congratulations on contributing frequently!",
 		"weeklyWarrior": "Congratulations on contributing weekly!"
 	}
+	const [nextBadgeLevel, setNextBadgeLevel] = useState(0)
+
+	// User rankings data: nivindulakshitha
+	const [userRankings, setUserRankings] = useState({});
 
 	// Fetch the canteen data for each location: nivindulakshitha
 	useEffect(() => {
@@ -78,10 +115,10 @@ const Dashboard = ({ userId, userName }) => {
 						draftData[location] = {}
 						draftData[location].id = locationsList.indexOf(location);
 						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
-						draftData[location].percent = overallCrowdednessPercentage(response.data.votes);
-						draftData[location].status = determineCrowdedness(draftData[location].percent);
+						draftData[location].percent = response.data.votes != undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+						draftData[location].status = response.data.votes != undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
 						draftData[location].name = location;
-						draftData[location].description = 'About ' + esimateCrowd(response.data.votes) + ' people';
+						draftData[location].description = `${response.data.votes != undefined ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`;
 					}
 				})
 				.catch(error => {
@@ -92,7 +129,7 @@ const Dashboard = ({ userId, userName }) => {
 				});
 		}
 
-	}, [userName])
+	}, [userName]);
 
 	// Fetch the badges data for the user: nivindulakshitha
 	useEffect(() => {
@@ -100,7 +137,7 @@ const Dashboard = ({ userId, userName }) => {
 			.then(response => {
 				if (response.success) {
 					setUserBadges(response.data);
-					console.log(response.data.badges)
+					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
 				}
 			})
 			.catch(error => {
@@ -108,16 +145,21 @@ const Dashboard = ({ userId, userName }) => {
 			})
 	}, [userName])
 
+	
+	useEffect(() => {
+	  
+	}, [userName])
+	
 
 	const [canteen, setCanteen] = useState(null);
 	const [peopleRange, setPeopleRange] = useState(null);
 	const [agreement, setAgreement] = useState(false);
 
 	// Function to determine color based on percentage
-	const getColor = (percent) => {
-		if (percent > 75) return 'red';
-		if (percent > 50) return 'orange';
-		if (percent > 25) return 'blue';
+	const getColor = (crowdedness) => {
+		if (crowdedness === 'Very crowded') return 'red';
+		if (crowdedness === 'Moderately crowded') return 'orange';
+		if (crowdedness === 'Crowded') return 'blue';
 		return 'green';
 	};
 
@@ -131,7 +173,6 @@ const Dashboard = ({ userId, userName }) => {
 		// Submit the traffic to the database according to the respective canteen: nivindulakshitha
 		const request = await newApiRequest(`http://localhost:3000/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
-			console.log('Data submitted successfully:', request);
 			message.success('Data submitted successfully');
 		} else {
 			message.error('Failed to submit data. Please try again.');
@@ -174,8 +215,8 @@ const Dashboard = ({ userId, userName }) => {
 							//Display the location data: nivindulakshitha
 							Object.keys(locationTraffic).map(location => (
 								<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
-									<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].percent) }}>{locationTraffic[location].status}</span>}>
-										<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].percent)} />
+									<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].status) }}>{locationTraffic[location].status}</span>}>
+										<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].status)} />
 										<p>{locationTraffic[location].description}</p>
 										<p>Last update was {locationTraffic[location].lastModified}</p>
 									</Card>
@@ -271,7 +312,7 @@ const Dashboard = ({ userId, userName }) => {
 						<Col xs={24} md={12}>
 							<Card className="badge-card">
 								<Text>How close you are to your next badge?</Text>
-								<Progress percent={20} />
+								<Progress percent={nextBadgeLevel} />
 								<Link href="/profile" className="profile-link">See your badges in profile</Link>
 							</Card>
 							{
@@ -280,10 +321,10 @@ const Dashboard = ({ userId, userName }) => {
 									Object.keys(userBadges.badges).map(badge => (
 										// Some badges are holding true or false values; check for those: nivindulakshitha
 										typeof userBadges.badges[badge] == 'boolean' && userBadges.badges[badge] && (
-											<Card className="first-step-card">
+											<Card className="first-step-card" key={badge}>
 												<div className="first-step-content">
 													<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${badgeNames[badge]}`} alt="Placeholder" className="placeholder-image" />
-													<div>
+													<div className='width-full'>
 														<Title level={4}>{badgeNames[badge]}</Title>
 														<Text>{congratulationTexts[badge]}</Text>
 														<Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
@@ -312,12 +353,12 @@ const Dashboard = ({ userId, userName }) => {
 														</Card>
 													</Col>
 												)) : (
-													// Display the badges that are not boolean: nivindulakshitha
-													<Col xs={24} sm={8} key={badge}>
+														// Display the badges that are not boolean and not null: nivindulakshitha
+														userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
 														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${userBadges.badges[badge]}`} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
-													</Col>
+														</Col>)
 												)
 											))
 										) : (
