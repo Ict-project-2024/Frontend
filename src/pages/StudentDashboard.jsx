@@ -32,11 +32,26 @@ const determineCrowdedness = (percent) => {
 	return 'Not crowded';
 }
 
+// Determine the major crowd count based on the votes: nivindulakshitha
+const esimateCrowd = (votes) => {
+	let midpoints = {
+		"0-15": 8,
+		"15-25": 20,
+		"25-35": 30,
+		"35+": 40
+	};
+
+	let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+	let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
+
+	return estimatedCount.toFixed(0);
+}
+
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 
+	// Fetch the canteen data for each location: nivindulakshitha
 	useEffect(() => {
-		// Fetch the canteen data for each location: nivindulakshitha
 		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
 		let draftData = {};
@@ -51,7 +66,7 @@ const Dashboard = ({ userId, userName }) => {
 						draftData[location].percent = overallCrowdednessPercentage(response.data.votes);
 						draftData[location].status = determineCrowdedness(draftData[location].percent);
 						draftData[location].name = location;
-						draftData[location].description = 'Exactly 5 people';
+						draftData[location].description = 'About ' + esimateCrowd(response.data.votes) + ' people';
 					}
 				})
 				.catch(error => {
@@ -63,41 +78,6 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 	}, [userName])
-
-	const canteenData = [
-		{
-			id: 1,
-			name: "Student Canteen",
-			percent: 86,
-			status: "Very crowded",
-			description: "Around 35+ people",
-			lastUpdate: "10min ago"
-		},
-		{
-			id: 2,
-			name: "Staff Canteen",
-			percent: 55,
-			status: "Moderately crowded",
-			description: "Around 15-25 people",
-			lastUpdate: "5min ago"
-		},
-		{
-			id: 3,
-			name: "Library",
-			percent: 28,
-			status: "Crowded",
-			description: "Exactly 5 people",
-			lastUpdate: "5min ago"
-		},
-		{
-			id: 4,
-			name: "Medical Center",
-			percent: 12,
-			status: "Not crowded",
-			description: "Exactly 5 people",
-			lastUpdate: "1hr ago"
-		}
-	];
 
 	const [canteen, setCanteen] = useState(null);
 	const [peopleRange, setPeopleRange] = useState(null);

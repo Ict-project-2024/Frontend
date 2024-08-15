@@ -58,12 +58,14 @@ const GreetingSection = ({ name }) => {
 					<div className="greeting-left">
 						<img src={user.avatar} alt="avatar" className="greet-avatar" />
 						<div className="greeting-text">
-							<h2>Good {dateTime.greeting} {user.name}!</h2>
-							<p>Here are some quick links</p>
+							<p>Good {dateTime.greeting} {user.name}!</p>
+							<div className='flex align-items-center'>
+							<p className='smallLetters'>Here are some quick links</p>
 							<div className="quick-links">
 								<a href="https://lms.tech.sjp.ac.lk/"><HomeOutlined /> LMS</a>
 								<a href="https://www.sjp.ac.lk/"><DesktopOutlined /> USJ Web</a>
 								<a href="https://lib.sjp.ac.lk/"><BookOutlined /> E-Library</a>
+							</div>
 							</div>
 						</div>
 					</div>
