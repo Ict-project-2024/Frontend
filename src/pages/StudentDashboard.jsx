@@ -49,6 +49,21 @@ const esimateCrowd = (votes) => {
 
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
+	const [userBadges, setUserBadges] = useState({})
+	const badgeNames = {
+		"firstStep": "First Step",
+		"accuracyStar": "Accuracy Star",
+		"dailyContributor": "Daily Contributor",
+		"frequentContributor": "Frequent Contributor",
+		"weeklyWarrior": "Weekly Warrior"
+	}
+	const congratulationTexts = {
+		"firstStep": "Congratulations on making your first occupancy update!",
+		"accuracyStar": "Congratulations on maintaining a high accuracy rate!",
+		"dailyContributor": "Congratulations on contributing daily!",
+		"frequentContributor": "Congratulations on contributing frequently!",
+		"weeklyWarrior": "Congratulations on contributing weekly!"
+	}
 
 	// Fetch the canteen data for each location: nivindulakshitha
 	useEffect(() => {
@@ -78,6 +93,21 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 	}, [userName])
+
+	// Fetch the badges data for the user: nivindulakshitha
+	useEffect(() => {
+		newApiRequest(`http://localhost:3000/api/votes/get`, 'POST', { "userId": userId })
+			.then(response => {
+				if (response.success) {
+					setUserBadges(response.data);
+					console.log(response.data.badges)
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching location data:', error);
+			})
+	}, [userName])
+
 
 	const [canteen, setCanteen] = useState(null);
 	const [peopleRange, setPeopleRange] = useState(null);
@@ -244,35 +274,56 @@ const Dashboard = ({ userId, userName }) => {
 								<Progress percent={20} />
 								<Link href="/profile" className="profile-link">See your badges in profile</Link>
 							</Card>
-							<Card className="first-step-card">
-								<div className="first-step-content">
-									<img src="src/assets/images/image.png" alt="Placeholder" className="placeholder-image" />
-									<div>
-										<Title level={4}>First Step</Title>
-										<Text>Congratulations on making your first occupancy update!</Text>
-										<Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
-									</div>
-								</div>
-							</Card>
+							{
+								// Display the claimed badges: nivindulakshitha
+								userBadges && userBadges.badges ? (
+									Object.keys(userBadges.badges).map(badge => (
+										// Some badges are holding true or false values; check for those: nivindulakshitha
+										typeof userBadges.badges[badge] == 'boolean' && userBadges.badges[badge] && (
+											<Card className="first-step-card">
+												<div className="first-step-content">
+													<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${badgeNames[badge]}`} alt="Placeholder" className="placeholder-image" />
+													<div>
+														<Title level={4}>{badgeNames[badge]}</Title>
+														<Text>{congratulationTexts[badge]}</Text>
+														<Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
+													</div>
+												</div>
+											</Card>
+										)
+
+									))) : (
+									<p className='smallLetters'>No claimed badges available right now</p>
+								)
+							}
 						</Col>
 						<Col xs={24} md={12}>
 							<Card title="Your next badges">
 								<Row gutter={[16, 16]}>
-									<Col xs={24} sm={8}>
-										<Card cover={<img src="src/assets/images/badge.png" alt="First Step" />}>
-											<Card.Meta title="First Step" />
-										</Card>
-									</Col>
-									<Col xs={24} sm={8}>
-										<Card cover={<img src="src/assets/images/badge.png" alt="Frequent Contributor" />}>
-											<Card.Meta title="Frequent Contributor" />
-										</Card>
-									</Col>
-									<Col xs={24} sm={8}>
-										<Card cover={<img src="src/assets/images/badge.png" alt="Daily Contributor" />}>
-											<Card.Meta title="Daily Contributor" />
-										</Card>
-									</Col>
+									{
+										// Display the badges data: nivindulakshitha
+										userBadges && userBadges.badges ? (
+											Object.keys(userBadges.badges).map(badge => (
+												// Some badges are holding true or false values; check for those: nivindulakshitha
+												typeof userBadges.badges[badge] == 'boolean' ? (!userBadges.badges[badge] && (
+													<Col xs={24} sm={8} key={badge}>
+														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${badge}`} alt={badge} />}>
+															<Card.Meta title={badgeNames[badge]} />
+														</Card>
+													</Col>
+												)) : (
+													// Display the badges that are not boolean: nivindulakshitha
+													<Col xs={24} sm={8} key={badge}>
+														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${userBadges.badges[badge]}`} alt={badge} />}>
+															<Card.Meta title={badgeNames[badge]} />
+														</Card>
+													</Col>
+												)
+											))
+										) : (
+											<p className='smallLetters'>No badges available right now</p>
+										)
+									}
 								</Row>
 								<Link href="/badges" className="view-all-link">View all</Link>
 							</Card>
