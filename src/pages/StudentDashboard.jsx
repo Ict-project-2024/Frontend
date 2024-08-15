@@ -57,6 +57,13 @@ const Dashboard = ({ userId, userName }) => {
 		"frequentContributor": "Frequent Contributor",
 		"weeklyWarrior": "Weekly Warrior"
 	}
+	const congratulationTexts = {
+		"firstStep": "Congratulations on making your first occupancy update!",
+		"accuracyStar": "Congratulations on maintaining a high accuracy rate!",
+		"dailyContributor": "Congratulations on contributing daily!",
+		"frequentContributor": "Congratulations on contributing frequently!",
+		"weeklyWarrior": "Congratulations on contributing weekly!"
+	}
 
 	// Fetch the canteen data for each location: nivindulakshitha
 	useEffect(() => {
@@ -267,16 +274,28 @@ const Dashboard = ({ userId, userName }) => {
 								<Progress percent={20} />
 								<Link href="/profile" className="profile-link">See your badges in profile</Link>
 							</Card>
-							<Card className="first-step-card">
-								<div className="first-step-content">
-									<img src="src/assets/images/image.png" alt="Placeholder" className="placeholder-image" />
-									<div>
-										<Title level={4}>First Step</Title>
-										<Text>Congratulations on making your first occupancy update!</Text>
-										<Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
-									</div>
-								</div>
-							</Card>
+							{
+								// Display the claimed badges: nivindulakshitha
+								userBadges && userBadges.badges ? (
+									Object.keys(userBadges.badges).map(badge => (
+										// Some badges are holding true or false values; check for those: nivindulakshitha
+										typeof userBadges.badges[badge] == 'boolean' && userBadges.badges[badge] && (
+											<Card className="first-step-card">
+												<div className="first-step-content">
+													<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${badgeNames[badge]}`} alt="Placeholder" className="placeholder-image" />
+													<div>
+														<Title level={4}>{badgeNames[badge]}</Title>
+														<Text>{congratulationTexts[badge]}</Text>
+														<Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
+													</div>
+												</div>
+											</Card>
+										)
+
+									))) : (
+									<p className='smallLetters'>No claimed badges available right now</p>
+								)
+							}
 						</Col>
 						<Col xs={24} md={12}>
 							<Card title="Your next badges">
