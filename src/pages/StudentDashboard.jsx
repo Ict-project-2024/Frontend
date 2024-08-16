@@ -6,6 +6,7 @@ import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
 import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
+import RankingBox from '../components/RankingBox';
 
 const { Content } = Layout;
 const { Text, Title, Link } = Typography;
@@ -88,8 +89,11 @@ const Dashboard = ({ userId, userName }) => {
 	}
 	const [nextBadgeLevel, setNextBadgeLevel] = useState(0)
 
-	// User rankings data: nivindulakshitha
-	const [userRankings, setUserRankings] = useState({});
+	// User top rankings data: nivindulakshitha
+	const [userTopRankings, setUserTopRankings] = useState({});
+
+	// 
+	const [rankingBoardData, setRankingBoardData] = useState({})
 
 	// Calculate the next badge level based on the current badge level: nivindulakshitha
 	const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
@@ -158,25 +162,32 @@ const Dashboard = ({ userId, userName }) => {
 						userVotes[user.userId] = user.votes;
 					});
 
+					// Sort the users based on the votes: nivindulakshitha
+					const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
+
 					// Get the first three users with the highest votes: nivindulakshitha
-					const firstThreeVotes = await allUsers
-						.sort((a, b) => b.votes - a.votes)
-						.slice(0, 3)
+					const firstThreeVotes = rankingBoard.slice(0, 3)
 
 					// Fetch the user data for the first three users: nivindulakshitha
-					let draftData = {};
-					firstThreeVotes.map(user => {
+					let draftRankingData = {}
+					let draftTopThree = {};
+					rankingBoard.map(user => {
 
 						newApiRequest(`http://localhost:3000/api/user/`, 'POST', { userId: user.userId })
 							.then(response => {
 								response.entries = user.votes;
-								draftData[firstThreeVotes.indexOf(user)] = response;
+								if (firstThreeVotes.includes(user)) {
+									draftTopThree[firstThreeVotes.indexOf(user)] = response;
+								}
+
+								draftRankingData[rankingBoard.indexOf(user)] = response;
 							})
 							.catch(error => {
 								console.error('Error fetching user data:', error);
 							})
 							.finally(() => {
-								setUserRankings(draftData);
+								setUserTopRankings(draftTopThree);
+								setRankingBoardData(draftRankingData);
 							});
 					})
 				}
@@ -214,16 +225,6 @@ const Dashboard = ({ userId, userName }) => {
 			message.error('Failed to submit data. Please try again.');
 		}
 	};
-
-	// Ranking Data
-	const rankingData = [
-		{ key: 1, rank: 1, name: 'Gongzhuan No.1 shop', entries: 323234 },
-		{ key: 2, rank: 2, name: 'Gongzhuan No.2 shop', entries: 323234 },
-		{ key: 3, rank: 3, name: 'Gongzhuan No.3 shop', entries: 323234 },
-		{ key: 4, rank: 4, name: 'Amanda Joe', entries: 323234 },
-		{ key: 5, rank: 5, name: 'Gongzhuan No.5 shop', entries: 323234 },
-		{ key: 6, rank: 6, name: 'Gongzhuan No.6 shop', entries: 323234 }
-	];
 
 	const columns = [
 		{
@@ -323,24 +324,25 @@ const Dashboard = ({ userId, userName }) => {
 							<Card title="This week's Canteen Heroes">
 								<Row gutter={[16, 16]} className="heroes-row">
 									{
-										userRankings && Object.keys(userRankings).length > 0 && (
+										// Display the user rankings: nivindulakshitha
+										userTopRankings && Object.keys(userTopRankings).length > 0 && (
 											<>
 												<Col xs={24} sm={8}>
 													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Dining Dynamo" alt="Dining Dynamo" />}>
-														<Card.Meta title="Dining Dynamo" description={ userRankings[1] && `${userRankings[1].firstName} ${userRankings[1].lastName}`} />
-														{userRankings[1] && (<Text>{ userRankings[1].entries}  Entries in a row</Text>)}
+														<Card.Meta title="Dining Dynamo" description={userTopRankings[1] && `${userTopRankings[1].firstName} ${userTopRankings[1].lastName}`} />
+														{userTopRankings[1] && (<Text>{userTopRankings[1].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8} className="hero-card-big">
 													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Canteen Champion" alt="Canteen Champion" />}>
-														<Card.Meta title="Canteen Champion" description={ userRankings[0] && `${userRankings[0].firstName} ${userRankings[0].lastName}`} />
-														{userRankings[0] && (<Text>{ userRankings[0].entries}  Entries in a row</Text>)}
+														<Card.Meta title="Canteen Champion" description={userTopRankings[0] && `${userTopRankings[0].firstName} ${userTopRankings[0].lastName}`} />
+														{userTopRankings[0] && (<Text>{userTopRankings[0].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8}>
 													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Foodie Forecaster" alt="Foodie Forecaster" />}>
-														<Card.Meta title="Foodie Forecaster" description={ userRankings[2] && `${userRankings[2].firstName} ${userRankings[2].lastName}`} />
-														{userRankings[2] && (<Text>{ userRankings[2].entries}  Entries in a row</Text>)}
+														<Card.Meta title="Foodie Forecaster" description={userTopRankings[2] && `${userTopRankings[2].firstName} ${userTopRankings[2].lastName}`} />
+														{userTopRankings[2] && (<Text>{userTopRankings[2].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 											</>
@@ -411,28 +413,18 @@ const Dashboard = ({ userId, userName }) => {
 								<Link href="/badges" className="view-all-link">View all</Link>
 							</Card>
 							<Card title="Your Ranking">
-								<Row>
-									<Col xs={12}>
-										<ol className="ranking-list">
-											<li>Gongzhuan No.1 shop</li>
-											<li>Gongzhuan No.2 shop</li>
-											<li>Gongzhuan No.3 shop</li>
-											<li>Gongzhuan No.4 shop</li>
-											<li>Gongzhuan No.5 shop</li>
-											<li>Gongzhuan No.6 shop</li>
-										</ol>
-									</Col>
-									<Col xs={12}>
-										<ul className="ranking-list">
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-										</ul>
-									</Col>
-								</Row>
+								{
+									Object.keys(rankingBoardData).map(key => {
+										return (
+											<RankingBox
+												userPosition={Number.parseInt(key) + 1}
+												userName={`${rankingBoardData[key].firstName} ${rankingBoardData[key].lastName}`}
+												entriesCount={rankingBoardData[key].entries}
+												selfBox={rankingBoardData[key]._id === userId}
+											/>
+										)
+									})
+								}
 							</Card>
 						</Col>
 					</Row>
