@@ -9,7 +9,7 @@ import News from './News'; // Adjust the path as needed
 import AboutUs from './AboutUs'; // Ensure you have the correct path
 import '../assets/css/Home.css'; // Ensure you have the correct path
 
-  const Home = () => {
+const Home = () => {
     const location = useLocation();
     // const userData = location.state;  
 
@@ -32,18 +32,18 @@ import '../assets/css/Home.css'; // Ensure you have the correct path
     }
   };
 
-  return (
-    <div className="home-container">
-      <NavigatorBar userName={{ first: userData.firstName, last: userData.lastName }} />
-      <div className="home-content">
-        <Routes>
-          <Route path="/dashboard" element={renderDashboard()} />
-          <Route path="/news" element={<News />} />
-          <Route path="/about-us" element={<AboutUs />} />
-        </Routes>
-      </div>
-    </div>
-  );
+	return (
+		<div className="home-container">
+			<NavigatorBar userName={{ first: userData.firstName, last: userData.lastName }} />
+			<div className="home-content">
+				<Routes>
+					<Route path="/dashboard" element={renderDashboard()} />
+					<Route path="/news" element={<News />} />
+					<Route path="/about-us" element={<AboutUs />} />
+				</Routes>
+			</div>
+		</div>
+	);
 };
 
 export default Home;

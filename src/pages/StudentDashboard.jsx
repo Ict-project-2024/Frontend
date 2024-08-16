@@ -92,7 +92,7 @@ const Dashboard = ({ userId, userName }) => {
 	// User top rankings data: nivindulakshitha
 	const [userTopRankings, setUserTopRankings] = useState({});
 
-	// 
+	// Ranking board data: nivindulakshitha
 	const [rankingBoardData, setRankingBoardData] = useState({})
 
 	// Calculate the next badge level based on the current badge level: nivindulakshitha
@@ -106,7 +106,7 @@ const Dashboard = ({ userId, userName }) => {
 		}
 	}
 
-	// Fetch the canteen data for each location: nivindulakshitha
+	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
 		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
@@ -116,6 +116,7 @@ const Dashboard = ({ userId, userName }) => {
 			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
+						// Set the data for each location: nivindulakshitha
 						draftData[location] = {}
 						draftData[location].id = locationsList.indexOf(location);
 						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
@@ -150,7 +151,6 @@ const Dashboard = ({ userId, userName }) => {
 	}, [userName])
 
 	let userVotes = {}
-
 	// Fetch the rankings data for the user: nivindulakshitha
 	useEffect(() => {
 		newApiRequest(`http://localhost:3000/api/votes/all`, 'GET', {})
@@ -414,6 +414,7 @@ const Dashboard = ({ userId, userName }) => {
 							</Card>
 							<Card title="Your Ranking">
 								{
+									// Display the user ranking: nivindulakshitha
 									Object.keys(rankingBoardData).map(key => {
 										return (
 											<RankingBox
