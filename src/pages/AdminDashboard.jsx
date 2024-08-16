@@ -1,70 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Progress, Table, Button, Typography } from 'antd';
+import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
-import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
+import GreetingSection from '../components/GreetingSection';
+import FooterComponent from '../components/FooterComponent';
 import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
+const { RangePicker } = DatePicker;
 
 const statisticsData = [
-	{
-		id: 1,
-		name: "Library",
-		visits: 8846,
-		avgDailyVisits: 1234,
-	},
-	{
-		id: 2,
-		name: "Medical Center",
-		visits: 8846,
-		avgDailyVisits: 1234,
-	}
+    {
+        id: 1,
+        name: "Library",
+        visits: 8846,
+        avgDailyVisits: 1234,
+    },
+    {
+        id: 2,
+        name: "Medical Center",
+        visits: 8846,
+        avgDailyVisits: 1234,
+    }
 ];
 
 const logData = [
-	{
-		id: 1,
-		name: "Library Log",
-		logs: [
-			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '2', date: '22/04/2024', student: 'geekblue', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '3', date: '22/04/2024', student: 'red', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '4', date: '22/04/2024', student: 'purple', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '5', date: '22/04/2024', student: 'green', checkIn: '09:22 am', checkOut: '10:48 am' },
-			// More log data...
-		]
-	},
-	{
-		id: 2,
-		name: "Medical Center Log",
-		logs: [
-			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '2', date: '22/04/2024', student: 'text', checkIn: '09:22 am', checkOut: '10:48 am' },
-			// More log data...
-		]
-	}
+    {
+        id: 1,
+        name: "Library Log",
+        logs: [
+            { key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
+            { key: '2', date: '22/04/2024', student: 'geekblue', checkIn: '09:22 am', checkOut: '10:48 am' },
+            { key: '3', date: '22/04/2024', student: 'red', checkIn: '09:22 am', checkOut: '10:48 am' },
+            { key: '4', date: '22/04/2024', student: 'purple', checkIn: '09:22 am', checkOut: '10:48 am' },
+            { key: '5', date: '22/04/2024', student: 'green', checkIn: '09:22 am', checkOut: '10:48 am' },
+            // More log data...
+        ]
+    },
+    {
+        id: 2,
+        name: "Medical Center Log",
+        logs: [
+            { key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
+            { key: '2', date: '22/04/2024', student: 'text', checkIn: '09:22 am', checkOut: '10:48 am' },
+            // More log data...
+        ]
+    }
 ];
 
 const chartData = [
-	{ name: '1', value: 20 },
-	{ name: '2', value: 30 },
-	{ name: '3', value: 40 },
-	{ name: '4', value: 35 },
-	{ name: '5', value: 50 },
-	{ name: '6', value: 45 },
-	{ name: '7', value: 60 },
+    { name: '1', value: 20 },
+    { name: '2', value: 30 },
+    { name: '3', value: 40 },
+    { name: '4', value: 35 },
+    { name: '5', value: 50 },
+    { name: '6', value: 45 },
+    { name: '7', value: 60 },
 ];
 
-
 const getColor = (percent) => {
-	if (percent > 75) return 'red';
-	if (percent > 50) return 'orange';
-	if (percent > 25) return 'blue';
-	return 'green';
+    if (percent > 75) return 'red';
+    if (percent > 50) return 'orange';
+    if (percent > 25) return 'blue';
+    return 'green';
 };
 
 // Calculate the overall crowdedness percentage based on the votes: nivindulakshitha
@@ -109,19 +110,18 @@ const determineCrowdedness = (percent, location = null) => {
 	}
 }
 
-// Determine the major crowd count based on the votes: nivindulakshitha
 const esimateCrowd = (votes) => {
-	let midpoints = {
-		"0-15": 8,
-		"15-25": 20,
-		"25-35": 30,
-		"35+": 40
-	};
+    let midpoints = {
+        "0-15": 8,
+        "15-25": 20,
+        "25-35": 30,
+        "35+": 40
+    };
 
-	let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
-	let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
+    let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+    let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
 
-	return estimatedCount.toFixed(0);
+    return estimatedCount.toFixed(0);
 }
 
 const AdminDashboard = ({ userId, userName }) => {
