@@ -1,36 +1,84 @@
 .checking-officer-dashboard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f0f2f5;
-  }
-  
-  .options {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .check-button {
-    width: 300px;
-    height: 80px;
-    font-size: 24px;
-  }
-  
-  .scanning-card {
-    width: 340px;
-    text-align: center;
-  }
-  
-  .scanning-card p {
-    font-size: 18px;
-    margin-top: 20px;
-  }
-  
-  .scanning-card button {
-    margin-top: 20px;
-    width: 100%;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Changed from center to flex-start to align content closer to the top */
+
+  padding-top: 200px; /* Add some padding to avoid content sticking to the top */
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.check-button {
+  width: 300px;
+  height: 80px;
+  font-size: 24px;
+}
+
+.scanning-card {
+  width: 340px;
+  text-align: center;
+}
+
+.scanning-card p {
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.scanning-card button {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.doctor-availability-container {
+  margin-bottom: 50px; /* Reduce the space between availability buttons and check-in/out buttons */
+  display: flex;
+  flex-direction: column; /* Arrange text above the buttons */
+  align-items: center;
+  justify-content: center;
+}
+
+.doctor-availability-label {
+  font-size: 16px;
+  margin-bottom: 10px; /* Space between the text and the buttons */
+}
+
+.doctor-availability {
+  display: flex;
+  gap: 10px; /* Space between the buttons */
+}
+
+.doctor-availability .ant-btn {
+  font-size: 16px;
+  width: 140px;
+  height: 40px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.doctor-availability .ant-btn-available {
+  background-color: #52C41A; /* Green color */
+  color: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.doctor-availability .ant-btn-unavailable {
+  background-color: white;
+  color: black;
+  border: 1px solid #d9d9d9;
+  box-shadow: none;
+}
+
+.doctor-availability .ant-btn-available:hover,
+.doctor-availability .ant-btn-unavailable:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}

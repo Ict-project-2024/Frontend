@@ -18,7 +18,7 @@ import '../assets/css/Home.css'; // Ensure you have the correct path
     _id: "45eytbu8bq7iyn9oqefmlik",
       firstName: 'John',
       lastName: 'Doe',
-      role: 'Admin', // Hardcoded as 'Admin' to render AdminDashboard
+      role: 'CheckingOfficer', // Hardcoded as 'Admin' to render AdminDashboard
     };
   // Determine which dashboard to display based on the user's role
   const renderDashboard = () => {
@@ -26,7 +26,7 @@ import '../assets/css/Home.css'; // Ensure you have the correct path
       case 'Admin':
         return <AdminDashboard userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} />;
       case 'CheckingOfficer':
-        return <CheckingOfficerDashboard userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} />;
+        return <CheckingOfficerDashboard role="MC" userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} />;
       default:
         return <StudentDashboard userId={userData._id} userName={{first: userData.firstName, last: userData.lastName}} />;
     }

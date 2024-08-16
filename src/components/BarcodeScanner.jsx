@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Spin } from 'antd';
+import { Card, Spin, Button } from 'antd';
 import Quagga from 'quagga';
 import CheckInSuccess from './CheckInSuccess'; // Import the new success screen component
 import CheckInOutButton from './CheckInOutButton'; // Import the customized button component
@@ -95,6 +95,15 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
     }
   };
 
+  const handleCancelScan = () => {
+    // Logic to handle the cancellation of scanning
+    setScanning(false);
+    setScanComplete(false);
+    setScanResult(null);
+    setScanTime(null);
+    onCancel(); // Call the onCancel prop to handle navigation back to home
+  };
+
   const handleBackToHome = () => {
     // Logic to go back to the home screen or reset the scanner
     setShowSuccessScreen(false);
@@ -140,6 +149,14 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
           scanComplete={scanComplete}
           actionType={actionType}
         />
+        <Button 
+          className="cancel-button" 
+          onClick={handleCancelScan} 
+          type="default"
+          style={{ marginTop: '10px' }}
+        >
+          Cancel
+        </Button>
       </Card>
     </div>
   );
