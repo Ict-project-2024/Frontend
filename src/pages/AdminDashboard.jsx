@@ -5,6 +5,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
+import CountUp from 'react-countup'
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -67,25 +68,45 @@ const getColor = (percent) => {
 };
 
 // Calculate the overall crowdedness percentage based on the votes: nivindulakshitha
-const overallCrowdednessPercentage = (votes) => {
-	let weights = {
-		"0-15": 0.2,
-		"15-25": 0.4,
-		"25-35": 0.6,
-		"35+": 1.0
-	};
+const overallCrowdednessPercentage = (data) => {
+	if (typeof data == 'object') { // For canteeen data
+		let weights = {
+			"0-15": 0.2,
+			"15-25": 0.4,
+			"25-35": 0.6,
+			"35+": 1.0
+		};
 
-	let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
-	let weightedSum = Object.keys(votes).reduce((sum, range) => sum + votes[range] * weights[range], 0);
-	return ((totalVotes > 0) ? (weightedSum / totalVotes) * 100 : 0).toFixed(0);
+		let totalVotes = Object.values(data).reduce((sum, count) => sum + count, 0);
+		let weightedSum = Object.keys(data).reduce((sum, range) => sum + data[range] * weights[range], 0);
+		return ((totalVotes > 0) ? (weightedSum / totalVotes) * 100 : 0).toFixed(0);
+	} else { // For library and medical center data
+		return ((data / 50) * 100).toFixed(0);
+	}
 }
 
 // Determine the crowdedness based on the percentage: nivindulakshitha
-const determineCrowdedness = (percent) => {
-	if (percent > 75) return 'Very crowded';
-	if (percent > 50) return 'Moderately crowded';
-	if (percent > 25) return 'Crowded';
-	return 'Not crowded';
+const determineCrowdedness = (percent, location = null) => {
+	switch (location) {
+		case 'Library': {
+			if (percent > 40) return 'Very crowded';
+			if (percent > 30) return 'Moderately crowded';
+			if (percent > 20) return 'Crowded';
+			return 'Not crowded';
+		}
+		case 'Medical Center': {
+			if (percent > 10) return 'Very crowded';
+			if (percent > 5) return 'Moderately crowded';
+			if (percent > 3) return 'Crowded';
+			return 'Not crowded';
+		}
+		default: {
+			if (percent > 75) return 'Very crowded';
+			if (percent > 50) return 'Moderately crowded';
+			if (percent > 25) return 'Crowded';
+			return 'Not crowded';
+		}
+	}
 }
 
 // Determine the major crowd count based on the votes: nivindulakshitha
@@ -105,8 +126,12 @@ const esimateCrowd = (votes) => {
 
 const AdminDashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
+	const [libraryChartData, setLibraryChartData] = useState([])
+	const [libraryStats, setLibraryStats] = useState({})
+	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
+	const [medicalCenterStats, setMedicalCenterStats] = useState({})
 
-	// Fetch the canteen data for each location: nivindulakshitha
+	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
 		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
@@ -116,13 +141,14 @@ const AdminDashboard = ({ userId, userName }) => {
 			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
+						// Set the data for each location: nivindulakshitha
 						draftData[location] = {}
 						draftData[location].id = locationsList.indexOf(location);
 						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
-						draftData[location].percent = overallCrowdednessPercentage(response.data.votes);
-						draftData[location].status = determineCrowdedness(draftData[location].percent);
+						draftData[location].percent = response.data.votes != undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+						draftData[location].status = response.data.votes != undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
 						draftData[location].name = location;
-						draftData[location].description = 'About ' + esimateCrowd(response.data.votes) + ' people';
+						draftData[location].description = `${response.data.votes != undefined ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`;
 					}
 				})
 				.catch(error => {
@@ -133,7 +159,70 @@ const AdminDashboard = ({ userId, userName }) => {
 				});
 		}
 
-	}, [userName])
+	}, [userId]);
+
+	// Fetch the required data for library: nivindulakshitha
+	useEffect(() => {
+		// Fetch the required data for each location: nivindulakshitha
+		let draftData = [];
+		let totalEntrances = 0;
+		let totalDays = 0;
+
+		newApiRequest(`http://localhost:3000/api/library/history`, 'GET', {})
+			.then(response => {
+				if (response.success) {
+					// Set the data for library: nivindulakshitha
+					response.data.map((data, index) => {
+						draftData[index] = new Object({
+							"Date": data.date,
+							"Students": data.entrances
+						})
+
+						totalEntrances += data.entrances;
+						totalDays++;
+					})
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching library data:', error);
+			})
+			.finally(() => {
+				setLibraryChartData(...libraryChartData, draftData);
+				setLibraryStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
+			});
+	}, [userId])
+
+	// Fetch the required data for medical center: nivindulakshitha
+	useEffect(() => {
+		// Fetch the required data for each location: nivindulakshitha
+		let draftData = [];
+		let totalEntrances = 0;
+		let totalDays = 0;
+
+		newApiRequest(`http://localhost:3000/api/medical-center/history`, 'GET', {})
+			.then(response => {
+				if (response.success) {
+					// Set the data for library: nivindulakshitha
+					response.data.map((data, index) => {
+						draftData[index] = new Object({
+							"Date": data.date,
+							"Students": data.entrances
+						})
+
+						totalEntrances += data.entrances;
+						totalDays++;
+					})
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching medical center data:', error);
+			})
+			.finally(() => {
+				setMedicalCenterChartData(...libraryChartData, draftData);
+				setMedicalCenterStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
+			});
+	}, [userId])
+
 
 	return (
 		<Layout>
@@ -159,27 +248,42 @@ const AdminDashboard = ({ userId, userName }) => {
 					}
 				</Row>
 
-				{/* Statistics Section */}
 				<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
-					{statisticsData.map(stat => (
-						<Col xs={24} md={12} key={stat.id}>
-							<Card>
-								<Title level={5}>{stat.name}</Title>
-								<Text type="secondary">Last 28 Days</Text>
-								<Title level={2} style={{ margin: '8px 0' }}>{stat.visits.toLocaleString()}</Title>
-								<ResponsiveContainer width="100%" height={100}>
-									<AreaChart data={chartData}>
-										<CartesianGrid strokeDasharray="3 3" />
-										<XAxis dataKey="name" hide />
-										<YAxis hide />
-										<Tooltip />
-										<Area type="monotone" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
-									</AreaChart>
-								</ResponsiveContainer>
-								<Text>Average Daily Visits: {stat.avgDailyVisits.toLocaleString()}</Text>
-							</Card>
-						</Col>
-					))}
+					{/* Display the statistics data: nivindulakshitha */}
+					<Col xs={24} md={12} key={1}>
+						<Card>
+							<Title level={5}>Library</Title>
+							<Text type="secondary">Last {Object.keys(libraryChartData).length} Days</Text>
+							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={libraryStats.visits ? libraryStats.visits.toLocaleString() : 0} />
+							<ResponsiveContainer width="100%" height={100}>
+								<AreaChart data={libraryChartData}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="Date" hide />
+									<YAxis hide />
+									<Tooltip />
+									<Area type="monotone" dataKey="Students" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+								</AreaChart>
+							</ResponsiveContainer>
+							<Text>Average Daily Visits: {libraryStats.avgDailyVisits && !isNaN(libraryStats.avgDailyVisits) ? libraryStats.avgDailyVisits.toLocaleString() : 0}</Text>
+						</Card>
+					</Col>
+					<Col xs={24} md={12} key={2}>
+						<Card>
+							<Title level={5}>Medical Center</Title>
+							<Text type="secondary">Last {Object.keys(medicalCenterChartData).length} Days</Text>
+							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={medicalCenterStats.visits ? medicalCenterStats.visits.toLocaleString() : 0} />
+							<ResponsiveContainer width="100%" height={100}>
+								<AreaChart data={medicalCenterChartData}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="Date" hide />
+									<YAxis hide />
+									<Tooltip />
+									<Area type="monotone" dataKey="Students" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+								</AreaChart>
+							</ResponsiveContainer>
+							<Text>Average Daily Visits: {medicalCenterStats.avgDailyVisits && !isNaN(medicalCenterStats.avgDailyVisits) ? medicalCenterStats.avgDailyVisits.toLocaleString() : 0}</Text>
+						</Card>
+					</Col>
 				</Row>
 
 				{/* Logs Section */}
