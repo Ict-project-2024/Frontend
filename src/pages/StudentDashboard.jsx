@@ -67,17 +67,6 @@ const esimateCrowd = (votes) => {
 	return estimatedCount.toFixed(0);
 }
 
-// Calculate the next badge level based on the current badge level: nivindulakshitha
-const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
-	if (frequentContributorLevel == null) {
-		setNextBadgeLevel(10 * currentVotes);
-	} else if (frequentContributorLevel == "Bronze") {
-		setNextBadgeLevel(2 * currentVotes);
-	} else {
-		setNextBadgeLevel(1 * currentVotes);
-	}
-}
-
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 
@@ -101,6 +90,17 @@ const Dashboard = ({ userId, userName }) => {
 
 	// User rankings data: nivindulakshitha
 	const [userRankings, setUserRankings] = useState({});
+
+	// Calculate the next badge level based on the current badge level: nivindulakshitha
+	const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
+		if (frequentContributorLevel == null) {
+			setNextBadgeLevel(10 * currentVotes);
+		} else if (frequentContributorLevel == "Bronze") {
+			setNextBadgeLevel(2 * currentVotes);
+		} else {
+			setNextBadgeLevel(1 * currentVotes);
+		}
+	}
 
 	// Fetch the canteen data for each location: nivindulakshitha
 	useEffect(() => {
@@ -145,11 +145,47 @@ const Dashboard = ({ userId, userName }) => {
 			})
 	}, [userName])
 
-	
+	let userVotes = {}
+
+	// Fetch the rankings data for the user: nivindulakshitha
 	useEffect(() => {
-	  
+		newApiRequest(`http://localhost:3000/api/votes/all`, 'GET', {})
+			.then(async response => {
+				if (response.success) {
+					const allUsers = response.data;
+
+					allUsers.forEach(user => {
+						userVotes[user.userId] = user.votes;
+					});
+
+					// Get the first three users with the highest votes: nivindulakshitha
+					const firstThreeVotes = await allUsers
+						.sort((a, b) => b.votes - a.votes)
+						.slice(0, 3)
+
+					// Fetch the user data for the first three users: nivindulakshitha
+					let draftData = {};
+					firstThreeVotes.map(user => {
+
+						newApiRequest(`http://localhost:3000/api/user/`, 'POST', { userId: user.userId })
+							.then(response => {
+								response.entries = user.votes;
+								draftData[firstThreeVotes.indexOf(user)] = response;
+							})
+							.catch(error => {
+								console.error('Error fetching user data:', error);
+							})
+							.finally(() => {
+								setUserRankings(draftData);
+							});
+					})
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching location data:', error);
+			})
 	}, [userName])
-	
+
 
 	const [canteen, setCanteen] = useState(null);
 	const [peopleRange, setPeopleRange] = useState(null);
@@ -286,24 +322,30 @@ const Dashboard = ({ userId, userName }) => {
 						<Col xs={24} md={12}>
 							<Card title="This week's Canteen Heroes">
 								<Row gutter={[16, 16]} className="heroes-row">
-									<Col xs={24} sm={8}>
-										<Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Dining Dynamo" />}>
-											<Card.Meta title="Dining Dynamo" description="Jhonne Doe" />
-											<Text>98 Entries in a row</Text>
-										</Card>
-									</Col>
-									<Col xs={24} sm={8} className="hero-card-big">
-										<Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Canteen Champion" />}>
-											<Card.Meta title="Canteen Champion" description="Jhonne Doe" />
-											<Text>154 Entries in a row</Text>
-										</Card>
-									</Col>
-									<Col xs={24} sm={8}>
-										<Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Foodie Forecaster" />}>
-											<Card.Meta title="Foodie Forecaster" description="Jhonne Doe" />
-											<Text>54 Entries in a row</Text>
-										</Card>
-									</Col>
+									{
+										userRankings && Object.keys(userRankings).length > 0 && (
+											<>
+												<Col xs={24} sm={8}>
+													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Dining Dynamo" alt="Dining Dynamo" />}>
+														<Card.Meta title="Dining Dynamo" description={ userRankings[1] && `${userRankings[1].firstName} ${userRankings[1].lastName}`} />
+														{userRankings[1] && (<Text>{ userRankings[1].entries}  Entries in a row</Text>)}
+													</Card>
+												</Col>
+												<Col xs={24} sm={8} className="hero-card-big">
+													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Canteen Champion" alt="Canteen Champion" />}>
+														<Card.Meta title="Canteen Champion" description={ userRankings[0] && `${userRankings[0].firstName} ${userRankings[0].lastName}`} />
+														{userRankings[0] && (<Text>{ userRankings[0].entries}  Entries in a row</Text>)}
+													</Card>
+												</Col>
+												<Col xs={24} sm={8}>
+													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Foodie Forecaster" alt="Foodie Forecaster" />}>
+														<Card.Meta title="Foodie Forecaster" description={ userRankings[2] && `${userRankings[2].firstName} ${userRankings[2].lastName}`} />
+														{userRankings[2] && (<Text>{ userRankings[2].entries}  Entries in a row</Text>)}
+													</Card>
+												</Col>
+											</>
+										)
+									}
 								</Row>
 							</Card>
 						</Col>
