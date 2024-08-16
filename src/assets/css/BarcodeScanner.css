@@ -1,10 +1,11 @@
 .barcode-scanner-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f0f0f0;
-  padding: 20px;
+  align-items: flex-start; /* Align content to the top */
+  padding: 10px; /* Reduced padding */
+  box-sizing: border-box; /* Ensure padding is included in the element's width and height */
+  overflow: hidden; /* Prevent overflow */
+  margin-top: -200px;
 }
 
 .scanning-card {
@@ -13,10 +14,11 @@
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: white;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: 0; /* Ensure no margin is added to the top */
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .card-content {
@@ -31,6 +33,9 @@
   height: auto;
   aspect-ratio: 4/3; /* Maintains a 4/3 aspect ratio */
   background-color: #000;
+  margin-top: 0; /* Remove any default margin at the top */
+  padding-top: 0; /* Remove any padding at the top */
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .scanning-status {
@@ -38,6 +43,7 @@
   color: #666;
   margin: 10px 0;
   text-align: center;
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .scan-result {
@@ -49,12 +55,14 @@
   border-top: 1px solid #e8e8e8;
   width: 100%;
   box-sizing: border-box; /* Ensure padding doesn't affect width */
+  overflow: hidden; /* Prevent overflow */
 }
 
 .result-display {
   display: flex;
   align-items: center;
   width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .avatar img {
@@ -62,6 +70,7 @@
   height: 60px;
   border-radius: 50%;
   padding-top: 12px;
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .scan-details {
@@ -69,12 +78,14 @@
   justify-content: space-between;
   flex-grow: 1;
   margin-left: 15px;
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .scan-details p {
   margin: 0;
   font-size: 15px !important;
   text-align: left;
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .check-in-button {
@@ -90,6 +101,8 @@
   font-weight: bold;
   border-top: 1px solid #e8e8e8;
   border-radius: 0 0 10px 10px;
+  box-sizing: border-box; /* Ensure padding is included in the element's width */
+  overflow: hidden; /* Prevent overflow */
 }
 
 .check-in-button:disabled {
@@ -108,6 +121,7 @@
 @media (max-width: 768px) {
   .barcode-scanner-container {
     padding: 10px;
+    overflow: hidden; /* Prevent overflow on mobile */
   }
 
   .scanning-card {
@@ -117,11 +131,13 @@
     flex-direction: column;
     justify-content: space-between;
     border-radius: 0;
+    overflow: hidden; /* Prevent overflow */
   }
 
   .camera-container {
     width: 100%;
     height: 50vh; /* Adjust height for mobile */
+    margin-top: 0; /* Remove any default margin at the top */
   }
 
   .scanning-status {
@@ -133,8 +149,9 @@
     height: 60px; /* Slightly larger button for easier tapping */
   }
 
-  .scan-result{
+  .scan-result {
     font-size: 10px;
+    overflow: hidden; /* Prevent overflow */
   }
 }
 
@@ -142,21 +159,26 @@
 @media (min-width: 769px) {
   .barcode-scanner-container {
     padding: 20px;
+    overflow: hidden; /* Prevent overflow on desktop */
   }
 
   .scanning-card {
     height: auto;
     max-width: 600px; /* Slightly wider on desktop */
     margin: 0 auto;
+    overflow: hidden; /* Prevent overflow */
   }
 
   .camera-container {
     width: 100%;
     height: auto;
     max-height: 400px; /* Maintain aspect ratio, but limit height */
+    margin-top: 0; /* Remove any default margin at the top */
+    overflow: hidden; /* Prevent overflow */
   }
 
   .check-in-button {
     height: 50px;
+    overflow: hidden; /* Prevent overflow */
   }
 }

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Button } from 'antd';
-import { SwapRightOutlined } from '@ant-design/icons';
+import { Button, Modal } from 'antd';
+import { SwapRightOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import BarcodeScanner from '../components/BarcodeScanner'; // Adjust the path as needed
 import '../assets/css/CheckingOfficerDashboard.css'; // Ensure you have the correct path
 
-const CheckingOfficerDashboard = () => {
+const CheckingOfficerDashboard = ({ role }) => { 
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [actionType, setActionType] = useState(null);
+  const [doctorAvailable, setDoctorAvailable] = useState(true); 
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+  const [pendingAvailability, setPendingAvailability] = useState(null);
 
   const handleCheckIn = () => {
     setScanning(true);
@@ -22,17 +25,80 @@ const CheckingOfficerDashboard = () => {
   const handleScan = data => {
     setScanResult(data);
     setScanning(false);
-    // Handle the scanned data (e.g., send to server or display to user)
     console.log('Scanned data:', data);
   };
 
   const handleCancel = () => {
     setScanning(false);
-    setActionType(null); // Reset action type on cancel
+    setActionType(null);
+  };
+
+  const showConfirmModal = (status) => {
+    setPendingAvailability(status);
+    setIsConfirmVisible(true);
+  };
+
+  const handleConfirm = () => {
+    setDoctorAvailable(pendingAvailability);
+    setIsConfirmVisible(false);
+  };
+
+  const handleCancelConfirm = () => {
+    setPendingAvailability(null);
+    setIsConfirmVisible(false);
   };
 
   return (
     <div className="checking-officer-dashboard">
+      {role === 'MC' && !scanning && (
+        <div className="doctor-availability-container">
+          <span className="doctor-availability-label">Doctor availability:</span>
+          <div className="doctor-availability">
+            <Button
+              className={`ant-btn ${doctorAvailable ? 'ant-btn-available' : 'ant-btn-unavailable'}`}
+              onClick={() => showConfirmModal(true)}
+              icon={<InfoCircleOutlined />}
+              style={{ backgroundColor: doctorAvailable ? '#72c140' : 'white', color: doctorAvailable ? 'white' : 'black' }}
+            >
+              Available
+            </Button>
+            <Button
+              className={`ant-btn ${!doctorAvailable ? 'ant-btn-unavailable' : 'ant-btn-available'}`}
+              onClick={() => showConfirmModal(false)}
+              icon={<InfoCircleOutlined />}
+              style={{ backgroundColor: !doctorAvailable ? '#F5222D' : 'white', color: !doctorAvailable ? 'white' : 'black' }}
+            >
+              Unavailable
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Modal
+        title={null}
+        visible={isConfirmVisible}
+        onOk={handleConfirm}
+        onCancel={handleCancelConfirm}
+        centered // This ensures the modal opens in the center of the screen
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button key="back" onClick={handleCancelConfirm} style={{ marginLeft: '10px', marginTop: '5px' }}>
+              Cancel
+            </Button>
+            <Button key="submit" type="primary" onClick={handleConfirm} style={{ marginLeft: '10px', marginTop: '5px' }}>
+              Confirm
+            </Button>
+          </div>
+        }
+      >
+        <div style={{ textAlign: 'center' }}>
+          <ExclamationCircleOutlined style={{ fontSize: '48px', color: '#faad14' }} />
+          <h2>Please confirm again</h2>
+          <p>Your action will update the entire system. Be responsible and reconfirm.</p>
+        </div>
+      </Modal>
+
+
       {!scanning ? (
         <div className="options">
           <Button
@@ -40,7 +106,7 @@ const CheckingOfficerDashboard = () => {
             type="primary"
             icon={<SwapRightOutlined />}
             onClick={handleCheckIn}
-            style={{ backgroundColor: 'green', borderColor: 'green' }}
+            style={{ backgroundColor: '#52C41A', borderColor: 'green' }}
             size="large"
           >
             Check in
@@ -50,7 +116,7 @@ const CheckingOfficerDashboard = () => {
             type="primary"
             icon={<SwapRightOutlined />}
             onClick={handleCheckOut}
-            style={{ backgroundColor: 'red', borderColor: 'red' }}
+            style={{ backgroundColor: '#F5222D', borderColor: '#F5222D' }}
             size="large"
           >
             Check out
@@ -59,7 +125,6 @@ const CheckingOfficerDashboard = () => {
       ) : (
         <BarcodeScanner onScan={handleScan} onCancel={handleCancel} actionType={actionType} />
       )}
-      {scanResult && <p>Scan Result: {scanResult}</p>}
     </div>
   );
 };
