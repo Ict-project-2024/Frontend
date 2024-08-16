@@ -12,60 +12,35 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-const statisticsData = [
-    {
-        id: 1,
-        name: "Library",
-        visits: 8846,
-        avgDailyVisits: 1234,
-    },
-    {
-        id: 2,
-        name: "Medical Center",
-        visits: 8846,
-        avgDailyVisits: 1234,
-    }
-];
-
 const logData = [
-    {
-        id: 1,
-        name: "Library Log",
-        logs: [
-            { key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '2', date: '22/04/2024', student: 'geekblue', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '3', date: '22/04/2024', student: 'red', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '4', date: '22/04/2024', student: 'purple', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '5', date: '22/04/2024', student: 'green', checkIn: '09:22 am', checkOut: '10:48 am' },
-            // More log data...
-        ]
-    },
-    {
-        id: 2,
-        name: "Medical Center Log",
-        logs: [
-            { key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '2', date: '22/04/2024', student: 'text', checkIn: '09:22 am', checkOut: '10:48 am' },
-            // More log data...
-        ]
-    }
-];
-
-const chartData = [
-    { name: '1', value: 20 },
-    { name: '2', value: 30 },
-    { name: '3', value: 40 },
-    { name: '4', value: 35 },
-    { name: '5', value: 50 },
-    { name: '6', value: 45 },
-    { name: '7', value: 60 },
+	{
+		id: 1,
+		name: "Library Log",
+		logs: [
+			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
+			{ key: '2', date: '22/04/2024', student: 'geekblue', checkIn: '09:22 am', checkOut: '10:48 am' },
+			{ key: '3', date: '22/04/2024', student: 'red', checkIn: '09:22 am', checkOut: '10:48 am' },
+			{ key: '4', date: '22/04/2024', student: 'purple', checkIn: '09:22 am', checkOut: '10:48 am' },
+			{ key: '5', date: '22/04/2024', student: 'green', checkIn: '09:22 am', checkOut: '10:48 am' },
+			// More log data...
+		]
+	},
+	{
+		id: 2,
+		name: "Medical Center Log",
+		logs: [
+			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
+			{ key: '2', date: '22/04/2024', student: 'text', checkIn: '09:22 am', checkOut: '10:48 am' },
+			// More log data...
+		]
+	}
 ];
 
 const getColor = (percent) => {
-    if (percent > 75) return 'red';
-    if (percent > 50) return 'orange';
-    if (percent > 25) return 'blue';
-    return 'green';
+	if (percent > 75) return 'red';
+	if (percent > 50) return 'orange';
+	if (percent > 25) return 'blue';
+	return 'green';
 };
 
 // Calculate the overall crowdedness percentage based on the votes: nivindulakshitha
@@ -111,17 +86,28 @@ const determineCrowdedness = (percent, location = null) => {
 }
 
 const esimateCrowd = (votes) => {
-    let midpoints = {
-        "0-15": 8,
-        "15-25": 20,
-        "25-35": 30,
-        "35+": 40
-    };
+	let midpoints = {
+		"0-15": 8,
+		"15-25": 20,
+		"25-35": 30,
+		"35+": 40
+	};
 
-    let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
-    let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
+	let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+	let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
 
-    return estimatedCount.toFixed(0);
+	return estimatedCount.toFixed(0);
+}
+
+// Fix the time to UTC+5:30: nivindulakshitha
+const fixDateTime = (originalTime) => {
+	const date = new Date(originalTime);
+	date.setMinutes(date.getMinutes() + 330); // UTC+5:30
+
+	const newDate = date.toISOString().split('T')[0];
+	const newTime = date.toISOString().split('T')[1].slice(0, 5);
+
+	return Object.assign({ date: newDate, time: newTime });
 }
 
 const AdminDashboard = ({ userId, userName }) => {
@@ -130,6 +116,8 @@ const AdminDashboard = ({ userId, userName }) => {
 	const [libraryStats, setLibraryStats] = useState({})
 	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
 	const [medicalCenterStats, setMedicalCenterStats] = useState({})
+	const [libraryLogData, setLibraryLogData] = useState([])
+	const [medicalCenterLogData, setMedicalCenterLogData] = useState([])
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
@@ -158,7 +146,6 @@ const AdminDashboard = ({ userId, userName }) => {
 					setLocationTraffic(draftData);
 				});
 		}
-
 	}, [userId]);
 
 	// Fetch the required data for library: nivindulakshitha
@@ -190,6 +177,63 @@ const AdminDashboard = ({ userId, userName }) => {
 				setLibraryChartData(...libraryChartData, draftData);
 				setLibraryStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
 			});
+	}, [userId])
+
+	// Fetch the required data for library: nivindulakshitha
+	useEffect(() => {
+		newApiRequest(`http://localhost:3000/api/library/useraccess`, 'POST', {}) // Time slot should be included
+			.then(response => {
+				if (response.success) {
+					// Set the data for library: nivindulakshitha
+					let index = 0;
+					response.data.map((user) => {
+						const fixedEnterDateTime = fixDateTime(user.entryTime);
+						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
+						user.entryTime = fixedEnterDateTime.time;
+						user.entryDate = fixedEnterDateTime.date;
+						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+
+						newApiRequest(`http://localhost:3000/api/user/`, 'POST', { "teNumber": user.teNumber })
+							.then(result => {
+								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
+								response.data[index] = user;
+								index++;
+								setLibraryLogData(response.data);
+							});
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching library data:', error);
+			})
+	}, [userId])
+
+	useEffect(() => {
+		newApiRequest(`http://localhost:3000/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
+			.then(response => {
+				if (response.success) {
+					// Set the data for medical center: nivindulakshitha
+					let index = 0;
+					response.data.map((user) => {
+						const fixedEnterDateTime = fixDateTime(user.entryTime);
+						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
+						user.entryTime = fixedEnterDateTime.time;
+						user.entryDate = fixedEnterDateTime.date;
+						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+
+						newApiRequest(`http://localhost:3000/api/user/`, 'POST', { "teNumber": user.teNumber })
+							.then(result => {
+								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
+								response.data[index] = user;
+								index++;
+								setMedicalCenterLogData(response.data);
+							});
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching library data:', error);
+			})
 	}, [userId])
 
 	// Fetch the required data for medical center: nivindulakshitha
@@ -254,7 +298,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						<Card>
 							<Title level={5}>Library</Title>
 							<Text type="secondary">Last {Object.keys(libraryChartData).length} Days</Text>
-							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={libraryStats.visits ? libraryStats.visits.toLocaleString() : 0} />
+							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} duration={5} end={libraryStats.visits ? libraryStats.visits.toLocaleString() : 0} />
 							<ResponsiveContainer width="100%" height={100}>
 								<AreaChart data={libraryChartData}>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -271,7 +315,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						<Card>
 							<Title level={5}>Medical Center</Title>
 							<Text type="secondary">Last {Object.keys(medicalCenterChartData).length} Days</Text>
-							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={medicalCenterStats.visits ? medicalCenterStats.visits.toLocaleString() : 0} />
+							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} duration={5} end={medicalCenterStats.visits ? medicalCenterStats.visits.toLocaleString() : 0} />
 							<ResponsiveContainer width="100%" height={100}>
 								<AreaChart data={medicalCenterChartData}>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -288,48 +332,90 @@ const AdminDashboard = ({ userId, userName }) => {
 
 				{/* Logs Section */}
 				<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
-					{logData.map(log => (
-						<Col xs={24} md={12} key={log.id}>
-							<Card
-								title={log.name}
-								extra={
-									<Button type="primary" icon={<DownloadOutlined />}>
-										Download log
-									</Button>
-								}
-							>
-								<div style={{ marginBottom: '16px' }}>
-									<Button type="primary">All time</Button>
-									<Button style={{ marginLeft: '8px' }}>Today</Button>
-									<Button style={{ marginLeft: '8px' }}>Custom range</Button>
-								</div>
-								<Table
-									dataSource={log.logs}
-									columns={[
-										{ title: 'Date', dataIndex: 'date', key: 'date' },
-										{
-											title: 'Student',
-											dataIndex: 'student',
-											key: 'student',
-											render: (text) => (
-												<Text style={{
-													backgroundColor: text.toLowerCase(),
-													color: ['red', 'purple', 'green'].includes(text.toLowerCase()) ? 'white' : 'black',
-													padding: '2px 6px',
-													borderRadius: '4px'
-												}}>
-													{text}
-												</Text>
-											)
-										},
-										{ title: 'Check in', dataIndex: 'checkIn', key: 'checkIn' },
-										{ title: 'Check out', dataIndex: 'checkOut', key: 'checkOut' }
-									]}
-									pagination={{ pageSize: 10 }}
-								/>
-							</Card>
-						</Col>
-					))}
+					<Col xs={24} md={12} key={1}>
+						{
+							libraryLogData.length > 0 && (
+								<Card
+									title={"Library Log"}
+									extra={
+										<Button type="primary" icon={<DownloadOutlined />}>
+											Download log
+										</Button>
+									}
+								>
+									<div style={{ marginBottom: '16px' }}>
+										<Button type="primary">All time</Button>
+										<Button style={{ marginLeft: '8px' }}>Today</Button>
+										<Button style={{ marginLeft: '8px' }}>Custom range</Button>
+									</div>
+									<Table
+										dataSource={libraryLogData.sort((a, b) => new Date(b.entryDate) - new Date(a.entryDate))}
+										columns={[
+											{ title: 'Date', dataIndex: 'entryDate', key: 'entryDate' },
+											{
+												title: 'Student',
+												dataIndex: 'userName',
+												key: 'userName',
+												render: (text) => {
+													return (<p style={{
+														color: 'black',
+														padding: '2px 6px',
+														borderRadius: '4px'
+													}}>{text || '-'}</p>)
+												}
+											}
+											,
+											{ title: 'Check in', dataIndex: 'entryTime', key: 'entryTime' },
+											{ title: 'Check out', dataIndex: 'exitTime', key: 'exitTime' }
+										]}
+										pagination={{ pageSize: 10 }}
+									/>
+								</Card>
+							)
+						}
+					</Col>
+					<Col xs={24} md={12} key={2}>
+						{
+							libraryLogData.length > 0 && (
+								<Card
+									title={"Medical Center Log"}
+									extra={
+										<Button type="primary" icon={<DownloadOutlined />}>
+											Download log
+										</Button>
+									}
+								>
+									<div style={{ marginBottom: '16px' }}>
+										<Button type="primary">All time</Button>
+										<Button style={{ marginLeft: '8px' }}>Today</Button>
+										<Button style={{ marginLeft: '8px' }}>Custom range</Button>
+									</div>
+									<Table
+										dataSource={medicalCenterLogData.sort((a, b) => new Date(b.entryDate) - new Date(a.entryDate))}
+										columns={[
+											{ title: 'Date', dataIndex: 'entryDate', key: 'entryDate' },
+											{
+												title: 'Student',
+												dataIndex: 'userName',
+												key: 'userName',
+												render: (text) => {
+													return (<p style={{
+														color: 'black',
+														padding: '2px 6px',
+														borderRadius: '4px'
+													}}>{text || '-'}</p>)
+												}
+											}
+											,
+											{ title: 'Check in', dataIndex: 'entryTime', key: 'entryTime' },
+											{ title: 'Check out', dataIndex: 'exitTime', key: 'exitTime' }
+										]}
+										pagination={{ pageSize: 10 }}
+									/>
+								</Card>
+							)
+						}
+					</Col>
 				</Row>
 			</Content>
 		</Layout>
