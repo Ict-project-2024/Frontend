@@ -1,0 +1,33 @@
+.ranking-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 1;
+    width: 100%;
+    margin-bottom: 4px;
+    gap: 16px;
+    flex-wrap: nowrap;
+}
+
+.position-ball {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    padding: 4px;
+    color: #00000073;
+    background-color: #F0F0F0;
+    line-height: 12px;
+    justify-content: center;
+}
+
+.position-ball.true {
+    color: #FFFFFF;
+    background-color: #1890FF;
+}
+
+.user-name {
+    text-align: left;
+    flex-grow: 3;
+    text-transform: capitalize;
+}
