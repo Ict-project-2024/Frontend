@@ -1,49 +1,42 @@
-.custom-range-picker-dropdown .ant-picker-dropdown {
-  width: 400px !important; /* Ensures sufficient width for visibility */
-  min-width: 400px;
+.custom-calendar-popup {
+  position: absolute;
+  top: 50px; /* Adjust based on where you want the calendar to appear */
+  right: 10px;
+  z-index: 1000;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
 }
 
-.custom-range-picker-dropdown .ant-picker-header {
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px; /* Increase the font size for better visibility */
-}
-
-.custom-range-picker-dropdown .ant-picker-header-view {
+.custom-datepicker-dropdown .ant-picker-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  height: 40px; /* Ensure there's enough height for the header */
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #d9d9d9;
 }
 
-.custom-range-picker-dropdown .ant-picker-calendar {
-  width: 400px !important; /* Ensures the calendar itself is wide enough */
+.custom-datepicker-dropdown .ant-picker-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  border-top: 1px solid #d9d9d9;
 }
 
-.custom-range-picker-dropdown .ant-picker-body {
-  padding-top: 40px; /* Ensures the body doesn't overlap the header */
+.custom-datepicker-dropdown .ant-picker-panel-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
 }
 
-.custom-range-picker-dropdown .ant-picker-panel {
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); /* Adds a subtle shadow for depth */
-  border-radius: 8px; /* Rounds the corners for a modern look */
+.calendar-footer {
+  padding-top: 10px;
+  text-align: right;
 }
 
-@media (max-width: 576px) {
-  .custom-range-picker-dropdown .ant-picker-dropdown {
-    width: 320px !important;
-    min-width: 320px;
-  }
-
-  .custom-range-picker-dropdown .ant-picker-header-view {
-    height: 40px; /* Ensure the header has sufficient height */
-  }
-
-  .custom-range-picker-dropdown .ant-picker-calendar {
-    width: 320px !important;
-  }
-
-  .custom-range-picker-dropdown .ant-picker-body {
-    padding-top: 40px; /* Maintain padding on smaller screens */
-  }
+.calendar-footer .ant-btn {
+  background-color: #4285F4;
+  border-color: #4285F4;
+  color: white;
 }

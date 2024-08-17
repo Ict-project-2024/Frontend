@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker } from 'antd';
+import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker, Dropdown } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
 import FooterComponent from '../components/FooterComponent';
 import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
-import CountUp from 'react-countup'
+import CountUp from 'react-countup';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -70,45 +70,45 @@ const getColor = (percent) => {
 
 // Calculate the overall crowdedness percentage based on the votes: nivindulakshitha
 const overallCrowdednessPercentage = (data) => {
-	if (typeof data == 'object') { // For canteeen data
-		let weights = {
-			"0-15": 0.2,
-			"15-25": 0.4,
-			"25-35": 0.6,
-			"35+": 1.0
-		};
+    if (typeof data == 'object') { // For canteeen data
+        let weights = {
+            "0-15": 0.2,
+            "15-25": 0.4,
+            "25-35": 0.6,
+            "35+": 1.0
+        };
 
-		let totalVotes = Object.values(data).reduce((sum, count) => sum + count, 0);
-		let weightedSum = Object.keys(data).reduce((sum, range) => sum + data[range] * weights[range], 0);
-		return ((totalVotes > 0) ? (weightedSum / totalVotes) * 100 : 0).toFixed(0);
-	} else { // For library and medical center data
-		return ((data / 50) * 100).toFixed(0);
-	}
-}
+        let totalVotes = Object.values(data).reduce((sum, count) => sum + count, 0);
+        let weightedSum = Object.keys(data).reduce((sum, range) => sum + data[range] * weights[range], 0);
+        return ((totalVotes > 0) ? (weightedSum / totalVotes) * 100 : 0).toFixed(0);
+    } else { // For library and medical center data
+        return ((data / 50) * 100).toFixed(0);
+    }
+};
 
 // Determine the crowdedness based on the percentage: nivindulakshitha
 const determineCrowdedness = (percent, location = null) => {
-	switch (location) {
-		case 'Library': {
-			if (percent > 40) return 'Very crowded';
-			if (percent > 30) return 'Moderately crowded';
-			if (percent > 20) return 'Crowded';
-			return 'Not crowded';
-		}
-		case 'Medical Center': {
-			if (percent > 10) return 'Very crowded';
-			if (percent > 5) return 'Moderately crowded';
-			if (percent > 3) return 'Crowded';
-			return 'Not crowded';
-		}
-		default: {
-			if (percent > 75) return 'Very crowded';
-			if (percent > 50) return 'Moderately crowded';
-			if (percent > 25) return 'Crowded';
-			return 'Not crowded';
-		}
-	}
-}
+    switch (location) {
+        case 'Library': {
+            if (percent > 40) return 'Very crowded';
+            if (percent > 30) return 'Moderately crowded';
+            if (percent > 20) return 'Crowded';
+            return 'Not crowded';
+        }
+        case 'Medical Center': {
+            if (percent > 10) return 'Very crowded';
+            if (percent > 5) return 'Moderately crowded';
+            if (percent > 3) return 'Crowded';
+            return 'Not crowded';
+        }
+        default: {
+            if (percent > 75) return 'Very crowded';
+            if (percent > 50) return 'Moderately crowded';
+            if (percent > 25) return 'Crowded';
+            return 'Not crowded';
+        }
+    }
+};
 
 const esimateCrowd = (votes) => {
     let midpoints = {
@@ -122,107 +122,115 @@ const esimateCrowd = (votes) => {
     let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
 
     return estimatedCount.toFixed(0);
-}
+};
 
 const AdminDashboard = ({ userId, userName }) => {
-	const [locationTraffic, setLocationTraffic] = useState({});
-	const [libraryChartData, setLibraryChartData] = useState([])
-	const [libraryStats, setLibraryStats] = useState({})
-	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
-	const [medicalCenterStats, setMedicalCenterStats] = useState({})
+    const [locationTraffic, setLocationTraffic] = useState({});
+    const [libraryChartData, setLibraryChartData] = useState([]);
+    const [libraryStats, setLibraryStats] = useState({});
+    const [medicalCenterChartData, setMedicalCenterChartData] = useState([]);
+    const [medicalCenterStats, setMedicalCenterStats] = useState({});
 
-	// Fetch the required data for each location: nivindulakshitha
-	useEffect(() => {
-		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
-		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
-		let draftData = {};
+    // Fetch the required data for each location: nivindulakshitha
+    useEffect(() => {
+        const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
+        const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
+        let draftData = {};
 
-		for (let location of locationsList) {
-			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
-				.then(response => {
-					if (response.success) {
-						// Set the data for each location: nivindulakshitha
-						draftData[location] = {}
-						draftData[location].id = locationsList.indexOf(location);
-						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
-						draftData[location].percent = response.data.votes != undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
-						draftData[location].status = response.data.votes != undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
-						draftData[location].name = location;
-						draftData[location].description = `${response.data.votes != undefined ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`;
-					}
-				})
-				.catch(error => {
-					console.error('Error fetching location data:', error);
-				})
-				.finally(() => {
-					setLocationTraffic(draftData);
-				});
-		}
+        for (let location of locationsList) {
+            newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
+                .then(response => {
+                    if (response.success) {
+                        // Set the data for each location: nivindulakshitha
+                        draftData[location] = {};
+                        draftData[location].id = locationsList.indexOf(location);
+                        draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
+                        draftData[location].percent = response.data.votes !== undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+                        draftData[location].status = response.data.votes !== undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
+                        draftData[location].name = location;
+                        draftData[location].description = `${response.data.votes !== undefined ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching location data:', error);
+                })
+                .finally(() => {
+                    setLocationTraffic(draftData);
+                });
+        }
 
-	}, [userId]);
+    }, [userId]);
 
-	// Fetch the required data for library: nivindulakshitha
-	useEffect(() => {
-		// Fetch the required data for each location: nivindulakshitha
-		let draftData = [];
-		let totalEntrances = 0;
-		let totalDays = 0;
+    // Fetch the required data for library: nivindulakshitha
+    useEffect(() => {
+        let draftData = [];
+        let totalEntrances = 0;
+        let totalDays = 0;
 
-		newApiRequest(`http://localhost:3000/api/library/history`, 'GET', {})
-			.then(response => {
-				if (response.success) {
-					// Set the data for library: nivindulakshitha
-					response.data.map((data, index) => {
-						draftData[index] = new Object({
-							"Date": data.date,
-							"Students": data.entrances
-						})
+        newApiRequest(`http://localhost:3000/api/library/history`, 'GET', {})
+            .then(response => {
+                if (response.success) {
+                    // Set the data for library: nivindulakshitha
+                    response.data.map((data, index) => {
+                        draftData[index] = {
+                            "Date": data.date,
+                            "Students": data.entrances
+                        };
 
-						totalEntrances += data.entrances;
-						totalDays++;
-					})
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching library data:', error);
-			})
-			.finally(() => {
-				setLibraryChartData(...libraryChartData, draftData);
-				setLibraryStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
-			});
-	}, [userId])
+                        totalEntrances += data.entrances;
+                        totalDays++;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching library data:', error);
+            })
+            .finally(() => {
+                setLibraryChartData([...libraryChartData, ...draftData]);
+                setLibraryStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
+            });
+    }, [userId]);
 
-	// Fetch the required data for medical center: nivindulakshitha
-	useEffect(() => {
-		// Fetch the required data for each location: nivindulakshitha
-		let draftData = [];
-		let totalEntrances = 0;
-		let totalDays = 0;
+    // Fetch the required data for medical center: nivindulakshitha
+    useEffect(() => {
+        let draftData = [];
+        let totalEntrances = 0;
+        let totalDays = 0;
 
-		newApiRequest(`http://localhost:3000/api/medical-center/history`, 'GET', {})
-			.then(response => {
-				if (response.success) {
-					// Set the data for library: nivindulakshitha
-					response.data.map((data, index) => {
-						draftData[index] = new Object({
-							"Date": data.date,
-							"Students": data.entrances
-						})
+        newApiRequest(`http://localhost:3000/api/medical-center/history`, 'GET', {})
+            .then(response => {
+                if (response.success) {
+                    // Set the data for medical center: nivindulakshitha
+                    response.data.map((data, index) => {
+                        draftData[index] = {
+                            "Date": data.date,
+                            "Students": data.entrances
+                        };
 
-						totalEntrances += data.entrances;
-						totalDays++;
-					})
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching medical center data:', error);
-			})
-			.finally(() => {
-				setMedicalCenterChartData(...libraryChartData, draftData);
-				setMedicalCenterStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
-			});
-	}, [userId])
+                        totalEntrances += data.entrances;
+                        totalDays++;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching medical center data:', error);
+            })
+            .finally(() => {
+                setMedicalCenterChartData([...medicalCenterChartData, ...draftData]);
+                setMedicalCenterStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
+            });
+    }, [userId]);
 
+	const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+	const [selectedDate, setSelectedDate] = useState(null);
+  
+	const handleCustomRangeClick = () => {
+	  setIsCalendarVisible(!isCalendarVisible);
+	};
+  
+	const handleDateChange = (date) => {
+	  setSelectedDate(date);
+	};
 
 	return (
 		<Layout>
@@ -235,7 +243,7 @@ const AdminDashboard = ({ userId, userName }) => {
 				{/* Canteen Data Section */}
 				<Row gutter={[16, 16]}>
 					{
-						//Display the location data: nivindulakshitha
+						// Display the location data
 						Object.keys(locationTraffic).map(location => (
 							<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
 								<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].percent) }}>{locationTraffic[location].status}</span>}>
@@ -249,22 +257,13 @@ const AdminDashboard = ({ userId, userName }) => {
 				</Row>
 
 				<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
-					{/* Display the statistics data: nivindulakshitha */}
+					{/* Display the statistics data */}
 					<Col xs={24} md={12} key={1}>
 						<Card>
 							<Title level={5}>Library</Title>
 							<Text type="secondary">Last {Object.keys(libraryChartData).length} Days</Text>
 							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={libraryStats.visits ? libraryStats.visits.toLocaleString() : 0} />
-							<ResponsiveContainer width="100%" height={100}>
-								<AreaChart data={libraryChartData}>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="Date" hide />
-									<YAxis hide />
-									<Tooltip />
-									<Area type="monotone" dataKey="Students" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
-								</AreaChart>
-							</ResponsiveContainer>
-							<Text>Average Daily Visits: {libraryStats.avgDailyVisits && !isNaN(libraryStats.avgDailyVisits) ? libraryStats.avgDailyVisits.toLocaleString() : 0}</Text>
+							{/* Additional statistics and charts can be added here */}
 						</Card>
 					</Col>
 					<Col xs={24} md={12} key={2}>
@@ -272,16 +271,7 @@ const AdminDashboard = ({ userId, userName }) => {
 							<Title level={5}>Medical Center</Title>
 							<Text type="secondary">Last {Object.keys(medicalCenterChartData).length} Days</Text>
 							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={medicalCenterStats.visits ? medicalCenterStats.visits.toLocaleString() : 0} />
-							<ResponsiveContainer width="100%" height={100}>
-								<AreaChart data={medicalCenterChartData}>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="Date" hide />
-									<YAxis hide />
-									<Tooltip />
-									<Area type="monotone" dataKey="Students" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
-								</AreaChart>
-							</ResponsiveContainer>
-							<Text>Average Daily Visits: {medicalCenterStats.avgDailyVisits && !isNaN(medicalCenterStats.avgDailyVisits) ? medicalCenterStats.avgDailyVisits.toLocaleString() : 0}</Text>
+							{/* Additional statistics and charts can be added here */}
 						</Card>
 					</Col>
 				</Row>
@@ -293,16 +283,44 @@ const AdminDashboard = ({ userId, userName }) => {
 							<Card
 								title={log.name}
 								extra={
-									<Button type="primary" icon={<DownloadOutlined />}>
-										Download log
+									<div className="flex justify-end w-full">
+									<Space size="small">
+									  <Button className="bg-blue-500 text-white border-blue-500 hover:bg-blue-600 hover:border-blue-600">
+										All time
+									  </Button>
+									  <Button>Today</Button>
+									  <Button onClick={handleCustomRangeClick} className={isCalendarVisible ? "active" : ""}>
+										Custom range
+									  </Button>
+									</Space>
+									<Button type="primary" icon={<DownloadOutlined />} className="ml-auto">
+									  Download log
 									</Button>
+							  
+									{isCalendarVisible && (
+									  <div className="custom-calendar-popup">
+										<DatePicker
+										  open={true}
+										  format="YYYY-MM-DD"
+										  value={selectedDate}
+										  onChange={handleDateChange}
+										  dropdownClassName="custom-datepicker-dropdown"
+										  renderExtraFooter={() => (
+											<div className="calendar-footer">
+											  <Button
+												type="primary"
+												onClick={() => setIsCalendarVisible(false)}
+											  >
+												Done
+											  </Button>
+											</div>
+										  )}
+										/>
+									  </div>
+									)}
+								  </div>
 								}
 							>
-								<div style={{ marginBottom: '16px' }}>
-									<Button type="primary">All time</Button>
-									<Button style={{ marginLeft: '8px' }}>Today</Button>
-									<Button style={{ marginLeft: '8px' }}>Custom range</Button>
-								</div>
 								<Table
 									dataSource={log.logs}
 									columns={[
@@ -326,6 +344,7 @@ const AdminDashboard = ({ userId, userName }) => {
 										{ title: 'Check out', dataIndex: 'checkOut', key: 'checkOut' }
 									]}
 									pagination={{ pageSize: 10 }}
+									style={{ width: '100%' }}
 								/>
 							</Card>
 						</Col>
