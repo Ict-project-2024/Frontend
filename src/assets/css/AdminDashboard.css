@@ -28,6 +28,11 @@
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); /* Adds a subtle shadow for depth */
   border-radius: 8px; /* Rounds the corners for a modern look */
 }
+.custom-range-picker-dropdown .ant-picker-dropdown {
+  margin-top: -5px; /* Fine-tune the alignment */
+  text-align: center;
+}
+
 
 @media (max-width: 576px) {
   .custom-range-picker-dropdown .ant-picker-dropdown {
