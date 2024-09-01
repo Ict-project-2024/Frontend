@@ -11,15 +11,16 @@ import '../assets/css/Home.css'; // Ensure you have the correct path
 
 const Home = () => {
     const location = useLocation();
-    // const userData = location.state;  
+  const userData = location.state;
+  //userData.role = "Admin"; // Temporary hardcoded user data for development
 
     // Temporary hardcoded user data for development
-    const userData = {
-    _id: "45eytbu8bq7iyn9oqefmlik",
-      firstName: 'John',
-      lastName: 'Doe',
-      role: 'CheckingOfficer', // Hardcoded as 'Admin' to render AdminDashboard
-    };
+  /* const userData = {
+  _id: "45eytbu8bq7iyn9oqefmlik",
+    firstName: 'John',
+    lastName: 'Doe',
+    role: 'Admin', // Hardcoded as 'Admin' to render AdminDashboard
+  }; */
   // Determine which dashboard to display based on the user's role
   const renderDashboard = () => {
     switch(userData.role) {

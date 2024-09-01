@@ -376,7 +376,7 @@ const AdminDashboard = ({ userId, userName }) => {
 					</Col>
 					<Col xs={24} md={12} key={2}>
 						{
-							libraryLogData.length > 0 && (
+							medicalCenterLogData.length > 0 && (
 								<Card
 									title={"Medical Center Log"}
 									extra={
