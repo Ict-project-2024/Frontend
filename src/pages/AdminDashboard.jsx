@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker } from 'antd';
+import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker,ConfigProvider } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
@@ -7,6 +7,7 @@ import FooterComponent from '../components/FooterComponent';
 import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
+import locale from 'antd/es/date-picker/locale/en_US';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -223,7 +224,22 @@ const AdminDashboard = ({ userId, userName }) => {
 			});
 	}, [userId])
 
+    const [visibleCalendars, setVisibleCalendars] = useState({});
 
+    const toggleCalendarVisibility = (id) => {
+        setVisibleCalendars((prevState) => ({
+            ...prevState,
+            [id]: !prevState[id]
+        }));
+    };
+
+    const handleDatePickerChange = (id, date, dateString) => {
+        console.log(`Table ${id}:`, date, dateString); // Handle the selected date here
+        setVisibleCalendars((prevState) => ({
+            ...prevState,
+            [id]: false
+        }));  // Close the calendar after selection
+    };
 	return (
 		<Layout>
 			<Content style={{ padding: '0 50px', overflow: 'auto' }}>
@@ -287,50 +303,86 @@ const AdminDashboard = ({ userId, userName }) => {
 				</Row>
 
 				{/* Logs Section */}
-				<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
-					{logData.map(log => (
-						<Col xs={24} md={12} key={log.id}>
-							<Card
-								title={log.name}
-								extra={
-									<Button type="primary" icon={<DownloadOutlined />}>
-										Download log
-									</Button>
-								}
-							>
-								<div style={{ marginBottom: '16px' }}>
-									<Button type="primary">All time</Button>
-									<Button style={{ marginLeft: '8px' }}>Today</Button>
-									<Button style={{ marginLeft: '8px' }}>Custom range</Button>
-								</div>
-								<Table
-									dataSource={log.logs}
-									columns={[
-										{ title: 'Date', dataIndex: 'date', key: 'date' },
-										{
-											title: 'Student',
-											dataIndex: 'student',
-											key: 'student',
-											render: (text) => (
-												<Text style={{
-													backgroundColor: text.toLowerCase(),
-													color: ['red', 'purple', 'green'].includes(text.toLowerCase()) ? 'white' : 'black',
-													padding: '2px 6px',
-													borderRadius: '4px'
-												}}>
-													{text}
-												</Text>
-											)
-										},
-										{ title: 'Check in', dataIndex: 'checkIn', key: 'checkIn' },
-										{ title: 'Check out', dataIndex: 'checkOut', key: 'checkOut' }
-									]}
-									pagination={{ pageSize: 10 }}
-								/>
-							</Card>
-						</Col>
-					))}
-				</Row>
+                
+                <ConfigProvider locale={locale}>
+            <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
+                {logData.map(log => (
+                    <Col xs={24} md={12} key={log.id}>
+                        <Card
+                            title={
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                    <span>{log.name}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+                                        <Button type="default" style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>All time</Button>
+                                        <Button type="default" style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>Today</Button>
+                                        <Button
+                                            type="default"
+                                            style={{ marginRight: '8px', fontSize: '14px', padding: '4px 12px' }}
+                                            onClick={() => toggleCalendarVisibility(log.id)}
+                                        >
+                                            Custom range
+                                        </Button>
+                                        <Button type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
+                                            Download log
+                                        </Button>
+                                        {visibleCalendars[log.id] && (
+                                            <DatePicker
+                                                open={true}
+                                                onChange={(date, dateString) => handleDatePickerChange(log.id, date, dateString)}
+                                                dropdownClassName="custom-range-picker-dropdown"
+                                                getPopupContainer={trigger => trigger.parentNode} // Ensure it appears under the button
+                                                onOpenChange={(open) => {
+                                                    if (!open) {
+                                                        setVisibleCalendars((prevState) => ({
+                                                            ...prevState,
+                                                            [log.id]: false
+                                                        }));
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            }
+                            bodyStyle={{ padding: 0 }}
+                            style={{ width: '100%' }}
+                        >
+                            <Table
+                                dataSource={log.logs}
+                                columns={[
+                                    { title: 'Date', dataIndex: 'date', key: 'date', align: 'center' },
+                                    {
+                                        title: 'Student',
+                                        dataIndex: 'student',
+                                        key: 'student',
+                                        align: 'center',
+                                        render: (text) => (
+                                            <span style={{
+                                                color: '#1890ff',
+                                                cursor: 'pointer'
+                                            }}>
+                                                {text}
+                                            </span>
+                                        )
+                                    },
+                                    { title: 'Check in', dataIndex: 'checkIn', key: 'checkIn', align: 'center' },
+                                    { title: 'Check out', dataIndex: 'checkOut', key: 'checkOut', align: 'center' }
+                                ]}
+                                pagination={{
+                                    pageSize: 10,
+                                    showSizeChanger: false,
+                                    position: ['bottomCenter'],
+                                    total: 50,
+                                    showQuickJumper: true
+                                }}
+                                rowClassName="log-table-row"
+                                style={{ width: '100%' }}
+                            />
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
+        </ConfigProvider>
 			</Content>
 		</Layout>
 	);

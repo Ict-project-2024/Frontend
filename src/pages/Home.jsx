@@ -18,7 +18,7 @@ const Home = () => {
     _id: "45eytbu8bq7iyn9oqefmlik",
       firstName: 'John',
       lastName: 'Doe',
-      role: 'CheckingOfficer', // Hardcoded as 'Admin' to render AdminDashboard
+      role: 'Admin', // Hardcoded as 'Admin' to render AdminDashboard
     };
   // Determine which dashboard to display based on the user's role
   const renderDashboard = () => {
