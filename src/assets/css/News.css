@@ -1,0 +1,18 @@
+.news-container {
+	display: flex;
+	flex-direction: column;
+	min-height: -webkit-fill-available;
+	justify-content: center;
+	place-items: center;
+	padding: 24px;
+}
+
+.title {
+	color: #000;
+	text-align: center;
+	font-family: Roboto;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 32px;
+}
