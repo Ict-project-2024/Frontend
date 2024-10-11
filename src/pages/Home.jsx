@@ -1,7 +1,6 @@
-import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import NavigatorBar from '../components/NavigatorBar'; // Adjust the path as needed
-import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
+// import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
 import StudentDashboard from './StudentDashboard'; // Adjust the path as needed
 import AdminDashboard from './AdminDashboard'; // Adjust the path as needed
 import CheckingOfficerDashboard from './CheckingOfficerDashboard'; // Adjust the path as needed
@@ -11,7 +10,8 @@ import '../assets/css/Home.css'; // Ensure you have the correct path
 
 const Home = () => {
     const location = useLocation();
-  const userData = location.state;
+  localStorage.setItem('userData', JSON.stringify(location.state || {}));
+  const userData = JSON.parse(localStorage.getItem('userData'));
   //userData.role = "Admin"; // Temporary hardcoded user data for development
 
     // Temporary hardcoded user data for development
