@@ -23,8 +23,10 @@ const Home = () => {
 	  role: 'Admin', // Hardcoded as 'Admin' to render AdminDashboard
 	}; */
 	// Determine which dashboard to display based on the user's role
+	
+	//corrected admin login dont use harcoded data
 	const renderDashboard = () => {
-		switch (userData.role) {
+		switch (userData.roles[0].role) {
 			case 'Admin':
 				return <AdminDashboard userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
 			case 'CheckingOfficer':
