@@ -46,11 +46,18 @@ jobs:
         with:
           name: node-app
 
+      - name: Zip build folder
+        run: zip -r build.zip build
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'unimofot'
           slot-name: 'Production'
-          package: ./build
+          package: build.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_079C5DC90F9946F1A135B9D0A1A0311C }}
+
+
+
+          
