@@ -12,17 +12,21 @@ const LoginForm = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/login', {
-                email,
-                password
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/auth/login`,
+                {
+                    email,
+                    password,
                 },
-            });
-
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+    
             console.log('Login Response:', response.data);
-
+    
             if (response.status === 200) {
                 if (response.data.success) {
                     navigate('/dashboard', { state: response.data });
@@ -39,6 +43,7 @@ const LoginForm = () => {
             message.error('Failed to login. Please try again.');
         }
     };
+    
 
     return (
         <div className="login-form">

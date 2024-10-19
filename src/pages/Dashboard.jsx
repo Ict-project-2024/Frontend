@@ -42,7 +42,7 @@ const Dashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
+			newApiRequest(`${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						draftData[location] = {}
@@ -84,7 +84,7 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 		// Submit the traffic to the database according to the respective canteen: nivindulakshitha
-		const request = await newApiRequest(`http://localhost:3000/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
+		const request = await newApiRequest(`${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			console.log('Data submitted successfully:', request);
 			message.success('Data submitted successfully');
