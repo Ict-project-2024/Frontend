@@ -41,25 +41,28 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: node-app
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v4
+      with:
+        name: node-app
 
-      - name: List files after download
-        run: ls -la
+    - name: Create build directory if missing
+      run: mkdir -p build
 
-      - name: Check if build folder exists
-        run: if [ -d "build" ]; then echo "Build folder exists"; else echo "Build folder not found" && exit 1; fi
+    - name: Move downloaded files to build folder
+      run: mv * build
 
-      - name: Zip build folder
-        run: zip -r build.zip build
+    - name: Check if build folder exists
+      run: if [ -d "build" ]; then echo "Build folder exists"; else echo "Build folder not found" && exit 1; fi
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'unimofot'
-          slot-name: 'Production'
-          package: build.zip
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_079C5DC90F9946F1A135B9D0A1A0311C }}
+    - name: Zip build folder
+      run: zip -r build.zip build
+
+    - name: 'Deploy to Azure Web App'
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: 'unimofot'
+        slot-name: 'Production'
+        package: build.zip
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_079C5DC90F9946F1A135B9D0A1A0311C }}
