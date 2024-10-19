@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'unimofot'
           slot-name: 'Production'
-          package: build
+          package: ./build
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_079C5DC90F9946F1A135B9D0A1A0311C }}
