@@ -49,10 +49,6 @@ jobs:
       - name: List files after download
         run: ls -la
 
-      - name: Remove all files in wwwroot
-        run: |
-          rm -rf site/wwwroot/*
-
       - name: Move build files to root for deployment
         run: |
           mkdir -p wwwroot
