@@ -25,7 +25,7 @@ jobs:
         run: npm run build
 
       - name: List files after build
-        run: ls -la
+        run: ls -la build/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -49,8 +49,17 @@ jobs:
       - name: List files after download
         run: ls -la
 
-      - name: Zip downloaded files for deployment
-        run: zip -r build.zip .
+      - name: Remove all files in wwwroot
+        run: |
+          rm -rf site/wwwroot/*
+
+      - name: Move build files to root for deployment
+        run: |
+          mkdir -p wwwroot
+          mv build/* wwwroot/
+
+      - name: Zip wwwroot folder for deployment
+        run: zip -r wwwroot.zip wwwroot
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -58,5 +67,5 @@ jobs:
         with:
           app-name: 'unimofot'
           slot-name: 'Production'
-          package: build.zip
+          package: wwwroot.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_079C5DC90F9946F1A135B9D0A1A0311C }}
