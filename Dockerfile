@@ -15,9 +15,8 @@ COPY . .
 
 # Set environment variables for the build process
 ARG VITE_BASE_URL
-ARG VITE_PORT
 ENV VITE_BASE_URL=$VITE_BASE_URL
-ENV VITE_PORT=$VITE_PORT
+
 
 # Build the application using Vite
 RUN npm run build

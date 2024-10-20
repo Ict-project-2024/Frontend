@@ -86,14 +86,14 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 		}
 
 		try {
-			const response = await axios.post('${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/auth/register', formData, {
+			const response = await axios.post('${import.meta.env.VITE_BASE_URL}/api/auth/register', formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
 			});
 
 			console.log('Backend POST Request Details:', {
-				url: '${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/auth/register',
+				url: '${import.meta.env.VITE_BASE_URL}/api/auth/register',
 				method: 'POST',
 				headers: {
 					'Content-Type': 'multipart/form-data',
