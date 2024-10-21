@@ -6,7 +6,7 @@ import '../assets/css/GreetingSection.css'; // Ensure you have the correct path
 const GreetingSection = ({ name }) => {
 	const [user, setUser] = useState({
 		name: name,
-		avatar: 'src/assets/images/avatar.png'
+		avatar: './images/avatar.png'
 	});
 	const [dateTime, setDateTime] = useState({
 		date: '',
