@@ -134,7 +134,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
           {scanResult && scanTime && (
             <div className="result-display">
               <div className="avatar">
-                <img src="/path-to-avatar-image.png" alt="Avatar" />
+                <img src="/images/avatar.png" alt="Avatar" />
               </div>
               <div className="scan-details">
                 <p><strong>Reg. No:</strong> {`TE${scanResult}`}</p>

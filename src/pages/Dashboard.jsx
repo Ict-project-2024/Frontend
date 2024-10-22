@@ -42,7 +42,7 @@ const Dashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
+			newApiRequest(`${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						draftData[location] = {}
@@ -84,7 +84,7 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 		// Submit the traffic to the database according to the respective canteen: nivindulakshitha
-		const request = await newApiRequest(`http://localhost:3000/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
+		const request = await newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			console.log('Data submitted successfully:', request);
 			message.success('Data submitted successfully');
@@ -201,19 +201,19 @@ const Dashboard = ({ userId, userName }) => {
 							<Card title="This week's Canteen Heroes">
 								<Row gutter={[16, 16]} className="heroes-row">
 									<Col xs={24} sm={8}>
-										<Card className="hero-card" cover={<img src="./images/badge.png" alt="Dining Dynamo" />}>
+										<Card className="hero-card" cover={<img src="/images/badge.png" alt="Dining Dynamo" />}>
 											<Card.Meta title="Dining Dynamo" description="Jhonne Doe" />
 											<Text>98 Entries in a row</Text>
 										</Card>
 									</Col>
 									<Col xs={24} sm={8} className="hero-card-big">
-										<Card className="hero-card" cover={<img src="./images/badge.png" alt="Canteen Champion" />}>
+										<Card className="hero-card" cover={<img src="/images/badge.png" alt="Canteen Champion" />}>
 											<Card.Meta title="Canteen Champion" description="Jhonne Doe" />
 											<Text>154 Entries in a row</Text>
 										</Card>
 									</Col>
 									<Col xs={24} sm={8}>
-										<Card className="hero-card" cover={<img src="./images/badge.png" alt="Foodie Forecaster" />}>
+										<Card className="hero-card" cover={<img src="/images/badge.png" alt="Foodie Forecaster" />}>
 											<Card.Meta title="Foodie Forecaster" description="Jhonne Doe" />
 											<Text>54 Entries in a row</Text>
 										</Card>
@@ -231,7 +231,8 @@ const Dashboard = ({ userId, userName }) => {
 							</Card>
 							<Card className="first-step-card">
 								<div className="first-step-content">
-									<img src="./images/image.png" alt="Placeholder" className="placeholder-image" />
+
+									<img src="/images/image.png" alt="Placeholder" className="placeholder-image" />
 									<div>
 										<Title level={4}>First Step</Title>
 										<Text>Congratulations on making your first occupancy update!</Text>
@@ -244,12 +245,12 @@ const Dashboard = ({ userId, userName }) => {
 							<Card title="Your next badges">
 								<Row gutter={[16, 16]}>
 									<Col xs={24} sm={8}>
-										<Card cover={<img src="./images/badge.png" alt="First Step" />}>
+										<Card cover={<img src="images/badge.png" alt="First Step" />}>
 											<Card.Meta title="First Step" />
 										</Card>
 									</Col>
 									<Col xs={24} sm={8}>
-										<Card cover={<img src="./images/badge.png" alt="Frequent Contributor" />}>
+										<Card cover={<img src="images/badge.png" alt="Frequent Contributor" />}>
 											<Card.Meta title="Frequent Contributor" />
 										</Card>
 									</Col>
