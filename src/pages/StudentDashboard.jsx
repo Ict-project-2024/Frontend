@@ -172,7 +172,7 @@ const Dashboard = ({ userId, userName }) => {
 					let draftRankingData = {}
 					let draftTopThree = {};
 					rankingBoard.map(user => {
-
+						console.log(user);
 						newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', { userId: user.userId })
 							.then(response => {
 								response.entries = user.votes;
