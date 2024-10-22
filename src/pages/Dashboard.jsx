@@ -231,6 +231,7 @@ const Dashboard = ({ userId, userName }) => {
 							</Card>
 							<Card className="first-step-card">
 								<div className="first-step-content">
+
 									<img src="/images/image.png" alt="Placeholder" className="placeholder-image" />
 									<div>
 										<Title level={4}>First Step</Title>
@@ -254,7 +255,7 @@ const Dashboard = ({ userId, userName }) => {
 										</Card>
 									</Col>
 									<Col xs={24} sm={8}>
-										<Card cover={<img src="src/assets/images/badge.png" alt="Daily Contributor" />}>
+										<Card cover={<img src="./images/badge.png" alt="Daily Contributor" />}>
 											<Card.Meta title="Daily Contributor" />
 										</Card>
 									</Col>

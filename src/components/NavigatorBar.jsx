@@ -10,7 +10,7 @@ const NavigatorBar = ({ userName }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('Serati Ma');
   const [notifications, setNotifications] = useState(11);
-  const [avatarUrl, setAvatarUrl] = useState('/images/avatar.png'); // Update the image path
+  const [avatarUrl, setAvatarUrl] = useState('./images/avatar.png');
   const [menuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const NavigatorBar = ({ userName }) => {
       // Dummy values
       setUsername('Serati Ma');
       setNotifications(11);
-      setAvatarUrl('/images/avatar.png'); // Update the image path
+      setAvatarUrl('./images/avatar.png');
     };
 
     fetchUserData();
@@ -41,7 +41,7 @@ const NavigatorBar = ({ userName }) => {
         {menuVisible ? <CloseOutlined /> : <MenuOutlined />}
       </div>
       <div className="logo">
-        <img src="/images/logo.png" alt="Unimo Logo" /> {/* Update the image path */}
+        <img src="./images/logo.png" alt="Unimo Logo" />
       </div>
       <div className="nav-menu">
         <Menu mode="horizontal" defaultSelectedKeys={['live-status']}>
