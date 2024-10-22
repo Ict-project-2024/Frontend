@@ -7,9 +7,12 @@ import CheckingOfficerDashboard from './CheckingOfficerDashboard'; // Adjust the
 import News from './News'; // Adjust the path as needed
 import AboutUs from './AboutUs'; // Ensure you have the correct path
 import '../assets/css/Home.css'; // Ensure you have the correct path
+import { useAuth } from '../context/AuthContext';
 
 
 const Home = () => {
+	const { user } = useAuth();
+	console.log(user);
 	const location = useLocation();
 	localStorage.setItem('userData', JSON.stringify(location.state || {}));
 	const userData = JSON.parse(localStorage.getItem('userData'));
@@ -26,19 +29,19 @@ const Home = () => {
 	
 	//corrected admin login dont use harcoded data
 	const renderDashboard = () => {
-		switch (userData.roles[0].role) {
+		switch (user.roles[0].role) {
 			case 'Admin':
-				return <AdminDashboard userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
+				return <AdminDashboard userId={user._id} userName={{ first: user.firstName, last: user.lastName }} />;
 			case 'CheckingOfficer':
-				return <CheckingOfficerDashboard role="MC" userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
+				return <CheckingOfficerDashboard role="MC" userId={user._id} userName={{ first: user.firstName, last: user.lastName }} />;
 			default:
-				return <StudentDashboard userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
+				return <StudentDashboard userId={user._id} userName={{ first: user.firstName, last: user.lastName }} />;
 		}
 	};
 
 	return (
 		<div className="home-container">
-			<NavigatorBar userName={{ first: userData.firstName, last: userData.lastName }} />
+			<NavigatorBar userName={{ first: user.firstName, last: user.lastName }} />
 			<div className="home-content">
 				<Routes>
 					<Route path="/dashboard" element={renderDashboard()} />

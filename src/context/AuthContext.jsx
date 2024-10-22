@@ -10,11 +10,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   // State to hold user information, including roles
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    role: '', // Role can be 'Admin', 'Student', or 'CheckingOfficer'
-  });
+  const [user, setUser] = useState({});
 
   // State to manage authentication status
   const [isAuthenticated, setIsAuthenticated] = useState(false);

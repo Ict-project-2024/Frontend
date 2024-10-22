@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Badge, Avatar } from 'antd';
 import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
-import { useAuth } from '../components/context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import '../assets/css/NavigatorBar.css'; // Ensure you have the correct path
 
 const NavigatorBar = ({ userName }) => {
