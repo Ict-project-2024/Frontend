@@ -5,6 +5,8 @@ export const newApiRequest = async (url, method, data,
         'Content-Type': 'application/json',
     }) => {
 
+    console.log('url:', url, 'method:', method, 'data:', data, 'headers:', headers);
+
     try {
         const response = await axios({
             url,
