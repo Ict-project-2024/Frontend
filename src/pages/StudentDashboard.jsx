@@ -113,7 +113,7 @@ const Dashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/${routeFix[location]}/status`, 'POST', { "location": location })
+			newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						// Set the data for each location: nivindulakshitha
@@ -138,7 +138,7 @@ const Dashboard = ({ userId, userName }) => {
 
 	// Fetch the badges data for the user: nivindulakshitha
 	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/votes/get`, 'POST', { "userId": userId })
+		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/votes/get`, 'POST', { "userId": userId })
 			.then(response => {
 				if (response.success) {
 					setUserBadges(response.data);
@@ -153,7 +153,7 @@ const Dashboard = ({ userId, userName }) => {
 	let userVotes = {}
 	// Fetch the rankings data for the user: nivindulakshitha
 	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/votes/all`, 'GET', {})
+		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/votes/all`, 'GET', {})
 			.then(async response => {
 				if (response.success) {
 					const allUsers = response.data;
@@ -173,7 +173,7 @@ const Dashboard = ({ userId, userName }) => {
 					let draftTopThree = {};
 					rankingBoard.map(user => {
 
-						newApiRequest(`${import.meta.env.VITE_BASE_URL}:${import.meta.env.VITE_PORT}/api/user/`, 'POST', { userId: user.userId })
+						newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', { userId: user.userId })
 							.then(response => {
 								response.entries = user.votes;
 								if (firstThreeVotes.includes(user)) {
