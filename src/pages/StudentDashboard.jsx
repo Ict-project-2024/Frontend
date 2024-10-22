@@ -418,6 +418,7 @@ const Dashboard = ({ userId, userName }) => {
 									Object.keys(rankingBoardData).map(key => {
 										return (
 											<RankingBox
+												key={key}
 												userPosition={Number.parseInt(key) + 1}
 												userName={`${rankingBoardData[key].firstName} ${rankingBoardData[key].lastName}`}
 												entriesCount={rankingBoardData[key].entries}

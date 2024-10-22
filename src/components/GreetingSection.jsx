@@ -6,7 +6,7 @@ import '../assets/css/GreetingSection.css'; // Ensure you have the correct path
 const GreetingSection = ({ name }) => {
 	const [user, setUser] = useState({
 		name: name,
-		avatar: './images/avatar.png'
+		avatar: 'https://avatar.iran.liara.run/public/boy'
 	});
 	const [dateTime, setDateTime] = useState({
 		date: '',
