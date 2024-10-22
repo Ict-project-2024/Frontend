@@ -16,8 +16,7 @@ export const newApiRequest = async (url, method, data,
 
         return response.data;
     } catch (error) {
-        console.log("url", url, "method", method, "data", data, "headers", headers)
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error.message);
         return { error: error.message };
     }
 }

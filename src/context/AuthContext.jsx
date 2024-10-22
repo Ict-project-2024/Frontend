@@ -9,26 +9,17 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // State to hold user information, including roles
   const [user, setUser] = useState({});
 
-  // State to manage authentication status
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Simulate fetching user data from an API or local storage on component mount
   useEffect(() => {
-    // Dummy data for demonstration purposes
-    // Replace this with actual data fetching logic (e.g., from an API or local storage)
-    const fetchedUserData = {
-      firstName: 'John',
-      lastName: 'Doe',
-      role: 'Admin', // Example role; this could be dynamically set
-    };
-
-    // Update the state with the fetched user data
-    setUser(fetchedUserData);
-    setIsAuthenticated(true); // Simulate successful authentication
-  }, []);
+    if (Object.keys(user).length > 0) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated, setUser, setIsAuthenticated }}>

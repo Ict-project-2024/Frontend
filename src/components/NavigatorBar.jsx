@@ -16,14 +16,14 @@ const NavigatorBar = ({ userName }) => {
   useEffect(() => {
     // Simulate fetching user data from backend
     // You can replace this with an actual API call
-    const fetchUserData = () => {
+    const fetchUserBio = () => {
       // Dummy values
       setUsername('Serati Ma');
       setNotifications(11);
       setAvatarUrl('./images/avatar.png');
     };
 
-    fetchUserData();
+    fetchUserBio();
   }, []);
 
   const handleLogout = () => {

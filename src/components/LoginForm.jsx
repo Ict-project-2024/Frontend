@@ -27,11 +27,10 @@ const LoginForm = () => {
                 }
             );
     
-            console.log('Login Response:', response.data);
-    
             if (response.status === 200) {
                 if (response.data.success) {
                     setUser(response.data);
+                    sessionStorage.setItem('userBio', JSON.stringify(response.data));
                     navigate('/dashboard', { state: response.data });
                 } else {
                     console.log('Login failed:', response.data.message);
