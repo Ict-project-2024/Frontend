@@ -5,6 +5,7 @@ export const newApiRequest = async (url, method, data,
         'Content-Type': 'application/json',
     }) => {
 
+
     try {
         const response = await axios({
             url,
@@ -15,7 +16,7 @@ export const newApiRequest = async (url, method, data,
 
         return response.data;
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error.message);
         return { error: error.message };
     }
 }

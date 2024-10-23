@@ -4,8 +4,10 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../assets/css/LoginForm.css';
+import { useAuth } from '../context/AuthContext';
 
 const LoginForm = () => {
+    const {setUser} = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -25,10 +27,10 @@ const LoginForm = () => {
                 }
             );
     
-            console.log('Login Response:', response.data);
-    
             if (response.status === 200) {
                 if (response.data.success) {
+                    setUser(response.data);
+                    sessionStorage.setItem('userBio', JSON.stringify(response.data));
                     navigate('/dashboard', { state: response.data });
                 } else {
                     console.log('Login failed:', response.data.message);
