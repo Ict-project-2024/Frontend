@@ -47,7 +47,8 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 		if (info.file) {
 			try {
-				const tokenResponse = await axios.get('http://localhost:3000/api/sas-token/genarate');
+				const tokenResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
+				console.log(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
 				const { sasUrl, blobUrl } = tokenResponse.data;
 
 				const uploadResponse = await axios.put(sasUrl, info.file.originFileObj, {
