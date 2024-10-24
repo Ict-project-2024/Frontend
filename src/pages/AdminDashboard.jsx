@@ -4,10 +4,10 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
 import FooterComponent from '../components/FooterComponent';
-import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
 import locale from 'antd/es/date-picker/locale/en_US';
+import newApiRequest from '../utils/apiRequests';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;

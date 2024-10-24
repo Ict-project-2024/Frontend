@@ -4,9 +4,9 @@ import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
-import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import RankingBox from '../components/RankingBox';
+import newApiRequest from '../utils/apiRequests';
 
 const { Content } = Layout;
 const { Text, Title, Link } = Typography;

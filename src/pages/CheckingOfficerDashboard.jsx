@@ -1,16 +1,18 @@
-import { useState } from 'react';
-import { Button, Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { Button, Modal, message } from 'antd';
 import { SwapRightOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import BarcodeScanner from '../components/BarcodeScanner'; // Adjust the path as needed
 import '../assets/css/CheckingOfficerDashboard.css'; // Ensure you have the correct path
+import newApiRequest from '../utils/apiRequests';
+import { set } from 'date-fns';
 
 const CheckingOfficerDashboard = ({ role }) => { 
   const [scanning, setScanning] = useState(false);
-  const [scanResult, setScanResult] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [doctorAvailable, setDoctorAvailable] = useState(true); 
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
   const [pendingAvailability, setPendingAvailability] = useState(null);
+  const [checkedUser, setCheckedUser] = useState({})
 
   const handleCheckIn = () => {
     setScanning(true);
@@ -23,10 +25,46 @@ const CheckingOfficerDashboard = ({ role }) => {
   };
 
   const handleScan = data => {
-    setScanResult(data);
-    setScanning(false);
-    console.log('Scanned data:', data);
+    const teRegex = /^TE\d{6}$/i;
+
+    if (data && teRegex.test(data)) {
+      newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', {
+        teNumber: data,
+      }).then(response => {
+        if (response) {
+          setCheckedUser({
+            teNumber: data,
+            phoneNumber: response.mobileNumber,
+          });
+        } else {
+          message.error("User could not be found but obtained his phone number check-in can be done manually");
+          // Hence, user not found in the database, his phone number should be obtained: nivindulakshitha
+          // UI/UX development is needed to be done: nivindulakshitha
+        }
+      });
+      setScanning(false);
+      setCheckedUser(data);
+    } else {
+      setScanning(false);
+      message.error('Invalid QR code');
+    }
   };
+
+  useEffect(() => {
+    if (!checkedUser || !Object.hasOwn(checkedUser, 'phoneNumber')) return;
+
+    newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/library/enter`, 'POST', checkedUser).then(response => {
+      if (response && response.success) {
+        message.success('Check-in logging successful');
+      } else {
+        message.error('Check-in logging failed');
+      }
+    }).catch(error => {
+      console.error('Error fetching data:', error.message);
+      message.error('Check-in logging failed');
+    })
+
+  }, [checkedUser]);
 
   const handleCancel = () => {
     setScanning(false);
@@ -85,7 +123,7 @@ const CheckingOfficerDashboard = ({ role }) => {
             <Button key="back" onClick={handleCancelConfirm} style={{ marginLeft: '10px', marginTop: '5px' }}>
               Cancel
             </Button>
-            <Button key="submit" type="primary" onClick={handleConfirm} style={{ marginLeft: '10px', marginTop: '5px' }}>
+            <Button key="submit" type="primary" onClick={/* handleConfirm */ () => { handleScan("TE104818") }} style={{ marginLeft: '10px', marginTop: '5px' }}>
               Confirm
             </Button>
           </div>
