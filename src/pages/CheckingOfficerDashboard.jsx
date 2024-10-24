@@ -28,7 +28,7 @@ const CheckingOfficerDashboard = ({ role }) => {
     const teRegex = /^TE\d{6}$/i;
 
     if (data && teRegex.test(data)) {
-      newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', {
+      newApiRequest(`/api/user/`, 'POST', {
         teNumber: data,
       }).then(response => {
         if (response) {
@@ -37,7 +37,7 @@ const CheckingOfficerDashboard = ({ role }) => {
             phoneNumber: response.mobileNumber,
           });
         } else {
-          message.error("User could not be found but obtained his phone number check-in can be done manually");
+          message.error("User could not be found but obtaineing his phone number check-in operation can be done manually");
           // Hence, user not found in the database, his phone number should be obtained: nivindulakshitha
           // UI/UX development is needed to be done: nivindulakshitha
         }
@@ -53,7 +53,7 @@ const CheckingOfficerDashboard = ({ role }) => {
   useEffect(() => {
     if (!checkedUser || !Object.hasOwn(checkedUser, 'phoneNumber')) return;
 
-    newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/library/enter`, 'POST', checkedUser).then(response => {
+    newApiRequest(`/api/library/enter`, 'POST', checkedUser).then(response => {
       if (response && response.success) {
         message.success('Check-in logging successful');
       } else {

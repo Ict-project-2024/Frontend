@@ -8,7 +8,7 @@ const newApiRequest = async (url, method, data,
 
     try {
         const response = await axios({
-            url,
+            url: `${import.meta.env.VITE_BASE_URL}${url}`,
             method,
             data,
             headers
