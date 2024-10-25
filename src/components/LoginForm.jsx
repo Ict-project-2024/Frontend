@@ -27,22 +27,38 @@ const LoginForm = () => {
     
             console.log('Login Response:', response.data);
     
-            if (response.status === 200) {
-                if (response.data.success) {
-                    navigate('/dashboard', { state: response.data });
-                } else {
-                    console.log('Login failed:', response.data.message);
-                    message.error('Invalid email or password');
-                }
+            // Handle successful login
+            if (response.status === 200 && response.data.success) {
+                navigate('/dashboard', { state: response.data });
             } else {
-                console.log('Unexpected response status:', response.status);
-                message.error('Failed to login. Please try again.');
+                // Handle various error messages from the backend
+                if (response.data.message) {
+                    message.error(response.data.message);
+                } else {
+                    console.log('Unexpected response:', response.data);
+                    message.error('Failed to login. Please try again.');
+                }
             }
         } catch (error) {
             console.error('Login error:', error);
-            message.error('Failed to login. Please try again.');
+    
+            // Specific error handling based on the error response
+            if (error.response) {
+                // Backend response with error
+                if (error.response.status === 401) {
+                    message.error('Invalid username or password');
+                } else if (error.response.status === 403) {
+                    message.error('Email not verified. Please check your email to verify your account.');
+                } else {
+                    message.error('Failed to login. Please try again.');
+                }
+            } else {
+                // Network error or other issue
+                message.error('An error occurred. Please check your internet connection and try again.');
+            }
         }
     };
+    
     
 
     return (
