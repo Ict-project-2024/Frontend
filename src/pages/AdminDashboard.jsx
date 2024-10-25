@@ -3,7 +3,6 @@ import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, Dat
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
-import FooterComponent from '../components/FooterComponent';
 import { formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
 import locale from 'antd/es/date-picker/locale/en_US';
@@ -110,6 +109,8 @@ const fixDateTime = (originalTime) => {
 
 	return Object.assign({ date: newDate, time: newTime });
 }
+
+import PropTypes from 'prop-types';
 
 const AdminDashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
@@ -428,7 +429,15 @@ const AdminDashboard = ({ userId, userName }) => {
         </ConfigProvider>
 			</Content>
 		</Layout>
-	);
+	)
+};
+
+AdminDashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string
+	}).isRequired
 };
 
 export default AdminDashboard;

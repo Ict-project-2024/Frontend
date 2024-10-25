@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
@@ -67,6 +68,7 @@ const esimateCrowd = (votes) => {
 
 	return estimatedCount.toFixed(0);
 }
+
 
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
@@ -435,5 +437,14 @@ const Dashboard = ({ userId, userName }) => {
 		</Layout>
 	);
 };
+
+Dashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string.isRequired,
+	}).isRequired,
+};
+
 export default Dashboard;
 

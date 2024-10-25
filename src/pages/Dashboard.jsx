@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
@@ -293,6 +294,13 @@ const Dashboard = ({ userId, userName }) => {
 			<FooterComponent />
 		</Layout>
 	);
+};
+Dashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string
+	}).isRequired
 };
 
 export default Dashboard;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal, message } from 'antd';
 import { SwapRightOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import BarcodeScanner from '../components/BarcodeScanner'; // Adjust the path as needed
@@ -165,6 +166,10 @@ const CheckingOfficerDashboard = ({ role }) => {
       )}
     </div>
   );
+};
+
+CheckingOfficerDashboard.propTypes = {
+  role: PropTypes.string.isRequired,
 };
 
 export default CheckingOfficerDashboard;

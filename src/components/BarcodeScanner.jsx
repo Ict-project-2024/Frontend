@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Spin, Button } from 'antd';
 import Quagga from 'quagga';
@@ -20,7 +21,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
     return () => {
       stopScanner();
     };
-  }, []);
+  });
 
   const startScanner = () => {
     if (quaggaInitialized.current) {
