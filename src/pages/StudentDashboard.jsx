@@ -150,10 +150,10 @@ const Dashboard = ({ userId, userName }) => {
 			.catch(error => {
 				console.error('Error fetching location data:', error);
 			})
-	}, [userName])
+	}, [userId, userName])
 
-	let userVotes = {}
 	// Fetch the rankings data for the user: nivindulakshitha
+	let userVotes = {}
 	useEffect(() => {
 		newApiRequest(`/api/votes/all`, 'GET', {})
 			.then(async response => {
@@ -196,7 +196,7 @@ const Dashboard = ({ userId, userName }) => {
 			.catch(error => {
 				console.error('Error fetching location data:', error);
 			})
-	}, [userName])
+	}, [userName, userVotes])
 
 
 	const [canteen, setCanteen] = useState(null);
