@@ -4,11 +4,11 @@ import { SwapRightOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from
 import BarcodeScanner from '../components/BarcodeScanner'; // Adjust the path as needed
 import '../assets/css/CheckingOfficerDashboard.css'; // Ensure you have the correct path
 
-const CheckingOfficerDashboard = ({ role }) => { 
+const CheckingOfficerDashboard = ({ role }) => {
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [actionType, setActionType] = useState(null);
-  const [doctorAvailable, setDoctorAvailable] = useState(true); 
+  const [doctorAvailable, setDoctorAvailable] = useState(true);
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
   const [pendingAvailability, setPendingAvailability] = useState(null);
 
@@ -26,6 +26,34 @@ const CheckingOfficerDashboard = ({ role }) => {
     setScanResult(data);
     setScanning(false);
     console.log('Scanned data:', data);
+
+    // Define the endpoint URL
+
+    let url;
+    if (role === 'CheckingOfficer-medicalCenter') {
+      url = `${import.meta.env.VITE_BASE_URL}/api/medical-center/enter`;
+    } else if (role === 'CheckingOfficer-library') {
+      url = `${import.meta.env.VITE_BASE_URL}/api/library/enter`;
+    } else {
+      console.error('Unknown role, cannot determine URL');
+      return; // Exit the function if the role is not recognized
+    }
+
+
+    // Make the API request
+    newApiRequest(url, 'POST', { scannedData: data, actionType })
+      .then(response => {
+        if (response.success) {
+          console.log('Scan processed successfully:', response);
+          // Optionally, handle any additional logic for a successful response
+        } else {
+          console.error('Failed to process scan:', response.message);
+          // Optionally, handle failure response
+        }
+      })
+      .catch(error => {
+        console.error('Error processing scan:', error);
+      });
   };
 
   const handleCancel = () => {
@@ -50,7 +78,7 @@ const CheckingOfficerDashboard = ({ role }) => {
 
   return (
     <div className="checking-officer-dashboard">
-      {role === 'MC' && !scanning && (
+      {role === 'CheckingOfficer-medicalCenter' && !scanning && (
         <div className="doctor-availability-container">
           <span className="doctor-availability-label">Doctor availability:</span>
           <div className="doctor-availability">

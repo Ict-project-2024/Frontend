@@ -29,8 +29,10 @@ const Home = () => {
 		switch (userData.roles[0].role) {
 			case 'Admin':
 				return <AdminDashboard userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
-			case 'CheckingOfficer':
-				return <CheckingOfficerDashboard role="MC" userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
+			case 'CheckingOfficer-medicalCenter':
+				return <CheckingOfficerDashboard role={userData.roles[0].role} userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
+			case 'CheckingOfficer-library':
+				return <CheckingOfficerDashboard role={userData.roles[0].role} userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
 			default:
 				return <StudentDashboard userId={userData._id} userName={{ first: userData.firstName, last: userData.lastName }} />;
 		}
