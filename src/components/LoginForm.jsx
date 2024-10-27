@@ -33,18 +33,30 @@ const LoginForm = () => {
                     sessionStorage.setItem('userBio', JSON.stringify(response.data));
                     navigate('/dashboard', { state: response.data });
                 } else {
-                    console.log('Login failed:', response.data.message);
-                    message.error('Invalid email or password');
+                    console.log('Unexpected response:', response.data);
+                    message.error('Failed to login. Please try again.');
                 }
-            } else {
-                console.log('Unexpected response status:', response.status);
-                message.error('Failed to login. Please try again.');
             }
         } catch (error) {
             console.error('Login error:', error);
-            message.error('Failed to login. Please try again.');
+    
+            // Specific error handling based on the error response
+            if (error.response) {
+                // Backend response with error
+                if (error.response.status === 401) {
+                    message.error('Invalid username or password');
+                } else if (error.response.status === 403) {
+                    message.error('Email not verified. Please check your email to verify your account.');
+                } else {
+                    message.error('Failed to login. Please try again.');
+                }
+            } else {
+                // Network error or other issue
+                message.error('An error occurred. Please check your internet connection and try again.');
+            }
         }
     };
+    
     
 
     return (

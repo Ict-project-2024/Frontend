@@ -7,10 +7,10 @@ import '../assets/css/CheckingOfficerDashboard.css'; // Ensure you have the corr
 import newApiRequest from '../utils/apiRequests';
 import { set } from 'date-fns';
 
-const CheckingOfficerDashboard = ({ role }) => { 
+const CheckingOfficerDashboard = ({ role }) => {
   const [scanning, setScanning] = useState(false);
   const [actionType, setActionType] = useState(null);
-  const [doctorAvailable, setDoctorAvailable] = useState(true); 
+  const [doctorAvailable, setDoctorAvailable] = useState(true);
   const [isConfirmVisible, setIsConfirmVisible] = useState(false);
   const [pendingAvailability, setPendingAvailability] = useState(null);
   const [checkedUser, setCheckedUser] = useState({})
@@ -26,6 +26,7 @@ const CheckingOfficerDashboard = ({ role }) => {
   };
 
   const handleScan = data => {
+
     const teRegex = /^TE\d{6}$/i;
 
     if (data && teRegex.test(data)) {
@@ -38,13 +39,15 @@ const CheckingOfficerDashboard = ({ role }) => {
             phoneNumber: response.mobileNumber,
           });
         } else {
+          setCheckedUser({
+            teNumber: data,
+          });
           message.error("User could not be found but obtaineing his phone number check-in operation can be done manually");
           // Hence, user not found in the database, his phone number should be obtained: nivindulakshitha
           // UI/UX development is needed to be done: nivindulakshitha
         }
       });
       setScanning(false);
-      setCheckedUser(data);
     } else {
       setScanning(false);
       message.error('Invalid QR code');
@@ -53,8 +56,18 @@ const CheckingOfficerDashboard = ({ role }) => {
 
   useEffect(() => {
     if (!checkedUser || !Object.hasOwn(checkedUser, 'phoneNumber')) return;
+    
+    let url;
+    if (role === 'CheckingOfficer-medicalCenter') {
+      url = `/api/medical-center/enter`;
+    } else if (role === 'CheckingOfficer-library') {
+      url = `/api/library/enter`;
+    } else {
+      console.error('Unknown role, cannot determine URL');
+      return; // Exit the function if the role is not recognized
+    }
 
-    newApiRequest(`/api/library/enter`, 'POST', checkedUser).then(response => {
+    newApiRequest(url, 'POST', checkedUser).then(response => {
       if (response && response.success) {
         message.success('Check-in logging successful');
       } else {
@@ -89,7 +102,7 @@ const CheckingOfficerDashboard = ({ role }) => {
 
   return (
     <div className="checking-officer-dashboard">
-      {role === 'MC' && !scanning && (
+      {role === 'CheckingOfficer-medicalCenter' && !scanning && (
         <div className="doctor-availability-container">
           <span className="doctor-availability-label">Doctor availability:</span>
           <div className="doctor-availability">

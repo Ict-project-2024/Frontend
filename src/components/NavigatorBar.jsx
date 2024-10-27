@@ -27,9 +27,20 @@ const NavigatorBar = ({ userName }) => {
   }, []);
 
   const handleLogout = () => {
-    logout(); // Update the authentication state
-    navigate('/login'); // Redirect to login page or any other page
+    // Clear cookies
+    document.cookie.split(';').forEach((cookie) => {
+      const cookieName = cookie.split('=')[0];
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    });
+
+    // Clear local storage
+    localStorage.clear(); // Or specific keys if needed
+
+
+    // Redirect to the login page or any other page
+    navigate('/login');
   };
+
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
