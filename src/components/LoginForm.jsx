@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import newApiRequest from '../utils/apiRequests';
 import '../assets/css/LoginForm.css';
 import { useAuth } from '../context/AuthContext';
 
@@ -14,26 +14,20 @@ const LoginForm = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post(
-                `/api/auth/login`,
+            const response = await newApiRequest(
+                `/api/auth/login`, 'POST',
                 {
                     email,
                     password,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
+                });
     
             if (response.status === 200) {
-                if (response.data.success) {
-                    setUser(response.data);
-                    sessionStorage.setItem('userBio', JSON.stringify(response.data));
-                    navigate('/dashboard', { state: response.data });
+                if (response.success) {
+                    setUser(response);
+                    sessionStorage.setItem('userBio', JSON.stringify(response));
+                    navigate('/dashboard', { state: response });
                 } else {
-                    console.log('Unexpected response:', response.data);
+                    console.log('Unexpected response:', response);
                     message.error('Failed to login. Please try again.');
                 }
             }

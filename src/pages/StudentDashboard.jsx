@@ -196,7 +196,7 @@ const Dashboard = ({ userId, userName }) => {
 			.catch(error => {
 				console.error('Error fetching location data:', error);
 			})
-	}, [userName, userVotes])
+	}, [userName])
 
 
 	const [canteen, setCanteen] = useState(null);
