@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Badge, Avatar } from 'antd';
 import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
-import { useAuth } from '../components/context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import '../assets/css/NavigatorBar.css'; // Ensure you have the correct path
 
 const NavigatorBar = ({ userName }) => {
@@ -16,14 +16,14 @@ const NavigatorBar = ({ userName }) => {
   useEffect(() => {
     // Simulate fetching user data from backend
     // You can replace this with an actual API call
-    const fetchUserData = () => {
+    const fetchUserBio = () => {
       // Dummy values
       setUsername('Serati Ma');
       setNotifications(11);
       setAvatarUrl('./images/avatar.png');
     };
 
-    fetchUserData();
+    fetchUserBio();
   }, []);
 
   const handleLogout = () => {

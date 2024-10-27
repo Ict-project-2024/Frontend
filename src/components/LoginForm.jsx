@@ -4,8 +4,10 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../assets/css/LoginForm.css';
+import { useAuth } from '../context/AuthContext';
 
 const LoginForm = () => {
+    const {setUser} = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -25,15 +27,11 @@ const LoginForm = () => {
                 }
             );
     
-            console.log('Login Response:', response.data);
-    
-            // Handle successful login
-            if (response.status === 200 && response.data.success) {
-                navigate('/dashboard', { state: response.data });
-            } else {
-                // Handle various error messages from the backend
-                if (response.data.message) {
-                    message.error(response.data.message);
+            if (response.status === 200) {
+                if (response.data.success) {
+                    setUser(response.data);
+                    sessionStorage.setItem('userBio', JSON.stringify(response.data));
+                    navigate('/dashboard', { state: response.data });
                 } else {
                     console.log('Unexpected response:', response.data);
                     message.error('Failed to login. Please try again.');
