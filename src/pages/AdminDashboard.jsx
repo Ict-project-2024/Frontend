@@ -3,11 +3,10 @@ import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, Dat
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
-import FooterComponent from '../components/FooterComponent';
-import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
 import locale from 'antd/es/date-picker/locale/en_US';
+import newApiRequest from '../utils/apiRequests';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -111,6 +110,8 @@ const fixDateTime = (originalTime) => {
 	return Object.assign({ date: newDate, time: newTime });
 }
 
+import PropTypes from 'prop-types';
+
 const AdminDashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 	const [libraryChartData, setLibraryChartData] = useState([])
@@ -127,7 +128,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/${routeFix[location]}/status`, 'POST', { "location": location })
+			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						// Set the data for each location: nivindulakshitha
@@ -156,7 +157,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let totalEntrances = 0;
 		let totalDays = 0;
 
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/library/history`, 'GET', {})
+		newApiRequest(`/api/library/history`, 'GET', {})
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -182,7 +183,7 @@ const AdminDashboard = ({ userId, userName }) => {
 
 	// Fetch the required data for library: nivindulakshitha
 	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/library/useraccess`, 'POST', {}) // Time slot should be included
+		newApiRequest(`/api/library/useraccess`, 'POST', {}) // Time slot should be included
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -194,7 +195,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						user.entryDate = fixedEnterDateTime.date;
 						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
-						newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', { "teNumber": user.teNumber })
+						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
 							.then(result => {
 								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
 								response.data[index] = user;
@@ -210,7 +211,7 @@ const AdminDashboard = ({ userId, userName }) => {
 	}, [userId])
 
 	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
+		newApiRequest(`/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
 			.then(response => {
 				if (response.success) {
 					// Set the data for medical center: nivindulakshitha
@@ -222,7 +223,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						user.entryDate = fixedEnterDateTime.date;
 						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
-						newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', { "teNumber": user.teNumber })
+						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
 							.then(result => {
 								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
 								response.data[index] = user;
@@ -244,7 +245,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let totalEntrances = 0;
 		let totalDays = 0;
 
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/medical-center/history`, 'GET', {})
+		newApiRequest(`/api/medical-center/history`, 'GET', {})
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -428,7 +429,15 @@ const AdminDashboard = ({ userId, userName }) => {
         </ConfigProvider>
 			</Content>
 		</Layout>
-	);
+	)
+};
+
+AdminDashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string
+	}).isRequired
 };
 
 export default AdminDashboard;
