@@ -102,15 +102,18 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		console.log('Form Data:', form);
+
 		const validationError = validateForm();
 		if (validationError) {
 			setErrorMessage(validationError);
 			return;
 		}
+
 		if (!imageUploaded) {
 			setErrorMessage('Please upload a profile picture before submitting.');
 			return;
 		}
+
 		setErrorMessage('');
 		setRegistering(true); // Start the registration loading indicator
 
@@ -122,19 +125,27 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/register`, formData);
 
-			if (response.status !== 200) {
+			// Check for status 200 or 201 and handle accordingly
+			if (response.status === 200) {
+				setIsModalVisible(true); // Show modal only when status is 200
+			} else if (response.status === 201) {
+				message.success(`Note: ${response.data.message}`);
+			} else {
 				throw new Error('Registration failed. Status: ' + response.status);
 			}
-
-			setIsModalVisible(true);
-			message.success('Registration successful!');
 		} catch (error) {
-			console.error('Registration Error:', error);
-			setErrorMessage('Failed to register. Please try again later.');
+		
+			// Show the backend's error message if available
+			if (error.response && error.response.data && error.response.data.message) {
+				setErrorMessage(error.response.data.message);
+			} else {
+				setErrorMessage('Failed to register. Please try again later.');
+			}
 		} finally {
 			setRegistering(false); // Stop the registration loading indicator
 		}
 	};
+
 
 	const handleCloseModal = () => {
 		setIsModalVisible(false);
