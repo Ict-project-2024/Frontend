@@ -23,11 +23,10 @@ const CheckingOfficerDashboard = ({ role }) => {
   };
 
   const handleScan = data => {
-    setScanResult(data);
-    setScanning(false);
-    console.log('Scanned data:', data);
 
-    // Define the endpoint URL
+    const teRegex = /^TE\d{6}$/i;
+
+    // Define the endpoint URL:nuwan
 
     let url;
     if (role === 'CheckingOfficer-medicalCenter') {
@@ -39,21 +38,34 @@ const CheckingOfficerDashboard = ({ role }) => {
       return; // Exit the function if the role is not recognized
     }
 
-
     // Make the API request
-    newApiRequest(url, 'POST', { scannedData: data, actionType })
-      .then(response => {
+
+    if (data && teRegex.test(data)) {
+      newApiRequest(url, 'POST', {
+        teNumber: data,
+  
+      }).then(response => {
         if (response.success) {
-          console.log('Scan processed successfully:', response);
-          // Optionally, handle any additional logic for a successful response
+          setCheckedUser({
+            teNumber: data,
+            phoneNumber: response.mobileNumber,
+          });
         } else {
-          console.error('Failed to process scan:', response.message);
-          // Optionally, handle failure response
+          setCheckedUser({
+            teNumber: data,
+          });
+          message.error("User could not be found but obtaineing his phone number check-in operation can be done manually");
+          // Hence, user not found in the database, his phone number should be obtained: nivindulakshitha
+          // UI/UX development is needed to be done: nivindulakshitha
         }
-      })
-      .catch(error => {
-        console.error('Error processing scan:', error);
       });
+      setScanning(false);
+
+    }else{
+      setScanning(false);
+      message.error('Invalid QR code');
+    }
+
   };
 
   const handleCancel = () => {

@@ -113,7 +113,7 @@ const Dashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/${routeFix[location]}/status`, 'POST', { "canteen": location })
+			newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						// Set the data for each location: nivindulakshitha
