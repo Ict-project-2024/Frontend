@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const newApiRequest = async (url, method, data,
+const newApiRequest = async (url, method, data,
     headers = {
         'Content-Type': 'application/json',
     }) => {
@@ -8,7 +8,7 @@ export const newApiRequest = async (url, method, data,
 
     try {
         const response = await axios({
-            url,
+            url: `${import.meta.env.VITE_BASE_URL}${url}`,
             method,
             data,
             headers
@@ -20,3 +20,5 @@ export const newApiRequest = async (url, method, data,
         return { error: error.message };
     }
 }
+
+export default newApiRequest
