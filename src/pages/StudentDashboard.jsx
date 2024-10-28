@@ -108,96 +108,97 @@ const Dashboard = ({ userId, userName }) => {
 		}
 	}
 
+	// Fetch the badges data for the user: nivindulakshitha
 	useEffect(() => {
-		// Fetch the badges data for the user: nivindulakshitha
 		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
 			.then(response => {
-				if (response.success) {
-					setUserBadges(response.data);
+				if (response.success && response.data) {
+					setUserBadges(response);
 					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
 				}
 			})
 			.catch(error => console.error('Error fetching location data:', error));
+	}, [userId]); // Dependency array to re-fetch when userId changes
 
 
-		// Fetch the required data for each location: nivindulakshitha
+	// Fetch the required data for each location: nivindulakshitha
+	useEffect(() => {
+		const fetchBadgesData = async () => {
+			try {
+				const response = await newApiRequest(`/api/votes/get`, 'POST', { userId });
+				if (response.success) {
+					setUserBadges(response.data);
+					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+				}
+			} catch (error) {
+				console.error('Error fetching badges data:', error);
+			}
+		};
+
 		const fetchLocationData = async () => {
 			const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 			const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
 
-			const requests = locationsList.map(location => {
-				return newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location });
-			});
-
+			const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location }));
 			const responses = await Promise.all(requests);
 
 			const draftData = responses.reduce((acc, response, index) => {
 				if (response.success) {
 					const location = locationsList[index];
+					const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
 					acc[location] = {
 						id: index,
 						lastModified: formatDistanceToNow(response.data.lastModified, { addSuffix: true }),
-						percent: response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy),
-						status: response.data.votes ? determineCrowdedness(acc[location].percent) : determineCrowdedness(response.data.currentOccupancy, location),
+						percent: percent,
+						status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
 						name: location,
 						description: `${response.data.votes ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`
 					};
 				}
 				return acc;
 			}, {});
-
-			setLocationTraffic(draftData);
+			console.log(draftData);	
+			setLocationTraffic((prev) => ({ ...prev, ...draftData }));
 		};
 
-		// Fetch the rankings data for the user: nivindulakshitha
-		let userVotes = {}
-		newApiRequest(`/api/votes/all`, 'GET', {})
-			.then(async response => {
+		const fetchRankingsData = async () => {
+			try {
+				const response = await newApiRequest(`/api/votes/all`, 'GET', {});
 				if (response.success) {
 					const allUsers = response.data;
+					const userVotes = {};
+					allUsers.forEach(user => { userVotes[user.userId] = user.votes; });
 
-					allUsers.forEach(user => {
-						userVotes[user.userId] = user.votes;
-					});
-
-					// Sort the users based on the votes: nivindulakshitha
-					const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
-
-					// Get the first three users with the highest votes: nivindulakshitha
-					const firstThreeVotes = rankingBoard.slice(0, 3)
-
-					// Fetch the user data for the first three users: nivindulakshitha
-					let draftRankingData = {}
+					const rankingBoard = allUsers.sort((a, b) => b.votes - a.votes);
+					const firstThreeVotes = rankingBoard.slice(0, 3);
+					let draftRankingData = {};
 					let draftTopThree = {};
-					rankingBoard.map(user => {
-						newApiRequest(`/api/user/`, 'POST', { userId: user.userId })
-							.then(response => {
-								if (response !== null) {
-									response.entries = user.votes;
-									if (firstThreeVotes.includes(user)) {
-										draftTopThree[firstThreeVotes.indexOf(user)] = response;
-									}
 
-									draftRankingData[rankingBoard.indexOf(user)] = response;
-								}
-							})
-							.catch(error => {
-								console.error('Error fetching user data:', error);
-							})
-							.finally(() => {
-								setUserTopRankings(draftTopThree);
-								setRankingBoardData(draftRankingData);
-							});
-					})
+					await Promise.all(rankingBoard.map(async user => {
+						const userResponse = await newApiRequest(`/api/user/`, 'POST', { userId: user.userId });
+						if (userResponse !== null) {
+							userResponse.entries = user.votes;
+							if (firstThreeVotes.includes(user)) {
+								draftTopThree[firstThreeVotes.indexOf(user)] = userResponse;
+							}
+							draftRankingData[rankingBoard.indexOf(user)] = userResponse;
+						}
+					}));
+
+					setUserTopRankings(draftTopThree);
+					setRankingBoardData(draftRankingData);
 				}
-			})
-			.catch(error => {
-				console.error('Error fetching location data:', error);
-			})
+			} catch (error) {
+				console.error('Error fetching rankings data:', error);
+			}
+		};
 
-
+		// Call the fetch functions
+		fetchBadgesData();
 		fetchLocationData();
-	}, [userName])
+		fetchRankingsData();
+
+	}, []);
 
 
 	const [canteen, setCanteen] = useState(null);
@@ -223,7 +224,6 @@ const Dashboard = ({ userId, userName }) => {
 		const request = await newApiRequest(`/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			message.success('Data submitted successfully');
-			window.location.reload()
 		} else {
 			message.error('Failed to submit data. Please try again.');
 		}
@@ -237,12 +237,12 @@ const Dashboard = ({ userId, userName }) => {
 					<Row gutter={[16, 16]}>
 						{
 							//Display the location data: nivindulakshitha
-							Object.keys(locationTraffic).length > 0 && locationTraffic.map(location => (
-								<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
-									<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].status) }}>{locationTraffic[location].status}</span>}>
-										<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].status)} />
-										<p>{locationTraffic[location].description}</p>
-										<p>Last update was {locationTraffic[location].lastModified}</p>
+							Object.keys(locationTraffic).length > 0 && Object.keys(locationTraffic).map(locationKey => (
+								<Col xs={24} sm={12} md={6} key={locationTraffic[locationKey].id}>
+									<Card title={locationTraffic[locationKey].name} extra={<span style={{ color: getColor(locationTraffic[locationKey].status) }}>{locationTraffic[locationKey].status}</span>}>
+										<Progress type="circle" percent={locationTraffic[locationKey].percent} size={80} strokeColor={getColor(locationTraffic[locationKey].status)} />
+										<p>{locationTraffic[locationKey].description}</p>
+										<p>Last update was {locationTraffic[locationKey].lastModified}</p>
 									</Card>
 								</Col>
 							))
