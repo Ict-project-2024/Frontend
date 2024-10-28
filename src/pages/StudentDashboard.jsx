@@ -176,12 +176,14 @@ const Dashboard = ({ userId, userName }) => {
 					rankingBoard.map(user => {
 						newApiRequest(`/api/user/`, 'POST', { userId: user.userId })
 							.then(response => {
-								response.entries = user.votes;
-								if (firstThreeVotes.includes(user)) {
-									draftTopThree[firstThreeVotes.indexOf(user)] = response;
-								}
+								if (response !== null) {
+									response.entries = user.votes;
+									if (firstThreeVotes.includes(user)) {
+										draftTopThree[firstThreeVotes.indexOf(user)] = response;
+									}
 
-								draftRankingData[rankingBoard.indexOf(user)] = response;
+									draftRankingData[rankingBoard.indexOf(user)] = response;
+								}
 							})
 							.catch(error => {
 								console.error('Error fetching user data:', error);

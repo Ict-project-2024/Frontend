@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import newApiRequest from '../utils/apiRequests';
 import '../assets/css/LoginForm.css';
 import { useAuth } from '../context/AuthContext';
+import newApiRequest from '../utils/apiRequests';
 
 const LoginForm = () => {
-    const {setUser} = useAuth();
+    const {setUser, user} = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -15,11 +16,13 @@ const LoginForm = () => {
     const handleLogin = async () => {
         try {
             const response = await newApiRequest(
-                `/api/auth/login`, 'POST',
+                `/api/auth/login`,
+                'POST',
                 {
                     email,
                     password,
-                });
+                }
+            );
     
             if (response.status === 200) {
                 if (response.success) {

@@ -13,10 +13,10 @@ const newApiRequest = async (url, method, data,
             data,
             headers
         });
-
+        //console.log(`🟢 ${response.status}: ${url} ${method} ${JSON.stringify(data)}`, response.data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching data:', error.message);
+        console.log( `🔺 ${error.message}: ${url} ${method} ${JSON.stringify(data)}`, error.response.data);
         return { error: error.message };
     }
 }
