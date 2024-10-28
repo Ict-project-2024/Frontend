@@ -22,12 +22,11 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 
 
 	useEffect(() => {
-		startScanner();
-
-		return () => {
-			stopScanner();
-		};
-	});
+    if (scannerRef.current) {
+        startScanner();
+    }
+    return () => stopScanner();
+}, [scannerRef.current]);
 
 	useEffect(() => {
 		const teRegex = /^\d{6}$/;
@@ -57,8 +56,8 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 					type: 'LiveStream',
 					constraints: {
 						facingMode: 'environment', // Ensure rear camera is used on mobile
-						width: { ideal: 1280 }, // Higher resolution for better accuracy
-						height: { ideal: 720 }, // Higher resolution for better accuracy
+						width: { ideal: 640 }, // Higher resolution for better accuracy
+						height: { ideal: 640 }, // Higher resolution for better accuracy
 					},
 					target: scannerRef.current,
 				},
@@ -90,6 +89,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				}
 				quaggaInitialized.current = true;
 				Quagga.start();
+				console.log("Quagga initialized successfully");
 			}
 		);
 
@@ -107,6 +107,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 		setScanning(false);
 		setScanComplete(true);
 		setScanResult(result.codeResult.code); // Store the result
+		//setScanResult(107802); // Hard code for testing
 		setScanTime(currentDateTime); // Store the current date and time
 		stopScanner(); // Pause the camera immediately
 	};
@@ -161,6 +162,8 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 			message.error('Unknown role, cannot determine URL');
 			return; // Exit the function if the role is not recognized
 		}
+
+		console.log('URL:', url);
 
 		newApiRequest(url, 'POST', checkedUser).then(response => {
 			if (response && response.success) {
