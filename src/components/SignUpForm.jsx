@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Row, Col, Radio, Upload, message } from 'antd';
+import { Input, Button, Row, Col, Radio, Upload, message, Progress } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import '../assets/css/Signup.css';
@@ -15,11 +15,15 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 		confirmPassword: '',
 		phoneNumber: '',
 		universityEmail: '',
-		headshot: null, // Add a new field for the image
+		headshot: null,
 	});
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [uploadProgress, setUploadProgress] = useState(0);
+	const [uploading, setUploading] = useState(false);
+	const [imageUploaded, setImageUploaded] = useState(false); // New flag for image upload status
+	const [registering, setRegistering] = useState(false); // New state for registration loading indicator
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -37,15 +41,39 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 		}));
 	};
 
-	const handleImageChange = (info) => {
-		if (info.file.status === 'done') {
-			message.success(`${info.file.name} file uploaded successfully.`);
-			setForm((prevForm) => ({
-				...prevForm,
-				headshot: info.file.originFileObj,
-			}));
-		} else if (info.file.status === 'error') {
-			message.error(`${info.file.name} file upload failed.`);
+	const handleImageChange = async (info) => {
+		setUploading(true);
+		setUploadProgress(0);
+
+		if (info.file) {
+			try {
+				const tokenResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
+				console.log(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
+				const { sasUrl, blobUrl } = tokenResponse.data;
+
+				const uploadResponse = await axios.put(sasUrl, info.file.originFileObj, {
+					headers: {
+						'x-ms-blob-type': 'BlockBlob',
+						'Content-Type': info.file.type,
+					},
+					onUploadProgress: (progressEvent) => {
+						const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+						setUploadProgress(progress);
+					},
+				});
+
+				setForm((prevForm) => ({
+					...prevForm,
+					headshot: blobUrl,
+				}));
+				setImageUploaded(true); // Set flag to true after successful upload
+				message.success(`${info.file.name} file uploaded successfully.`);
+			} catch (error) {
+				console.error("File Upload Error:", error.response ? error.response.data : error.message);
+				message.error(`${info.file.name} file upload failed.`);
+			} finally {
+				setUploading(false);
+			}
 		}
 	};
 
@@ -73,45 +101,51 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		console.log('Form Data:', form);
+
 		const validationError = validateForm();
 		if (validationError) {
 			setErrorMessage(validationError);
 			return;
 		}
-		setErrorMessage('');
 
-		const formData = new FormData();
-		for (const key in form) {
-			formData.append(key, form[key]);
+		if (!imageUploaded) {
+			setErrorMessage('Please upload a profile picture before submitting.');
+			return;
 		}
+
+		setErrorMessage('');
+		setRegistering(true); // Start the registration loading indicator
 
 		try {
-			const response = await axios.post('http://localhost:3000/api/auth/register', formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			});
+			const formData = {
+				...form,
+				headshotUrl: form.headshot,
+			};
 
-			console.log('Backend POST Request Details:', {
-				url: 'http://localhost:3000/api/auth/register',
-				method: 'POST',
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-				body: formData,
-				response: response.data,
-			});
+			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/register`, formData);
 
-			if (response.status !== 200) {
+			// Check for status 200 or 201 and handle accordingly
+			if (response.status === 200) {
+				setIsModalVisible(true); // Show modal only when status is 200
+			} else if (response.status === 201) {
+				message.success(`Note: ${response.data.message}`);
+			} else {
 				throw new Error('Registration failed. Status: ' + response.status);
 			}
-
-			setIsModalVisible(true); // Show the popup when registration is successful
 		} catch (error) {
-			console.error('Registration Error:', error);
-			setErrorMessage('Failed to register. Please try again later.');
+		
+			// Show the backend's error message if available
+			if (error.response && error.response.data && error.response.data.message) {
+				setErrorMessage(error.response.data.message);
+			} else {
+				setErrorMessage('Failed to register. Please try again later.');
+			}
+		} finally {
+			setRegistering(false); // Stop the registration loading indicator
 		}
 	};
+
 
 	const handleCloseModal = () => {
 		setIsModalVisible(false);
@@ -201,25 +235,30 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 								<Button
 									icon={<UploadOutlined />}
 									className="custom-upload-button"
+									loading={uploading}
 								>
-									Upload Profile Picture
+									{uploading ? 'Uploading...' : 'Upload Profile Picture'}
 								</Button>
 							</Upload>
 							<div className="upload-description">
-								This image is a must due security reasons.
+								This image is a must due to security reasons.
 							</div>
+							{uploading && (
+								<Progress
+									percent={uploadProgress}
+									status={uploadProgress === 100 ? 'success' : 'active'}
+									style={{ marginTop: '8px' }}
+								/>
+							)}
 						</div>
 
-						<Button type="primary" htmlType="submit" className="register-button" block>
-							Register
+						<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
+							{registering ? 'Registering...' : 'Register'}
 						</Button>
 					</form>
+					<RegistrationSuccessPopup isVisible={isModalVisible} onClose={handleCloseModal} />
 				</div>
 			</div>
-			<RegistrationSuccessPopup
-				isVisible={isModalVisible}
-				onClose={handleCloseModal}
-			/>
 		</div>
 	);
 };
