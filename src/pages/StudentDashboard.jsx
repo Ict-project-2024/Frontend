@@ -108,8 +108,19 @@ const Dashboard = ({ userId, userName }) => {
 		}
 	}
 
-	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
+		// Fetch the badges data for the user: nivindulakshitha
+		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
+			.then(response => {
+				if (response.success) {
+					setUserBadges(response.data);
+					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+				}
+			})
+			.catch(error => console.error('Error fetching location data:', error));
+
+
+		// Fetch the required data for each location: nivindulakshitha
 		const fetchLocationData = async () => {
 			const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 			const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
@@ -138,67 +149,55 @@ const Dashboard = ({ userId, userName }) => {
 			setLocationTraffic(draftData);
 		};
 
-		fetchLocationData();
-	}, [userId]);
-
-
-	// Fetch the badges data for the user: nivindulakshitha
-	useEffect(() => {
-		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
-			.then(response => {
+		// Fetch the rankings data for the user: nivindulakshitha
+		let userVotes = {}
+		newApiRequest(`/api/votes/all`, 'GET', {})
+			.then(async response => {
 				if (response.success) {
-					setUserBadges(response.data);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+					const allUsers = response.data;
+
+					allUsers.forEach(user => {
+						userVotes[user.userId] = user.votes;
+					});
+
+					// Sort the users based on the votes: nivindulakshitha
+					const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
+
+					// Get the first three users with the highest votes: nivindulakshitha
+					const firstThreeVotes = rankingBoard.slice(0, 3)
+
+					// Fetch the user data for the first three users: nivindulakshitha
+					let draftRankingData = {}
+					let draftTopThree = {};
+					rankingBoard.map(user => {
+						newApiRequest(`/api/user/`, 'POST', { userId: user.userId })
+							.then(response => {
+								if (response !== null) {
+									response.entries = user.votes;
+									if (firstThreeVotes.includes(user)) {
+										draftTopThree[firstThreeVotes.indexOf(user)] = response;
+									}
+
+									draftRankingData[rankingBoard.indexOf(user)] = response;
+								}
+							})
+							.catch(error => {
+								console.error('Error fetching user data:', error);
+							})
+							.finally(() => {
+								setUserTopRankings(draftTopThree);
+								setRankingBoardData(draftRankingData);
+							});
+					})
 				}
 			})
-			.catch(error => console.error('Error fetching location data:', error));
-	}, [userId]);
+			.catch(error => {
+				console.error('Error fetching location data:', error);
+			})
 
-	// Fetch the rankings data for the user: nivindulakshitha
-	let userVotes = {}
-	newApiRequest(`/api/votes/all`, 'GET', {})
-		.then(async response => {
-			if (response.success) {
-				const allUsers = response.data;
 
-				allUsers.forEach(user => {
-					userVotes[user.userId] = user.votes;
-				});
-
-				// Sort the users based on the votes: nivindulakshitha
-				const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
-
-				// Get the first three users with the highest votes: nivindulakshitha
-				const firstThreeVotes = rankingBoard.slice(0, 3)
-
-				// Fetch the user data for the first three users: nivindulakshitha
-				let draftRankingData = {}
-				let draftTopThree = {};
-				rankingBoard.map(user => {
-					newApiRequest(`/api/user/`, 'POST', { userId: user.userId })
-						.then(response => {
-							if (response !== null) {
-								response.entries = user.votes;
-								if (firstThreeVotes.includes(user)) {
-									draftTopThree[firstThreeVotes.indexOf(user)] = response;
-								}
-
-								draftRankingData[rankingBoard.indexOf(user)] = response;
-							}
-						})
-						.catch(error => {
-							console.error('Error fetching user data:', error);
-						})
-						.finally(() => {
-							setUserTopRankings(draftTopThree);
-							setRankingBoardData(draftRankingData);
-						});
-				})
-			}
-		})
-		.catch(error => {
-			console.error('Error fetching location data:', error);
-		})
+		fetchLocationData();
+	}, [userName])
 
 
 	const [canteen, setCanteen] = useState(null);
@@ -224,26 +223,11 @@ const Dashboard = ({ userId, userName }) => {
 		const request = await newApiRequest(`/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			message.success('Data submitted successfully');
+			window.location.reload()
 		} else {
 			message.error('Failed to submit data. Please try again.');
 		}
 	};
-
-	const columns = [
-		{
-			title: '',
-			dataIndex: 'rank',
-			key: 'rank',
-			render: (text, record) => (
-				<span style={{ display: 'flex', alignItems: 'center' }}>
-					<span style={{ fontWeight: record.rank === 4 ? 'bold' : 'normal', color: record.rank === 4 ? '#1890ff' : 'inherit' }}>{record.rank}</span>
-				</span>
-			),
-			responsive: ['md'],
-		},
-		{ title: 'Your Ranking', dataIndex: 'name', key: 'name' },
-		{ title: 'Entries', dataIndex: 'entries', key: 'entries' }
-	];
 
 	return (
 		<Layout>
