@@ -157,7 +157,6 @@ const Dashboard = ({ userId, userName }) => {
 				}
 				return acc;
 			}, {});
-			console.log(draftData);	
 			setLocationTraffic((prev) => ({ ...prev, ...draftData }));
 		};
 
