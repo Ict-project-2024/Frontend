@@ -5,7 +5,6 @@ import { SwapRightOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from
 import BarcodeScanner from '../components/BarcodeScanner'; // Adjust the path as needed
 import '../assets/css/CheckingOfficerDashboard.css'; // Ensure you have the correct path
 import newApiRequest from '../utils/apiRequests';
-import { set } from 'date-fns';
 
 const CheckingOfficerDashboard = ({ role }) => {
   const [scanning, setScanning] = useState(false);
@@ -42,7 +41,7 @@ const CheckingOfficerDashboard = ({ role }) => {
           setCheckedUser({
             teNumber: data,
           });
-          message.error("User could not be found but obtaineing his phone number check-in operation can be done manually");
+          message.error("User could not be found");
           // Hence, user not found in the database, his phone number should be obtained: nivindulakshitha
           // UI/UX development is needed to be done: nivindulakshitha
         }

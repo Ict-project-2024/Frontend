@@ -5,35 +5,32 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../assets/css/LoginForm.css';
 import { useAuth } from '../context/AuthContext';
+import newApiRequest from '../utils/apiRequests';
 
 const LoginForm = () => {
-    const {setUser} = useAuth();
+    const {setUser, user} = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post(
+            const response = await newApiRequest(
                 `/api/auth/login`,
+                'POST',
                 {
                     email,
                     password,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                 }
             );
     
             if (response.status === 200) {
-                if (response.data.success) {
-                    setUser(response.data);
-                    sessionStorage.setItem('userBio', JSON.stringify(response.data));
-                    navigate('/dashboard', { state: response.data });
+                if (response.success) {
+                    setUser(response);
+                    sessionStorage.setItem('userBio', JSON.stringify(response));
+                    navigate('/dashboard', { state: response });
                 } else {
-                    console.log('Unexpected response:', response.data);
+                    console.log('Unexpected response:', response);
                     message.error('Failed to login. Please try again.');
                 }
             }
