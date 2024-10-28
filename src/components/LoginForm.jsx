@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import newApiRequest from '../utils/apiRequests';
 import '../assets/css/LoginForm.css';
 import { useAuth } from '../context/AuthContext';
 import newApiRequest from '../utils/apiRequests';
