@@ -51,7 +51,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 				console.log(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
 				const { sasUrl, blobUrl } = tokenResponse.data;
 
-				const uploadResponse = await axios.put(sasUrl, info.file.originFileObj, {
+				const uploadResponse = await axios.put(sasUrl, info.file, {
 					headers: {
 						'x-ms-blob-type': 'BlockBlob',
 						'Content-Type': info.file.type,

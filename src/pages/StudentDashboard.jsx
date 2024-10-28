@@ -124,7 +124,7 @@ const Dashboard = ({ userId, userName }) => {
 	// Trigger the fetch every 5 seconds for live updates
 	setInterval(() => {
 		setFetchTrigger(!fetchTrigger)
-	}, 5000)
+	}, 60000)
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {

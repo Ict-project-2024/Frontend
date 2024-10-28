@@ -17,7 +17,7 @@ const newApiRequest = async (url, method, data,
         return response.data;
     } catch (error) {
         console.log( `🔺 ${error.message}: ${url} ${method} ${JSON.stringify(data)}`, error.response.data);
-        return { error: error.message };
+        return { error: error.message, ...error.response.data };
     }
 }
 
