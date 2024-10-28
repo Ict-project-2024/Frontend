@@ -25,57 +25,9 @@ const CheckingOfficerDashboard = ({ role }) => {
 	};
 
 	const handleScan = data => {
-
-		const teRegex = /^\d{6}$/;
-
-		if (data && teRegex.test(data)) {
-			newApiRequest(`/api/user/`, 'POST', {
-				teNumber: `TE${data}`,
-			}).then(response => {
-				if (response) {
-					setCheckedUser({
-						teNumber: data,
-						phoneNumber: response.mobileNumber,
-					});
-				} else {
-					setCheckedUser({
-						teNumber: data,
-					});
-					message.error("User could not be found");
-				}
-			});
-			setScanning(false);
-		} else {
-			setScanning(false);
-			message.error('Invalid QR code');
-		}
+		setScanning(false);
+		setCheckedUser(data);
 	};
-
-	useEffect(() => {
-		if (!checkedUser || !Object.hasOwn(checkedUser, 'phoneNumber')) return;
-
-		let url;
-		if (role === 'CheckingOfficer-medicalCenter') {
-			url = `/api/medical-center/enter`;
-		} else if (role === 'CheckingOfficer-library') {
-			url = `/api/library/enter`;
-		} else {
-			console.error('Unknown role, cannot determine URL');
-			return; // Exit the function if the role is not recognized
-		}
-
-		newApiRequest(url, 'POST', checkedUser).then(response => {
-			if (response && response.success) {
-				message.success('Check-in logging successful');
-			} else {
-				message.error('Check-in logging failed');
-			}
-		}).catch(error => {
-			console.error('Error fetching data:', error.message);
-			message.error('Check-in logging failed');
-		})
-
-	}, [checkedUser]);
 
 	const handleCancel = () => {
 		setScanning(false);

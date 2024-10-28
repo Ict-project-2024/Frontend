@@ -6,6 +6,7 @@ import CheckInSuccess from './CheckInSuccess'; // Import the new success screen 
 import CheckInOutButton from './CheckInOutButton'; // Import the customized button component
 import '../assets/css/BarcodeScanner.css';
 import newApiRequest from '../utils/apiRequests';
+import { useAuth } from '../context/AuthContext';
 
 const BarcodeScanner = ({ onCancel, actionType }) => {
 	const [scanning, setScanning] = useState(true); // Start scanning by default
@@ -16,6 +17,9 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	const [checkInUser, setCheckInUser] = useState(null);
 	const scannerRef = useRef(null);
 	const quaggaInitialized = useRef(false);
+	const [checkedUser, setCheckedUser] = useState({})
+	const { user } = useAuth();
+
 
 	useEffect(() => {
 		startScanner();
@@ -109,10 +113,67 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 
 	const handleCheckInOut = () => {
 		if (scanResult) {
-			// Display the success screen when check-in/check-out is completed
+			const teRegex = /^\d{6}$/;
+
+			if (scanResult && teRegex.test(scanResult)) {
+				newApiRequest(`/api/user/`, 'POST', {
+					teNumber: `TE${scanResult}`,
+				}).then(response => {
+					if (response) {
+						setCheckedUser({
+							teNumber: `TE${scanResult}`,
+							phoneNumber: response.mobileNumber,
+						});
+					} else {
+						setCheckedUser({
+							teNumber: `TE${scanResult}`,
+						});
+						message.error("User could not be found");
+					}
+				});
+				setScanning(false);
+			} else {
+				setScanning(false);
+				message.error('Invalid QR code');
+			}
 			setShowSuccessScreen(true);
 		}
 	};
+
+	useEffect(() => {
+		if (!checkedUser || !Object.hasOwn(checkedUser, 'phoneNumber')) return;
+
+		let url;
+		if (user.roles[0].role === 'CheckingOfficer-medicalCenter') {
+			if (actionType === 'checkin') {
+				url = `/api/medical-center/enter`; 
+			} else {
+				url = `/api/medical-center/exit`;
+			}
+		} else if (user.roles[0].role === 'CheckingOfficer-library') {
+			if (actionType === 'checkin') {
+				url = `/api/library/enter`;
+			} else {
+				url = `/api/library/exit`;
+			}
+		} else {
+			console.error('Unknown role, cannot determine URL');
+			message.error('Unknown role, cannot determine URL');
+			return; // Exit the function if the role is not recognized
+		}
+
+		newApiRequest(url, 'POST', checkedUser).then(response => {
+			if (response && response.success) {
+				message.success('Check-in logging successful');
+			} else {
+				message.error('Check-in logging failed');
+			}
+		}).catch(error => {
+			console.error('Error fetching data:', error.message);
+			message.error('Check-in logging failed');
+		})
+
+	}, [checkedUser]);
 
 	const handleCancelScan = () => {
 		// Logic to handle the cancellation of scanning
