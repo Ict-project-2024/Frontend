@@ -29,9 +29,12 @@ jobs:
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
+        context: .
         push: true
         tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_3cb45feed6c24bea8b90e23df150e7cf }}/frontend-unimo:${{ github.sha }}
         file: ./Dockerfile
+        build-args: |
+          VITE_BASE_URL=https://unimobackend-gah6e7dec8ecdkav.southeastasia-01.azurewebsites.net
 
   deploy:
     runs-on: ubuntu-latest
