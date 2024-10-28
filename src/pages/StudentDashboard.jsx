@@ -120,6 +120,11 @@ const Dashboard = ({ userId, userName }) => {
 			.catch(error => console.error('Error fetching location data:', error));
 	}, [userId]); // Dependency array to re-fetch when userId changes
 
+	const [fetchTrigger, setFetchTrigger] = useState(false)
+	// Trigger the fetch every 5 seconds for live updates
+	setInterval(() => {
+		setFetchTrigger(!fetchTrigger)
+	}, 5000)
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
@@ -192,12 +197,11 @@ const Dashboard = ({ userId, userName }) => {
 			}
 		};
 
-		// Call the fetch functions
 		fetchBadgesData();
 		fetchLocationData();
 		fetchRankingsData();
 
-	}, []);
+	}, [fetchTrigger]);
 
 
 	const [canteen, setCanteen] = useState(null);
@@ -223,6 +227,7 @@ const Dashboard = ({ userId, userName }) => {
 		const request = await newApiRequest(`/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			message.success('Data submitted successfully');
+			setFetchTrigger(!fetchTrigger);
 		} else {
 			message.error('Failed to submit data. Please try again.');
 		}
