@@ -6,7 +6,7 @@ import '../assets/css/GreetingSection.css'; // Ensure you have the correct path
 const GreetingSection = ({ name }) => {
 	const [user, setUser] = useState({
 		name: name,
-		avatar: 'https://avatar.iran.liara.run/public/boy'
+		avatar: 'https://unimo.blob.core.windows.net/unimo/d2b267dc-35c6-4de8-9640-c00d3655473c.jpg'
 	});
 	const [dateTime, setDateTime] = useState({
 		date: '',
