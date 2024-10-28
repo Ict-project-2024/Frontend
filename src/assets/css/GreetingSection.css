@@ -109,6 +109,11 @@
 .date-time .uppercaseText {
   text-transform: uppercase;
 }
+
+.greet-avatar {
+  margin-right: 20px;
+}
+
 @media (max-width: 768px) {
   .greeting-section {
     flex-direction: column;

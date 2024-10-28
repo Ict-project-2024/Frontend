@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, Avatar } from 'antd';
 import { HomeOutlined, BookOutlined, DesktopOutlined } from '@ant-design/icons';
 import '../assets/css/GreetingSection.css'; // Ensure you have the correct path
 import { useAuth } from '../context/AuthContext';
@@ -64,9 +64,9 @@ const GreetingSection = ({ name }) => {
 			<Row align="middle" justify="space-between" style={{ width: '100%' }}>
 				<Col xs={24} sm={12}>
 					<div className="greeting-left">
-						<img src={loggedUser.avatar} alt="avatar" className="greet-avatar" />
+						<Avatar src={loggedUser.avatar} size={60} className='greet-avatar'/>
 						<div className="greeting-text">
-							<p>Good {dateTime.greeting} {loggedUser.name}!</p>
+							<p>Good {dateTime.greeting} {loggedUser.name ? loggedUser.name : user.firstName}!</p>
 							<div className='flex align-items-center'>
 							<p className='smallLetters'>Here are some quick links</p>
 							<div className="quick-links">

@@ -9,7 +9,7 @@ const NavigatorBar = ({ userName }) => {
 	const { logout } = useAuth();
 	const navigate = useNavigate();
 	const [username, setUsername] = useState('');
-	const [notifications, setNotifications] = useState(0);
+	const [notifications, setNotifications] = useState(5);
 	const [avatarUrl, setAvatarUrl] = useState('');
 	const [menuVisible, setMenuVisible] = useState(false);
 	const { user, setUser } = useAuth();
