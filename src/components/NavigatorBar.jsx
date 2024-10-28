@@ -12,20 +12,23 @@ const NavigatorBar = ({ userName }) => {
 	const [notifications, setNotifications] = useState(0);
 	const [avatarUrl, setAvatarUrl] = useState('');
 	const [menuVisible, setMenuVisible] = useState(false);
-	const { user } = useAuth();
+	const { user, setUser } = useAuth();
 
 	useEffect(() => {		
 		const fetchUserBio = () => {
 			const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
-			if (Object.hasOwn(user, '_id')) {
-				if (storedUserBio) {
-					setUsername(`${storedUserBio.firstName} ${storedUserBio.lastName}`);
-					setAvatarUrl(storedUserBio.profileImage);
+			if (storedUserBio) {
+				setUser(storedUserBio);
+				setUsername(`${storedUserBio.firstName} ${storedUserBio.lastName}`);
+				setAvatarUrl(storedUserBio.profileImage);
+			} else {
+				if (Object.hasOwn(user, '_id')) {
+					sessionStorage.setItem('userBio', JSON.stringify(user));
+					setUsername(`${user.firstName} ${user.lastName}`);
+					setAvatarUrl(user.profileImage);
 				} else {
 					window.location.href = '/';
 				}
-			} else {
-				window.location.href = '/';
 			}
 		};
 

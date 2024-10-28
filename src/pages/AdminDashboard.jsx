@@ -12,30 +12,6 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-const logData = [
-	{
-		id: 1,
-		name: "Library Log",
-		logs: [
-			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '2', date: '22/04/2024', student: 'geekblue', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '3', date: '22/04/2024', student: 'red', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '4', date: '22/04/2024', student: 'purple', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '5', date: '22/04/2024', student: 'green', checkIn: '09:22 am', checkOut: '10:48 am' },
-			// More log data...
-		]
-	},
-	{
-		id: 2,
-		name: "Medical Center Log",
-		logs: [
-			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '2', date: '22/04/2024', student: 'text', checkIn: '09:22 am', checkOut: '10:48 am' },
-			// More log data...
-		]
-	}
-];
-
 const getColor = (percent) => {
 	if (percent > 75) return 'red';
 	if (percent > 50) return 'orange';
@@ -118,8 +94,18 @@ const AdminDashboard = ({ userId, userName }) => {
 	const [libraryStats, setLibraryStats] = useState({})
 	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
 	const [medicalCenterStats, setMedicalCenterStats] = useState({})
-	const [libraryLogData, setLibraryLogData] = useState([])
-	const [medicalCenterLogData, setMedicalCenterLogData] = useState([])
+	const [logData, setLogData] = useState([
+		{
+			id: 1,
+			name: "Library Log",
+			logs: []
+		},
+		{
+			id: 2,
+			name: "Medical Center Log",
+			logs: []
+		}
+	])
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
@@ -130,7 +116,6 @@ const AdminDashboard = ({ userId, userName }) => {
 		for (let location of locationsList) {
 			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
-					console.log(typeof response);
 					if (response.success) {
 						// Set the data for each location: nivindulakshitha
 						draftData[location] = {}
@@ -192,16 +177,17 @@ const AdminDashboard = ({ userId, userName }) => {
 					response.data.map((user) => {
 						const fixedEnterDateTime = fixDateTime(user.entryTime);
 						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
-						user.entryTime = fixedEnterDateTime.time;
-						user.entryDate = fixedEnterDateTime.date;
-						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+						user.checkIn = fixedEnterDateTime.time;
+						user.date = fixedEnterDateTime.date;
+						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
 						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
 							.then(result => {
-								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
+								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
 								response.data[index] = user;
 								index++;
-								setLibraryLogData(response.data);
+								response.data.key = response.data._id;
+								logData[0].logs = response.data;
 							});
 					});
 				}
@@ -220,16 +206,17 @@ const AdminDashboard = ({ userId, userName }) => {
 					response.data.map((user) => {
 						const fixedEnterDateTime = fixDateTime(user.entryTime);
 						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
-						user.entryTime = fixedEnterDateTime.time;
-						user.entryDate = fixedEnterDateTime.date;
-						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+						user.checkIn = fixedEnterDateTime.time;
+						user.date = fixedEnterDateTime.date;
+						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
 						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
 							.then(result => {
-								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
+								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
 								response.data[index] = user;
 								index++;
-								setMedicalCenterLogData(response.data);
+								response.data.key = response.data._id;
+								logData[1].logs = response.data;
 							});
 					});
 				}
@@ -410,14 +397,14 @@ const AdminDashboard = ({ userId, userName }) => {
                                             </span>
                                         )
                                     },
-                                    { title: 'Check in', dataIndex: 'checkIn', key: 'checkIn', align: 'center' },
-                                    { title: 'Check out', dataIndex: 'checkOut', key: 'checkOut', align: 'center' }
+                                    { title: 'Check in', dataIndex: 'checkIn', _id: 'checkIn', align: 'center' },
+                                    { title: 'Check out', dataIndex: 'checkOut', _id: 'checkOut', align: 'center' }
                                 ]}
                                 pagination={{
                                     pageSize: 10,
                                     showSizeChanger: false,
                                     position: ['bottomCenter'],
-                                    total: 50,
+                                    total: log.logs.length,
                                     showQuickJumper: true
                                 }}
                                 rowClassName="log-table-row"
