@@ -50,11 +50,13 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 				const tokenResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
 				console.log(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
 				const { sasUrl, blobUrl } = tokenResponse.data;
-
-				const uploadResponse = await axios.put(sasUrl, info.file, {
+				const fileData = info.file; 
+				console.log(info.file);
+        
+				const uploadResponse = await axios.put(sasUrl, fileData, {
 					headers: {
 						'x-ms-blob-type': 'BlockBlob',
-						'Content-Type': info.file.type,
+						'Content-Type': fileData.type,
 					},
 					onUploadProgress: (progressEvent) => {
 						const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
