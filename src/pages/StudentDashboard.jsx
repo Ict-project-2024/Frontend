@@ -110,33 +110,37 @@ const Dashboard = ({ userId, userName }) => {
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
-		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
-		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
-		let draftData = {};
+		const fetchLocationData = async () => {
+			const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
+			const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
 
-		for (let location of locationsList) {
-			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
-				.then(response => {
-					if (response.success) {
-						// Set the data for each location: nivindulakshitha
-						draftData[location] = {}
-						draftData[location].id = locationsList.indexOf(location);
-						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
-						draftData[location].percent = response.data.votes != undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
-						draftData[location].status = response.data.votes != undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
-						draftData[location].name = location;
-						draftData[location].description = `${response.data.votes != undefined ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`;
-					}
-				})
-				.catch(error => {
-					console.error('Error fetching location data:', error);
-				})
-				.finally(() => {
-					setLocationTraffic(draftData);
-				});
-		}
+			const requests = locationsList.map(location => {
+				return newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location });
+			});
 
-	}, [userName]);
+			const responses = await Promise.all(requests);
+
+			const draftData = responses.reduce((acc, response, index) => {
+				if (response.success) {
+					const location = locationsList[index];
+					acc[location] = {
+						id: index,
+						lastModified: formatDistanceToNow(response.data.lastModified, { addSuffix: true }),
+						percent: response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy),
+						status: response.data.votes ? determineCrowdedness(acc[location].percent) : determineCrowdedness(response.data.currentOccupancy, location),
+						name: location,
+						description: `${response.data.votes ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`
+					};
+				}
+				return acc;
+			}, {});
+
+			setLocationTraffic(draftData);
+		};
+
+		fetchLocationData();
+	}, [userId]);
+
 
 	// Fetch the badges data for the user: nivindulakshitha
 	useEffect(() => {
@@ -147,58 +151,54 @@ const Dashboard = ({ userId, userName }) => {
 					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
 				}
 			})
-			.catch(error => {
-				console.error('Error fetching location data:', error);
-			})
-	}, [userId, userName])
+			.catch(error => console.error('Error fetching location data:', error));
+	}, [userId]);
 
 	// Fetch the rankings data for the user: nivindulakshitha
 	let userVotes = {}
-	useEffect(() => {
-		newApiRequest(`/api/votes/all`, 'GET', {})
-			.then(async response => {
-				if (response.success) {
-					const allUsers = response.data;
+	newApiRequest(`/api/votes/all`, 'GET', {})
+		.then(async response => {
+			if (response.success) {
+				const allUsers = response.data;
 
-					allUsers.forEach(user => {
-						userVotes[user.userId] = user.votes;
-					});
+				allUsers.forEach(user => {
+					userVotes[user.userId] = user.votes;
+				});
 
-					// Sort the users based on the votes: nivindulakshitha
-					const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
+				// Sort the users based on the votes: nivindulakshitha
+				const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
 
-					// Get the first three users with the highest votes: nivindulakshitha
-					const firstThreeVotes = rankingBoard.slice(0, 3)
+				// Get the first three users with the highest votes: nivindulakshitha
+				const firstThreeVotes = rankingBoard.slice(0, 3)
 
-					// Fetch the user data for the first three users: nivindulakshitha
-					let draftRankingData = {}
-					let draftTopThree = {};
-					rankingBoard.map(user => {
-						newApiRequest(`/api/user/`, 'POST', { userId: user.userId })
-							.then(response => {
-								if (response !== null) {
-									response.entries = user.votes;
-									if (firstThreeVotes.includes(user)) {
-										draftTopThree[firstThreeVotes.indexOf(user)] = response;
-									}
-
-									draftRankingData[rankingBoard.indexOf(user)] = response;
+				// Fetch the user data for the first three users: nivindulakshitha
+				let draftRankingData = {}
+				let draftTopThree = {};
+				rankingBoard.map(user => {
+					newApiRequest(`/api/user/`, 'POST', { userId: user.userId })
+						.then(response => {
+							if (response !== null) {
+								response.entries = user.votes;
+								if (firstThreeVotes.includes(user)) {
+									draftTopThree[firstThreeVotes.indexOf(user)] = response;
 								}
-							})
-							.catch(error => {
-								console.error('Error fetching user data:', error);
-							})
-							.finally(() => {
-								setUserTopRankings(draftTopThree);
-								setRankingBoardData(draftRankingData);
-							});
-					})
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching location data:', error);
-			})
-	}, [userName])
+
+								draftRankingData[rankingBoard.indexOf(user)] = response;
+							}
+						})
+						.catch(error => {
+							console.error('Error fetching user data:', error);
+						})
+						.finally(() => {
+							setUserTopRankings(draftTopThree);
+							setRankingBoardData(draftRankingData);
+						});
+				})
+			}
+		})
+		.catch(error => {
+			console.error('Error fetching location data:', error);
+		})
 
 
 	const [canteen, setCanteen] = useState(null);
@@ -253,7 +253,7 @@ const Dashboard = ({ userId, userName }) => {
 					<Row gutter={[16, 16]}>
 						{
 							//Display the location data: nivindulakshitha
-							Object.keys(locationTraffic).map(location => (
+							Object.keys(locationTraffic).length > 0 && locationTraffic.map(location => (
 								<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
 									<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].status) }}>{locationTraffic[location].status}</span>}>
 										<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].status)} />
@@ -400,12 +400,12 @@ const Dashboard = ({ userId, userName }) => {
 														</Card>
 													</Col>
 												)) : (
-														// Display the badges that are not boolean and not null: nivindulakshitha
-														userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
+													// Display the badges that are not boolean and not null: nivindulakshitha
+													userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
 														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${userBadges.badges[badge]}`} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
-														</Col>)
+													</Col>)
 												)
 											))
 										) : (
@@ -418,7 +418,7 @@ const Dashboard = ({ userId, userName }) => {
 							<Card title="Your Ranking">
 								{
 									// Display the user ranking: nivindulakshitha
-									Object.keys(rankingBoardData).map(key => {
+									Object.keys(rankingBoardData).length > 0 && Object.keys(rankingBoardData).map(key => {
 										return (
 											<RankingBox
 												key={key}
