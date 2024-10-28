@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker,ConfigProvider } from 'antd';
+import { Layout, Row, Col, Card, Progress, Table, Button, Typography, DatePicker,ConfigProvider } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
@@ -87,6 +87,7 @@ const fixDateTime = (originalTime) => {
 }
 
 import PropTypes from 'prop-types';
+import { useAuth } from '../context/AuthContext';
 
 const AdminDashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
@@ -94,14 +95,15 @@ const AdminDashboard = ({ userId, userName }) => {
 	const [libraryStats, setLibraryStats] = useState({})
 	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
 	const [medicalCenterStats, setMedicalCenterStats] = useState({})
+	const {user} = useAuth();
 	const [logData, setLogData] = useState([
 		{
-			id: 1,
+			id: 0,
 			name: "Library Log",
 			logs: []
 		},
 		{
-			id: 2,
+			id: 1,
 			name: "Medical Center Log",
 			logs: []
 		}
@@ -272,13 +274,27 @@ const AdminDashboard = ({ userId, userName }) => {
             ...prevState,
             [id]: false
         }));  // Close the calendar after selection
-    };
+	};
+	
+	// Download the logs data functionality: nivindulakshitha
+	const downloadLogs = (logId) => {
+		const headers = Object.keys(logData[logId].logs[0]).join(',\t');
+		const csv = [headers, ...logData[logId].logs.map(row => Object.values(row).join(',\t'))].join('\n');
+		const blob = new Blob([csv], { type: 'text/csv' });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `${logData[logId].name} Data.csv`;
+		a.click();
+		window.URL.revokeObjectURL(url);
+	}
+
 	return (
 		<Layout>
 			<Content style={{ padding: '0 50px', overflow: 'auto' }}>
 				{/* Greeting Section */}
 				<div style={{ marginBottom: '20px' }}>
-					<GreetingSection name={userName.first} />
+					<GreetingSection name={userName.first ? userName.first : user.firstName} />
 				</div>
 
 				{/* Canteen Data Section */}
@@ -354,7 +370,7 @@ const AdminDashboard = ({ userId, userName }) => {
                                         >
                                             Custom range
                                         </Button>
-                                        <Button type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
+										<Button onClick={() => { downloadLogs(log.id) }} type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
                                             Download log
                                         </Button>
                                         {visibleCalendars[log.id] && (
