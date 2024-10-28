@@ -77,6 +77,11 @@
   display: block;
 }
 
+#root>div>div>div.navigator-bar>div.user-section>span.ant-badge.notification-badge.css-dev-only-do-not-override-1uq9j6g>sup {
+  left: -10px;
+  max-width: 30px;
+  }
+
 @media (max-width: 768px) {
   .navigator-bar {
     justify-content: space-between;

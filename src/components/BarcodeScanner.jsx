@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Spin, Button } from 'antd';
 import Quagga from 'quagga';
@@ -20,7 +21,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
     return () => {
       stopScanner();
     };
-  }, []);
+  });
 
   const startScanner = () => {
     if (quaggaInitialized.current) {
@@ -134,7 +135,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
           {scanResult && scanTime && (
             <div className="result-display">
               <div className="avatar">
-                <img src="/path-to-avatar-image.png" alt="Avatar" />
+                <img src="/images/avatar.png" alt="Avatar" />
               </div>
               <div className="scan-details">
                 <p><strong>Reg. No:</strong> {`TE${scanResult}`}</p>

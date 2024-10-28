@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
@@ -42,7 +43,7 @@ const Dashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
+			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						draftData[location] = {}
@@ -84,7 +85,7 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 		// Submit the traffic to the database according to the respective canteen: nivindulakshitha
-		const request = await newApiRequest(`http://localhost:3000/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
+		const request = await newApiRequest(`/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			console.log('Data submitted successfully:', request);
 			message.success('Data submitted successfully');
@@ -95,12 +96,6 @@ const Dashboard = ({ userId, userName }) => {
 
 	// Ranking Data
 	const rankingData = [
-		{ key: 1, rank: 1, name: 'Gongzhuan No.1 shop', entries: 323234 },
-		{ key: 2, rank: 2, name: 'Gongzhuan No.2 shop', entries: 323234 },
-		{ key: 3, rank: 3, name: 'Gongzhuan No.3 shop', entries: 323234 },
-		{ key: 4, rank: 4, name: 'Amanda Joe', entries: 323234 },
-		{ key: 5, rank: 5, name: 'Gongzhuan No.5 shop', entries: 323234 },
-		{ key: 6, rank: 6, name: 'Gongzhuan No.6 shop', entries: 323234 }
 	];
 
 	const columns = [
@@ -201,19 +196,19 @@ const Dashboard = ({ userId, userName }) => {
 							<Card title="This week's Canteen Heroes">
 								<Row gutter={[16, 16]} className="heroes-row">
 									<Col xs={24} sm={8}>
-										<Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Dining Dynamo" />}>
+										<Card className="hero-card" cover={<img src="/images/badge.png" alt="Dining Dynamo" />}>
 											<Card.Meta title="Dining Dynamo" description="Jhonne Doe" />
 											<Text>98 Entries in a row</Text>
 										</Card>
 									</Col>
 									<Col xs={24} sm={8} className="hero-card-big">
-										<Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Canteen Champion" />}>
+										<Card className="hero-card" cover={<img src="/images/badge.png" alt="Canteen Champion" />}>
 											<Card.Meta title="Canteen Champion" description="Jhonne Doe" />
 											<Text>154 Entries in a row</Text>
 										</Card>
 									</Col>
 									<Col xs={24} sm={8}>
-										<Card className="hero-card" cover={<img src="src/assets/images/badge.png" alt="Foodie Forecaster" />}>
+										<Card className="hero-card" cover={<img src="/images/badge.png" alt="Foodie Forecaster" />}>
 											<Card.Meta title="Foodie Forecaster" description="Jhonne Doe" />
 											<Text>54 Entries in a row</Text>
 										</Card>
@@ -231,7 +226,8 @@ const Dashboard = ({ userId, userName }) => {
 							</Card>
 							<Card className="first-step-card">
 								<div className="first-step-content">
-									<img src="src/assets/images/image.png" alt="Placeholder" className="placeholder-image" />
+
+									<img src="/images/image.png" alt="Placeholder" className="placeholder-image" />
 									<div>
 										<Title level={4}>First Step</Title>
 										<Text>Congratulations on making your first occupancy update!</Text>
@@ -244,17 +240,17 @@ const Dashboard = ({ userId, userName }) => {
 							<Card title="Your next badges">
 								<Row gutter={[16, 16]}>
 									<Col xs={24} sm={8}>
-										<Card cover={<img src="src/assets/images/badge.png" alt="First Step" />}>
+										<Card cover={<img src="images/badge.png" alt="First Step" />}>
 											<Card.Meta title="First Step" />
 										</Card>
 									</Col>
 									<Col xs={24} sm={8}>
-										<Card cover={<img src="src/assets/images/badge.png" alt="Frequent Contributor" />}>
+										<Card cover={<img src="images/badge.png" alt="Frequent Contributor" />}>
 											<Card.Meta title="Frequent Contributor" />
 										</Card>
 									</Col>
 									<Col xs={24} sm={8}>
-										<Card cover={<img src="src/assets/images/badge.png" alt="Daily Contributor" />}>
+										<Card cover={<img src="./images/badge.png" alt="Daily Contributor" />}>
 											<Card.Meta title="Daily Contributor" />
 										</Card>
 									</Col>
@@ -265,22 +261,10 @@ const Dashboard = ({ userId, userName }) => {
 								<Row>
 									<Col xs={12}>
 										<ol className="ranking-list">
-											<li>Gongzhuan No.1 shop</li>
-											<li>Gongzhuan No.2 shop</li>
-											<li>Gongzhuan No.3 shop</li>
-											<li>Gongzhuan No.4 shop</li>
-											<li>Gongzhuan No.5 shop</li>
-											<li>Gongzhuan No.6 shop</li>
 										</ol>
 									</Col>
 									<Col xs={12}>
 										<ul className="ranking-list">
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
 										</ul>
 									</Col>
 								</Row>
@@ -292,6 +276,13 @@ const Dashboard = ({ userId, userName }) => {
 			<FooterComponent />
 		</Layout>
 	);
+};
+Dashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string
+	}).isRequired
 };
 
 export default Dashboard;

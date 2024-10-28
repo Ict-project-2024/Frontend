@@ -1,72 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker,ConfigProvider } from 'antd';
+import { Layout, Row, Col, Card, Progress, Table, Button, Typography, DatePicker,ConfigProvider } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
-import FooterComponent from '../components/FooterComponent';
-import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
 import locale from 'antd/es/date-picker/locale/en_US';
+import newApiRequest from '../utils/apiRequests';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-const statisticsData = [
-    {
-        id: 1,
-        name: "Library",
-        visits: 8846,
-        avgDailyVisits: 1234,
-    },
-    {
-        id: 2,
-        name: "Medical Center",
-        visits: 8846,
-        avgDailyVisits: 1234,
-    }
-];
-
-const logData = [
-    {
-        id: 1,
-        name: "Library Log",
-        logs: [
-            { key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '2', date: '22/04/2024', student: 'geekblue', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '3', date: '22/04/2024', student: 'red', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '4', date: '22/04/2024', student: 'purple', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '5', date: '22/04/2024', student: 'green', checkIn: '09:22 am', checkOut: '10:48 am' },
-            // More log data...
-        ]
-    },
-    {
-        id: 2,
-        name: "Medical Center Log",
-        logs: [
-            { key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-            { key: '2', date: '22/04/2024', student: 'text', checkIn: '09:22 am', checkOut: '10:48 am' },
-            // More log data...
-        ]
-    }
-];
-
-const chartData = [
-    { name: '1', value: 20 },
-    { name: '2', value: 30 },
-    { name: '3', value: 40 },
-    { name: '4', value: 35 },
-    { name: '5', value: 50 },
-    { name: '6', value: 45 },
-    { name: '7', value: 60 },
-];
-
 const getColor = (percent) => {
-    if (percent > 75) return 'red';
-    if (percent > 50) return 'orange';
-    if (percent > 25) return 'blue';
-    return 'green';
+	if (percent > 75) return 'red';
+	if (percent > 50) return 'orange';
+	if (percent > 25) return 'blue';
+	return 'green';
 };
 
 // Calculate the overall crowdedness percentage based on the votes: nivindulakshitha
@@ -112,18 +62,32 @@ const determineCrowdedness = (percent, location = null) => {
 }
 
 const esimateCrowd = (votes) => {
-    let midpoints = {
-        "0-15": 8,
-        "15-25": 20,
-        "25-35": 30,
-        "35+": 40
-    };
+	let midpoints = {
+		"0-15": 8,
+		"15-25": 20,
+		"25-35": 30,
+		"35+": 40
+	};
 
-    let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
-    let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
+	let totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+	let estimatedCount = Object.keys(votes).reduce((sum, range) => sum + votes[range] * midpoints[range], 0) / (totalVotes / 2);
 
-    return estimatedCount.toFixed(0);
+	return estimatedCount.toFixed(0);
 }
+
+// Fix the time to UTC+5:30: nivindulakshitha
+const fixDateTime = (originalTime) => {
+	const date = new Date(originalTime);
+	date.setMinutes(date.getMinutes() + 330); // UTC+5:30
+
+	const newDate = date.toISOString().split('T')[0];
+	const newTime = date.toISOString().split('T')[1].slice(0, 5);
+
+	return Object.assign({ date: newDate, time: newTime });
+}
+
+import PropTypes from 'prop-types';
+import { useAuth } from '../context/AuthContext';
 
 const AdminDashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
@@ -131,6 +95,19 @@ const AdminDashboard = ({ userId, userName }) => {
 	const [libraryStats, setLibraryStats] = useState({})
 	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
 	const [medicalCenterStats, setMedicalCenterStats] = useState({})
+	const {user} = useAuth();
+	const [logData, setLogData] = useState([
+		{
+			id: 0,
+			name: "Library Log",
+			logs: []
+		},
+		{
+			id: 1,
+			name: "Medical Center Log",
+			logs: []
+		}
+	])
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
@@ -139,7 +116,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`http://localhost:3000/api/${routeFix[location]}/status`, 'POST', { "location": location })
+			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						// Set the data for each location: nivindulakshitha
@@ -159,7 +136,6 @@ const AdminDashboard = ({ userId, userName }) => {
 					setLocationTraffic(draftData);
 				});
 		}
-
 	}, [userId]);
 
 	// Fetch the required data for library: nivindulakshitha
@@ -169,7 +145,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let totalEntrances = 0;
 		let totalDays = 0;
 
-		newApiRequest(`http://localhost:3000/api/library/history`, 'GET', {})
+		newApiRequest(`/api/library/history`, 'GET', {})
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -193,6 +169,65 @@ const AdminDashboard = ({ userId, userName }) => {
 			});
 	}, [userId])
 
+	// Fetch the required data for library: nivindulakshitha
+	useEffect(() => {
+		newApiRequest(`/api/library/useraccess`, 'POST', {}) // Time slot should be included
+			.then(response => {
+				if (response.success) {
+					// Set the data for library: nivindulakshitha
+					let index = 0;
+					response.data.map((user) => {
+						const fixedEnterDateTime = fixDateTime(user.entryTime);
+						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
+						user.checkIn = fixedEnterDateTime.time;
+						user.date = fixedEnterDateTime.date;
+						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+
+						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
+							.then(result => {
+								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
+								response.data[index] = user;
+								index++;
+								response.data.key = response.data._id;
+								logData[0].logs = response.data;
+							});
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching library data:', error);
+			})
+	}, [userId])
+
+	useEffect(() => {
+		newApiRequest(`/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
+			.then(response => {
+				if (response.success) {
+					// Set the data for medical center: nivindulakshitha
+					let index = 0;
+					response.data.map((user) => {
+						const fixedEnterDateTime = fixDateTime(user.entryTime);
+						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
+						user.checkIn = fixedEnterDateTime.time;
+						user.date = fixedEnterDateTime.date;
+						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+
+						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
+							.then(result => {
+								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
+								response.data[index] = user;
+								index++;
+								response.data.key = response.data._id;
+								logData[1].logs = response.data;
+							});
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching library data:', error);
+			})
+	}, [userId])
+
 	// Fetch the required data for medical center: nivindulakshitha
 	useEffect(() => {
 		// Fetch the required data for each location: nivindulakshitha
@@ -200,7 +235,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let totalEntrances = 0;
 		let totalDays = 0;
 
-		newApiRequest(`http://localhost:3000/api/medical-center/history`, 'GET', {})
+		newApiRequest(`/api/medical-center/history`, 'GET', {})
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -239,13 +274,27 @@ const AdminDashboard = ({ userId, userName }) => {
             ...prevState,
             [id]: false
         }));  // Close the calendar after selection
-    };
+	};
+	
+	// Download the logs data functionality: nivindulakshitha
+	const downloadLogs = (logId) => {
+		const headers = Object.keys(logData[logId].logs[0]).join(',\t');
+		const csv = [headers, ...logData[logId].logs.map(row => Object.values(row).join(',\t'))].join('\n');
+		const blob = new Blob([csv], { type: 'text/csv' });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `${logData[logId].name} Data.csv`;
+		a.click();
+		window.URL.revokeObjectURL(url);
+	}
+
 	return (
 		<Layout>
 			<Content style={{ padding: '0 50px', overflow: 'auto' }}>
 				{/* Greeting Section */}
 				<div style={{ marginBottom: '20px' }}>
-					<GreetingSection name={userName.first} />
+					<GreetingSection name={userName.first ? userName.first : user.firstName} />
 				</div>
 
 				{/* Canteen Data Section */}
@@ -270,7 +319,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						<Card>
 							<Title level={5}>Library</Title>
 							<Text type="secondary">Last {Object.keys(libraryChartData).length} Days</Text>
-							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={libraryStats.visits ? libraryStats.visits.toLocaleString() : 0} />
+							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} duration={5} end={libraryStats.visits ? libraryStats.visits.toLocaleString() : 0} />
 							<ResponsiveContainer width="100%" height={100}>
 								<AreaChart data={libraryChartData}>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -287,7 +336,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						<Card>
 							<Title level={5}>Medical Center</Title>
 							<Text type="secondary">Last {Object.keys(medicalCenterChartData).length} Days</Text>
-							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} end={medicalCenterStats.visits ? medicalCenterStats.visits.toLocaleString() : 0} />
+							<CountUp style={{ margin: '8px 0', marginBottom: '.5em', fontWeight: '600px', fontSize: '30px' }} duration={5} end={medicalCenterStats.visits ? medicalCenterStats.visits.toLocaleString() : 0} />
 							<ResponsiveContainer width="100%" height={100}>
 								<AreaChart data={medicalCenterChartData}>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -303,7 +352,6 @@ const AdminDashboard = ({ userId, userName }) => {
 				</Row>
 
 				{/* Logs Section */}
-                
                 <ConfigProvider locale={locale}>
             <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
                 {logData.map(log => (
@@ -322,7 +370,7 @@ const AdminDashboard = ({ userId, userName }) => {
                                         >
                                             Custom range
                                         </Button>
-                                        <Button type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
+										<Button onClick={() => { downloadLogs(log.id) }} type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
                                             Download log
                                         </Button>
                                         {visibleCalendars[log.id] && (
@@ -365,14 +413,14 @@ const AdminDashboard = ({ userId, userName }) => {
                                             </span>
                                         )
                                     },
-                                    { title: 'Check in', dataIndex: 'checkIn', key: 'checkIn', align: 'center' },
-                                    { title: 'Check out', dataIndex: 'checkOut', key: 'checkOut', align: 'center' }
+                                    { title: 'Check in', dataIndex: 'checkIn', _id: 'checkIn', align: 'center' },
+                                    { title: 'Check out', dataIndex: 'checkOut', _id: 'checkOut', align: 'center' }
                                 ]}
                                 pagination={{
                                     pageSize: 10,
                                     showSizeChanger: false,
                                     position: ['bottomCenter'],
-                                    total: 50,
+                                    total: log.logs.length,
                                     showQuickJumper: true
                                 }}
                                 rowClassName="log-table-row"
@@ -385,7 +433,15 @@ const AdminDashboard = ({ userId, userName }) => {
         </ConfigProvider>
 			</Content>
 		</Layout>
-	);
+	)
+};
+
+AdminDashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string
+	}).isRequired
 };
 
 export default AdminDashboard;
