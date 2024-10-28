@@ -51,4 +51,4 @@ jobs:
         app-name: 'unimo'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_a1cc09359f8d409fb1dd29b0b3a1e251 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_3cb45feed6c24bea8b90e23df150e7cf }}/nuwansubhasingha/frontend-unimo:${{ github.sha }}'
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_3cb45feed6c24bea8b90e23df150e7cf }}/frontend-unimo:${{ github.sha }}'
