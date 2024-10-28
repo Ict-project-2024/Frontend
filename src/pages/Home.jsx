@@ -29,8 +29,7 @@ const Home = () => {
 	}, []);
 
 	const renderDashboard = () => {
-//switch (userBio.roles[0].role) {
-		switch ("CheckingOfficer") {
+		switch (userBio.roles[0].role) {
 			case 'Admin':
 				return <AdminDashboard userId={userBio._id} userName={{ first: userBio.firstName, last: userBio.lastName }} />;
 			case 'CheckingOfficer-medicalCenter':

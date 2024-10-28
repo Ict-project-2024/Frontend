@@ -130,6 +130,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		for (let location of locationsList) {
 			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
+					console.log(typeof response);
 					if (response.success) {
 						// Set the data for each location: nivindulakshitha
 						draftData[location] = {}

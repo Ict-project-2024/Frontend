@@ -20,7 +20,6 @@ const GreetingSection = ({ name }) => {
 	});
 
 	useEffect(() => {
-		console.log(user);
 		setLoggedUser({
 			name: user.firstName,
 			avatar: user.profileImage
