@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
@@ -42,7 +43,8 @@ const Dashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/${routeFix[location]}/status`, 'POST', { "location": location })
+
+			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						draftData[location] = {}
@@ -84,7 +86,7 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 		// Submit the traffic to the database according to the respective canteen: nivindulakshitha
-		const request = await newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
+		const request = await newApiRequest(`/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			console.log('Data submitted successfully:', request);
 			message.success('Data submitted successfully');
@@ -95,12 +97,6 @@ const Dashboard = ({ userId, userName }) => {
 
 	// Ranking Data
 	const rankingData = [
-		{ key: 1, rank: 1, name: 'Gongzhuan No.1 shop', entries: 323234 },
-		{ key: 2, rank: 2, name: 'Gongzhuan No.2 shop', entries: 323234 },
-		{ key: 3, rank: 3, name: 'Gongzhuan No.3 shop', entries: 323234 },
-		{ key: 4, rank: 4, name: 'Amanda Joe', entries: 323234 },
-		{ key: 5, rank: 5, name: 'Gongzhuan No.5 shop', entries: 323234 },
-		{ key: 6, rank: 6, name: 'Gongzhuan No.6 shop', entries: 323234 }
 	];
 
 	const columns = [
@@ -266,22 +262,10 @@ const Dashboard = ({ userId, userName }) => {
 								<Row>
 									<Col xs={12}>
 										<ol className="ranking-list">
-											<li>Gongzhuan No.1 shop</li>
-											<li>Gongzhuan No.2 shop</li>
-											<li>Gongzhuan No.3 shop</li>
-											<li>Gongzhuan No.4 shop</li>
-											<li>Gongzhuan No.5 shop</li>
-											<li>Gongzhuan No.6 shop</li>
 										</ol>
 									</Col>
 									<Col xs={12}>
 										<ul className="ranking-list">
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
-											<li>323,234</li>
 										</ul>
 									</Col>
 								</Row>
@@ -293,6 +277,13 @@ const Dashboard = ({ userId, userName }) => {
 			<FooterComponent />
 		</Layout>
 	);
+};
+Dashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string
+	}).isRequired
 };
 
 export default Dashboard;

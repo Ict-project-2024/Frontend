@@ -1,41 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Progress, Table, Button, Typography, Space, DatePicker,ConfigProvider } from 'antd';
+import { Layout, Row, Col, Card, Progress, Table, Button, Typography, DatePicker,ConfigProvider } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
-import FooterComponent from '../components/FooterComponent';
-import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
 import locale from 'antd/es/date-picker/locale/en_US';
+import newApiRequest from '../utils/apiRequests';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
-
-const logData = [
-	{
-		id: 1,
-		name: "Library Log",
-		logs: [
-			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '2', date: '22/04/2024', student: 'geekblue', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '3', date: '22/04/2024', student: 'red', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '4', date: '22/04/2024', student: 'purple', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '5', date: '22/04/2024', student: 'green', checkIn: '09:22 am', checkOut: '10:48 am' },
-			// More log data...
-		]
-	},
-	{
-		id: 2,
-		name: "Medical Center Log",
-		logs: [
-			{ key: '1', date: '22/04/2024', student: 'UserName', checkIn: '09:22 am', checkOut: '10:48 am' },
-			{ key: '2', date: '22/04/2024', student: 'text', checkIn: '09:22 am', checkOut: '10:48 am' },
-			// More log data...
-		]
-	}
-];
 
 const getColor = (percent) => {
 	if (percent > 75) return 'red';
@@ -111,14 +86,28 @@ const fixDateTime = (originalTime) => {
 	return Object.assign({ date: newDate, time: newTime });
 }
 
+import PropTypes from 'prop-types';
+import { useAuth } from '../context/AuthContext';
+
 const AdminDashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 	const [libraryChartData, setLibraryChartData] = useState([])
 	const [libraryStats, setLibraryStats] = useState({})
 	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
 	const [medicalCenterStats, setMedicalCenterStats] = useState({})
-	const [libraryLogData, setLibraryLogData] = useState([])
-	const [medicalCenterLogData, setMedicalCenterLogData] = useState([])
+	const {user} = useAuth();
+	const [logData, setLogData] = useState([
+		{
+			id: 0,
+			name: "Library Log",
+			logs: []
+		},
+		{
+			id: 1,
+			name: "Medical Center Log",
+			logs: []
+		}
+	])
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
@@ -127,7 +116,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let draftData = {};
 
 		for (let location of locationsList) {
-			newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/${routeFix[location]}/status`, 'POST', { "location": location })
+			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
 					if (response.success) {
 						// Set the data for each location: nivindulakshitha
@@ -156,7 +145,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let totalEntrances = 0;
 		let totalDays = 0;
 
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/library/history`, 'GET', {})
+		newApiRequest(`/api/library/history`, 'GET', {})
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -182,7 +171,7 @@ const AdminDashboard = ({ userId, userName }) => {
 
 	// Fetch the required data for library: nivindulakshitha
 	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/library/useraccess`, 'POST', {}) // Time slot should be included
+		newApiRequest(`/api/library/useraccess`, 'POST', {}) // Time slot should be included
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -190,16 +179,17 @@ const AdminDashboard = ({ userId, userName }) => {
 					response.data.map((user) => {
 						const fixedEnterDateTime = fixDateTime(user.entryTime);
 						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
-						user.entryTime = fixedEnterDateTime.time;
-						user.entryDate = fixedEnterDateTime.date;
-						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+						user.checkIn = fixedEnterDateTime.time;
+						user.date = fixedEnterDateTime.date;
+						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
-						newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', { "teNumber": user.teNumber })
+						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
 							.then(result => {
-								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
+								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
 								response.data[index] = user;
 								index++;
-								setLibraryLogData(response.data);
+								response.data.key = response.data._id;
+								logData[0].logs = response.data;
 							});
 					});
 				}
@@ -210,7 +200,7 @@ const AdminDashboard = ({ userId, userName }) => {
 	}, [userId])
 
 	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
+		newApiRequest(`/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
 			.then(response => {
 				if (response.success) {
 					// Set the data for medical center: nivindulakshitha
@@ -218,16 +208,17 @@ const AdminDashboard = ({ userId, userName }) => {
 					response.data.map((user) => {
 						const fixedEnterDateTime = fixDateTime(user.entryTime);
 						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
-						user.entryTime = fixedEnterDateTime.time;
-						user.entryDate = fixedEnterDateTime.date;
-						user.exitTime = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
+						user.checkIn = fixedEnterDateTime.time;
+						user.date = fixedEnterDateTime.date;
+						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
-						newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', { "teNumber": user.teNumber })
+						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
 							.then(result => {
-								user.userName = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber;
+								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
 								response.data[index] = user;
 								index++;
-								setMedicalCenterLogData(response.data);
+								response.data.key = response.data._id;
+								logData[1].logs = response.data;
 							});
 					});
 				}
@@ -244,7 +235,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		let totalEntrances = 0;
 		let totalDays = 0;
 
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/medical-center/history`, 'GET', {})
+		newApiRequest(`/api/medical-center/history`, 'GET', {})
 			.then(response => {
 				if (response.success) {
 					// Set the data for library: nivindulakshitha
@@ -283,13 +274,27 @@ const AdminDashboard = ({ userId, userName }) => {
             ...prevState,
             [id]: false
         }));  // Close the calendar after selection
-    };
+	};
+	
+	// Download the logs data functionality: nivindulakshitha
+	const downloadLogs = (logId) => {
+		const headers = Object.keys(logData[logId].logs[0]).join(',\t');
+		const csv = [headers, ...logData[logId].logs.map(row => Object.values(row).join(',\t'))].join('\n');
+		const blob = new Blob([csv], { type: 'text/csv' });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `${logData[logId].name} Data.csv`;
+		a.click();
+		window.URL.revokeObjectURL(url);
+	}
+
 	return (
 		<Layout>
 			<Content style={{ padding: '0 50px', overflow: 'auto' }}>
 				{/* Greeting Section */}
 				<div style={{ marginBottom: '20px' }}>
-					<GreetingSection name={userName.first} />
+					<GreetingSection name={userName.first ? userName.first : user.firstName} />
 				</div>
 
 				{/* Canteen Data Section */}
@@ -365,7 +370,7 @@ const AdminDashboard = ({ userId, userName }) => {
                                         >
                                             Custom range
                                         </Button>
-                                        <Button type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
+										<Button onClick={() => { downloadLogs(log.id) }} type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
                                             Download log
                                         </Button>
                                         {visibleCalendars[log.id] && (
@@ -408,14 +413,14 @@ const AdminDashboard = ({ userId, userName }) => {
                                             </span>
                                         )
                                     },
-                                    { title: 'Check in', dataIndex: 'checkIn', key: 'checkIn', align: 'center' },
-                                    { title: 'Check out', dataIndex: 'checkOut', key: 'checkOut', align: 'center' }
+                                    { title: 'Check in', dataIndex: 'checkIn', _id: 'checkIn', align: 'center' },
+                                    { title: 'Check out', dataIndex: 'checkOut', _id: 'checkOut', align: 'center' }
                                 ]}
                                 pagination={{
                                     pageSize: 10,
                                     showSizeChanger: false,
                                     position: ['bottomCenter'],
-                                    total: 50,
+                                    total: log.logs.length,
                                     showQuickJumper: true
                                 }}
                                 rowClassName="log-table-row"
@@ -428,7 +433,15 @@ const AdminDashboard = ({ userId, userName }) => {
         </ConfigProvider>
 			</Content>
 		</Layout>
-	);
+	)
+};
+
+AdminDashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string
+	}).isRequired
 };
 
 export default AdminDashboard;

@@ -52,7 +52,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 				const { sasUrl, blobUrl } = tokenResponse.data;
 				const fileData = info.file; 
 				console.log(info.file);
-
+        
 				const uploadResponse = await axios.put(sasUrl, fileData, {
 					headers: {
 						'x-ms-blob-type': 'BlockBlob',

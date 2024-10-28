@@ -1,12 +1,13 @@
+import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
-import { newApiRequest } from '../utils/apiRequests';
 import { formatDistanceToNow } from 'date-fns';
 import RankingBox from '../components/RankingBox';
+import newApiRequest from '../utils/apiRequests';
 
 const { Content } = Layout;
 const { Text, Title, Link } = Typography;
@@ -68,6 +69,7 @@ const esimateCrowd = (votes) => {
 	return estimatedCount.toFixed(0);
 }
 
+
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 
@@ -106,96 +108,100 @@ const Dashboard = ({ userId, userName }) => {
 		}
 	}
 
-	// Fetch the required data for each location: nivindulakshitha
-	useEffect(() => {
-		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
-		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
-		let draftData = {};
-
-		for (let location of locationsList) {
-			newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/${routeFix[location]}/status`, 'POST', { "location": location })
-				.then(response => {
-					if (response.success) {
-						// Set the data for each location: nivindulakshitha
-						draftData[location] = {}
-						draftData[location].id = locationsList.indexOf(location);
-						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
-						draftData[location].percent = response.data.votes != undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
-						draftData[location].status = response.data.votes != undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
-						draftData[location].name = location;
-						draftData[location].description = `${response.data.votes != undefined ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`;
-					}
-				})
-				.catch(error => {
-					console.error('Error fetching location data:', error);
-				})
-				.finally(() => {
-					setLocationTraffic(draftData);
-				});
-		}
-
-	}, [userName]);
-
 	// Fetch the badges data for the user: nivindulakshitha
 	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/votes/get`, 'POST', { "userId": userId })
+		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
 			.then(response => {
+				if (response.success && response.data) {
+					setUserBadges(response);
+					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+				}
+			})
+			.catch(error => console.error('Error fetching location data:', error));
+	}, [userId]); // Dependency array to re-fetch when userId changes
+
+	const [fetchTrigger, setFetchTrigger] = useState(false)
+	// Trigger the fetch every 5 seconds for live updates
+	setInterval(() => {
+		setFetchTrigger(!fetchTrigger)
+	}, 60000)
+
+	// Fetch the required data for each location: nivindulakshitha
+	useEffect(() => {
+		const fetchBadgesData = async () => {
+			try {
+				const response = await newApiRequest(`/api/votes/get`, 'POST', { userId });
 				if (response.success) {
 					setUserBadges(response.data);
 					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
 				}
-			})
-			.catch(error => {
-				console.error('Error fetching location data:', error);
-			})
-	}, [userName])
+			} catch (error) {
+				console.error('Error fetching badges data:', error);
+			}
+		};
 
-	let userVotes = {}
-	// Fetch the rankings data for the user: nivindulakshitha
-	useEffect(() => {
-		newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/votes/all`, 'GET', {})
-			.then(async response => {
+		const fetchLocationData = async () => {
+			const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
+			const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
+
+			const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location }));
+			const responses = await Promise.all(requests);
+
+			const draftData = responses.reduce((acc, response, index) => {
+				if (response.success) {
+					const location = locationsList[index];
+					const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+					acc[location] = {
+						id: index,
+						lastModified: formatDistanceToNow(response.data.lastModified, { addSuffix: true }),
+						percent: percent,
+						status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
+						name: location,
+						description: `${response.data.votes ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`
+					};
+				}
+				return acc;
+			}, {});
+			setLocationTraffic((prev) => ({ ...prev, ...draftData }));
+		};
+
+		const fetchRankingsData = async () => {
+			try {
+				const response = await newApiRequest(`/api/votes/all`, 'GET', {});
 				if (response.success) {
 					const allUsers = response.data;
+					const userVotes = {};
+					allUsers.forEach(user => { userVotes[user.userId] = user.votes; });
 
-					allUsers.forEach(user => {
-						userVotes[user.userId] = user.votes;
-					});
-
-					// Sort the users based on the votes: nivindulakshitha
-					const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
-
-					// Get the first three users with the highest votes: nivindulakshitha
-					const firstThreeVotes = rankingBoard.slice(0, 3)
-
-					// Fetch the user data for the first three users: nivindulakshitha
-					let draftRankingData = {}
+					const rankingBoard = allUsers.sort((a, b) => b.votes - a.votes);
+					const firstThreeVotes = rankingBoard.slice(0, 3);
+					let draftRankingData = {};
 					let draftTopThree = {};
-					rankingBoard.map(user => {
 
-						newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/user/`, 'POST', { userId: user.userId })
-							.then(response => {
-								response.entries = user.votes;
-								if (firstThreeVotes.includes(user)) {
-									draftTopThree[firstThreeVotes.indexOf(user)] = response;
-								}
+					await Promise.all(rankingBoard.map(async user => {
+						const userResponse = await newApiRequest(`/api/user/`, 'POST', { userId: user.userId });
+						if (userResponse !== null) {
+							userResponse.entries = user.votes;
+							if (firstThreeVotes.includes(user)) {
+								draftTopThree[firstThreeVotes.indexOf(user)] = userResponse;
+							}
+							draftRankingData[rankingBoard.indexOf(user)] = userResponse;
+						}
+					}));
 
-								draftRankingData[rankingBoard.indexOf(user)] = response;
-							})
-							.catch(error => {
-								console.error('Error fetching user data:', error);
-							})
-							.finally(() => {
-								setUserTopRankings(draftTopThree);
-								setRankingBoardData(draftRankingData);
-							});
-					})
+					setUserTopRankings(draftTopThree);
+					setRankingBoardData(draftRankingData);
 				}
-			})
-			.catch(error => {
-				console.error('Error fetching location data:', error);
-			})
-	}, [userName])
+			} catch (error) {
+				console.error('Error fetching rankings data:', error);
+			}
+		};
+
+		fetchBadgesData();
+		fetchLocationData();
+		fetchRankingsData();
+
+	}, [fetchTrigger]);
 
 
 	const [canteen, setCanteen] = useState(null);
@@ -218,29 +224,14 @@ const Dashboard = ({ userId, userName }) => {
 		}
 
 		// Submit the traffic to the database according to the respective canteen: nivindulakshitha
-		const request = await newApiRequest(`${import.meta.env.VITE_BASE_URL}/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
+		const request = await newApiRequest(`/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			message.success('Data submitted successfully');
+			setFetchTrigger(!fetchTrigger);
 		} else {
 			message.error('Failed to submit data. Please try again.');
 		}
 	};
-
-	const columns = [
-		{
-			title: '',
-			dataIndex: 'rank',
-			key: 'rank',
-			render: (text, record) => (
-				<span style={{ display: 'flex', alignItems: 'center' }}>
-					<span style={{ fontWeight: record.rank === 4 ? 'bold' : 'normal', color: record.rank === 4 ? '#1890ff' : 'inherit' }}>{record.rank}</span>
-				</span>
-			),
-			responsive: ['md'],
-		},
-		{ title: 'Your Ranking', dataIndex: 'name', key: 'name' },
-		{ title: 'Entries', dataIndex: 'entries', key: 'entries' }
-	];
 
 	return (
 		<Layout>
@@ -250,12 +241,12 @@ const Dashboard = ({ userId, userName }) => {
 					<Row gutter={[16, 16]}>
 						{
 							//Display the location data: nivindulakshitha
-							Object.keys(locationTraffic).map(location => (
-								<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
-									<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].status) }}>{locationTraffic[location].status}</span>}>
-										<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].status)} />
-										<p>{locationTraffic[location].description}</p>
-										<p>Last update was {locationTraffic[location].lastModified}</p>
+							Object.keys(locationTraffic).length > 0 && Object.keys(locationTraffic).map(locationKey => (
+								<Col xs={24} sm={12} md={6} key={locationTraffic[locationKey].id}>
+									<Card title={locationTraffic[locationKey].name} extra={<span style={{ color: getColor(locationTraffic[locationKey].status) }}>{locationTraffic[locationKey].status}</span>}>
+										<Progress type="circle" percent={locationTraffic[locationKey].percent} size={80} strokeColor={getColor(locationTraffic[locationKey].status)} />
+										<p>{locationTraffic[locationKey].description}</p>
+										<p>Last update was {locationTraffic[locationKey].lastModified}</p>
 									</Card>
 								</Col>
 							))
@@ -397,12 +388,12 @@ const Dashboard = ({ userId, userName }) => {
 														</Card>
 													</Col>
 												)) : (
-														// Display the badges that are not boolean and not null: nivindulakshitha
-														userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
+													// Display the badges that are not boolean and not null: nivindulakshitha
+													userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
 														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${userBadges.badges[badge]}`} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
-														</Col>)
+													</Col>)
 												)
 											))
 										) : (
@@ -415,7 +406,7 @@ const Dashboard = ({ userId, userName }) => {
 							<Card title="Your Ranking">
 								{
 									// Display the user ranking: nivindulakshitha
-									Object.keys(rankingBoardData).map(key => {
+									Object.keys(rankingBoardData).length > 0 && Object.keys(rankingBoardData).map(key => {
 										return (
 											<RankingBox
 												key={key}
@@ -436,5 +427,14 @@ const Dashboard = ({ userId, userName }) => {
 		</Layout>
 	);
 };
+
+Dashboard.propTypes = {
+	userId: PropTypes.string.isRequired,
+	userName: PropTypes.shape({
+		first: PropTypes.string.isRequired,
+		last: PropTypes.string.isRequired,
+	}).isRequired,
+};
+
 export default Dashboard;
 

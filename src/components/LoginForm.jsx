@@ -2,42 +2,41 @@ import React, { useState } from 'react';
 import { Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import '../assets/css/LoginForm.css';
+import { useAuth } from '../context/AuthContext';
+import newApiRequest from '../utils/apiRequests';
 
 const LoginForm = () => {
+    const {setUser, user} = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
+            const response = await newApiRequest(
+                `/api/auth/login`,
+                'POST',
                 {
                     email,
                     password,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                 }
             );
+
+            console.log('Login response:', response);
     
-            console.log('Login Response:', response.data);
-    
-            // Handle successful login
-            if (response.status === 200 && response.data.success) {
-                navigate('/dashboard', { state: response.data });
-            } else {
-                // Handle various error messages from the backend
-                if (response.data.message) {
-                    message.error(response.data.message);
+            if (response.status === 200) {
+                if (response.success) {
+                    setUser(response);
+                    sessionStorage.setItem('userBio', JSON.stringify(response));
+                    navigate('/dashboard', { state: response });
                 } else {
-                    console.log('Unexpected response:', response.data);
+                    console.log('Unexpected response:', response);
                     message.error('Failed to login. Please try again.');
                 }
+            } else {
+                console.log('Unexpected response:', response);
+                message.error(response.message || 'Failed to login. Please try again.');    
             }
         } catch (error) {
             console.error('Login error:', error);
