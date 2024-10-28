@@ -22,6 +22,8 @@ const LoginForm = () => {
                     password,
                 }
             );
+
+            console.log('Login response:', response);
     
             if (response.status === 200) {
                 if (response.success) {
@@ -32,6 +34,9 @@ const LoginForm = () => {
                     console.log('Unexpected response:', response);
                     message.error('Failed to login. Please try again.');
                 }
+            } else {
+                console.log('Unexpected response:', response);
+                message.error(response.message || 'Failed to login. Please try again.');    
             }
         } catch (error) {
             console.error('Login error:', error);
