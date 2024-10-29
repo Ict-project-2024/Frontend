@@ -1,15 +1,13 @@
 import { Routes, Route } from 'react-router-dom';
-import NavigatorBar from '../components/NavigatorBar'; // Adjust the path as needed
-// import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
-import StudentDashboard from './StudentDashboard'; // Adjust the path as needed
-import AdminDashboard from './AdminDashboard'; // Adjust the path as needed
-import CheckingOfficerDashboard from './CheckingOfficerDashboard'; // Adjust the path as needed
-import News from './News'; // Adjust the path as needed
-import AboutUs from './AboutUs'; // Ensure you have the correct path
-import '../assets/css/Home.css'; // Ensure you have the correct path
+import NavigatorBar from '../components/NavigatorBar';
+import StudentDashboard from './StudentDashboard';
+import AdminDashboard from './AdminDashboard';
+import CheckingOfficerDashboard from './CheckingOfficerDashboard';
+import News from './News';
+import AboutUs from './AboutUs';
+import '../assets/css/Home.css';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
-
 
 const Home = () => {
 	const { user, isAuthenticated } = useAuth();
@@ -17,18 +15,19 @@ const Home = () => {
 
 	useEffect(() => {
 		const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
-		if (!isAuthenticated) {
-			if (storedUserBio) {
-				setUserBio(storedUserBio);
-			} else {
-				window.location.href = '/';
-			}
-		} else {
+
+		if (isAuthenticated) {
 			setUserBio(user);
+		} else if (storedUserBio) {
+			setUserBio(storedUserBio);
+		} else {
+			window.location.href = '/';
 		}
-	}, []);
+	}, [user, isAuthenticated]);
 
 	const renderDashboard = () => {
+		if (!userBio.roles || userBio.roles.length === 0) return null;
+
 		switch (userBio.roles[0].role) {
 			case 'Admin':
 				return <AdminDashboard userId={userBio._id} userName={{ first: userBio.firstName, last: userBio.lastName }} />;
