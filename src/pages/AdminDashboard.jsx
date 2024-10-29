@@ -118,7 +118,7 @@ const AdminDashboard = ({ userId, userName }) => {
 		for (let location of locationsList) {
 			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
-					if (response.success) {
+					if (response.success && response.data) {
 						// Set the data for each location: nivindulakshitha
 						draftData[location] = {}
 						draftData[location].id = locationsList.indexOf(location);
@@ -147,7 +147,7 @@ const AdminDashboard = ({ userId, userName }) => {
 
 		newApiRequest(`/api/library/history`, 'GET', {})
 			.then(response => {
-				if (response.success) {
+				if (response.success && response.data) {
 					// Set the data for library: nivindulakshitha
 					response.data.map((data, index) => {
 						draftData[index] = new Object({
@@ -173,7 +173,7 @@ const AdminDashboard = ({ userId, userName }) => {
 	useEffect(() => {
 		newApiRequest(`/api/library/useraccess`, 'POST', {}) // Time slot should be included
 			.then(response => {
-				if (response.success) {
+				if (response.success && response.data) {
 					// Set the data for library: nivindulakshitha
 					let index = 0;
 					response.data.map((user) => {
@@ -202,7 +202,7 @@ const AdminDashboard = ({ userId, userName }) => {
 	useEffect(() => {
 		newApiRequest(`/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
 			.then(response => {
-				if (response.success) {
+				if (response.success && response.data) {
 					// Set the data for medical center: nivindulakshitha
 					let index = 0;
 					response.data.map((user) => {
@@ -237,7 +237,7 @@ const AdminDashboard = ({ userId, userName }) => {
 
 		newApiRequest(`/api/medical-center/history`, 'GET', {})
 			.then(response => {
-				if (response.success) {
+				if (response.success && response.data) {
 					// Set the data for library: nivindulakshitha
 					response.data.map((data, index) => {
 						draftData[index] = new Object({
@@ -287,6 +287,10 @@ const AdminDashboard = ({ userId, userName }) => {
 		a.download = `${logData[logId].name} Data.csv`;
 		a.click();
 		window.URL.revokeObjectURL(url);
+	}
+
+	const filterLogs = (key, start, end) => {
+		console.log(key, start, end)
 	}
 
 	return (
@@ -351,18 +355,17 @@ const AdminDashboard = ({ userId, userName }) => {
 					</Col>
 				</Row>
 
-				{/* Logs Section */}
                 <ConfigProvider locale={locale}>
             <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
-                {logData.map(log => (
+                {logData.map(log => (	
                     <Col xs={24} md={12} key={log.id}>
                         <Card
                             title={
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                                     <span>{log.name}</span>
                                     <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                                        <Button type="default" style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>All time</Button>
-                                        <Button type="default" style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>Today</Button>
+										<Button type="default" onClick={() => { filterLogs(log.id, undefined, undefined) } } style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>All time</Button>
+										<Button type="default" onClick={() => { filterLogs(log.id, new Date(), new Date()) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>Today</Button>
                                         <Button
                                             type="default"
                                             style={{ marginRight: '8px', fontSize: '14px', padding: '4px 12px' }}

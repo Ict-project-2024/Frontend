@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
+import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message, Spin } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
@@ -72,6 +72,7 @@ const esimateCrowd = (votes) => {
 
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
+	const [voteSubmitting, setVoteSubmitting] = useState(false)
 
 	// User badges data: nivindulakshitha
 	const [userBadges, setUserBadges] = useState({})
@@ -81,6 +82,14 @@ const Dashboard = ({ userId, userName }) => {
 		"dailyContributor": "Daily Contributor",
 		"frequentContributor": "Frequent Contributor",
 		"weeklyWarrior": "Weekly Warrior"
+	}
+	const badgeImages = {
+		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
+		"accuracyStar": "https://unimo.blob.core.windows.net/unimo/Acuracy Star.png",
+		"dailyContributor": "https://unimo.blob.core.windows.net/unimo/Daily Contributer.png",
+		"frequentContributor": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer.png",
+		"weeklyWarrior": "https://unimo.blob.core.windows.net/unimo/Weekly warior.png",
+		"validateContributor": "https://unimo.blob.core.windows.net/unimo/Validated Contributer.png"
 	}
 	const congratulationTexts = {
 		"firstStep": "Congratulations on making your first occupancy update!",
@@ -108,97 +117,100 @@ const Dashboard = ({ userId, userName }) => {
 		}
 	}
 
+	// Fetch the badges data for the user: nivindulakshitha
+	useEffect(() => {
+		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
+			.then(response => {
+				if (response.success && response.data) {
+					setUserBadges(response);
+					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+				}
+			})
+			.catch(error => console.error('Error fetching location data:', error));
+	}, [userId]); // Dependency array to re-fetch when userId changes
+
+	const [fetchTrigger, setFetchTrigger] = useState(false)
+	// Trigger the fetch every 5 seconds for live updates
+	setInterval(() => {
+		setFetchTrigger(!fetchTrigger)
+	}, 600000)
+
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
+		const fetchBadgesData = async () => {
+			try {
+				const response = await newApiRequest(`/api/votes/get`, 'POST', { userId });
+				if (response.success) {
+					setUserBadges(response.data);
+					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+				}
+			} catch (error) {
+				console.error('Error fetching badges data:', error);
+			}
+		};
+
 		const fetchLocationData = async () => {
 			const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 			const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
 
-			const requests = locationsList.map(location => {
-				return newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location });
-			});
-
+			const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location: location }));
 			const responses = await Promise.all(requests);
 
 			const draftData = responses.reduce((acc, response, index) => {
 				if (response.success) {
 					const location = locationsList[index];
+					const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
 					acc[location] = {
 						id: index,
 						lastModified: formatDistanceToNow(response.data.lastModified, { addSuffix: true }),
-						percent: response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy),
-						status: response.data.votes ? determineCrowdedness(acc[location].percent) : determineCrowdedness(response.data.currentOccupancy, location),
+						percent: percent,
+						status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
 						name: location,
 						description: `${response.data.votes ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`
 					};
 				}
 				return acc;
 			}, {});
-
-			setLocationTraffic(draftData);
+			setLocationTraffic((prev) => ({ ...prev, ...draftData }));
 		};
 
-		fetchLocationData();
-	}, [userId]);
-
-
-	// Fetch the badges data for the user: nivindulakshitha
-	useEffect(() => {
-		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
-			.then(response => {
+		const fetchRankingsData = async () => {
+			try {
+				const response = await newApiRequest(`/api/votes/all`, 'GET', {});
 				if (response.success) {
-					setUserBadges(response.data);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
-				}
-			})
-			.catch(error => console.error('Error fetching location data:', error));
-	}, [userId]);
+					const allUsers = response.data;
+					const userVotes = {};
+					allUsers.forEach(user => { userVotes[user.userId] = user.votes; });
 
-	// Fetch the rankings data for the user: nivindulakshitha
-	let userVotes = {}
-	newApiRequest(`/api/votes/all`, 'GET', {})
-		.then(async response => {
-			if (response.success) {
-				const allUsers = response.data;
+					const rankingBoard = allUsers.sort((a, b) => b.votes - a.votes);
+					const firstThreeVotes = rankingBoard.slice(0, 3);
+					let draftRankingData = {};
+					let draftTopThree = {};
 
-				allUsers.forEach(user => {
-					userVotes[user.userId] = user.votes;
-				});
-
-				// Sort the users based on the votes: nivindulakshitha
-				const rankingBoard = await allUsers.sort((a, b) => b.votes - a.votes)
-
-				// Get the first three users with the highest votes: nivindulakshitha
-				const firstThreeVotes = rankingBoard.slice(0, 3)
-
-				// Fetch the user data for the first three users: nivindulakshitha
-				let draftRankingData = {}
-				let draftTopThree = {};
-				rankingBoard.map(user => {
-					newApiRequest(`/api/user/`, 'POST', { userId: user.userId })
-						.then(response => {
-							if (response !== null) {
-								response.entries = user.votes;
-								if (firstThreeVotes.includes(user)) {
-									draftTopThree[firstThreeVotes.indexOf(user)] = response;
-								}
-
-								draftRankingData[rankingBoard.indexOf(user)] = response;
+					await Promise.all(rankingBoard.map(async user => {
+						const userResponse = await newApiRequest(`/api/user/`, 'POST', { userId: user.userId });
+						if (userResponse !== null) {
+							userResponse.entries = user.votes;
+							if (firstThreeVotes.includes(user)) {
+								draftTopThree[firstThreeVotes.indexOf(user)] = userResponse;
 							}
-						})
-						.catch(error => {
-							console.error('Error fetching user data:', error);
-						})
-						.finally(() => {
-							setUserTopRankings(draftTopThree);
-							setRankingBoardData(draftRankingData);
-						});
-				})
+							draftRankingData[rankingBoard.indexOf(user)] = userResponse;
+						}
+					}));
+
+					setUserTopRankings(draftTopThree);
+					setRankingBoardData(draftRankingData);
+				}
+			} catch (error) {
+				console.error('Error fetching rankings data:', error);
 			}
-		})
-		.catch(error => {
-			console.error('Error fetching location data:', error);
-		})
+		};
+
+		fetchBadgesData();
+		fetchLocationData();
+		fetchRankingsData();
+
+	}, [fetchTrigger]);
 
 
 	const [canteen, setCanteen] = useState(null);
@@ -215,8 +227,10 @@ const Dashboard = ({ userId, userName }) => {
 
 	// Handle form submission
 	const handleSubmit = async () => {
+		setVoteSubmitting(true);
 		if (!canteen || !peopleRange || !agreement) {
 			message.error('Please fill all the fields and agree to the terms.');
+			setVoteSubmitting(false);
 			return;
 		}
 
@@ -224,26 +238,13 @@ const Dashboard = ({ userId, userName }) => {
 		const request = await newApiRequest(`/api/canteen/report`, 'POST', { userId, canteen, peopleRange });
 		if (request.success) {
 			message.success('Data submitted successfully');
+			setFetchTrigger(!fetchTrigger);
+			setVoteSubmitting(false);
 		} else {
 			message.error('Failed to submit data. Please try again.');
+			setVoteSubmitting(false);
 		}
 	};
-
-	const columns = [
-		{
-			title: '',
-			dataIndex: 'rank',
-			key: 'rank',
-			render: (text, record) => (
-				<span style={{ display: 'flex', alignItems: 'center' }}>
-					<span style={{ fontWeight: record.rank === 4 ? 'bold' : 'normal', color: record.rank === 4 ? '#1890ff' : 'inherit' }}>{record.rank}</span>
-				</span>
-			),
-			responsive: ['md'],
-		},
-		{ title: 'Your Ranking', dataIndex: 'name', key: 'name' },
-		{ title: 'Entries', dataIndex: 'entries', key: 'entries' }
-	];
 
 	return (
 		<Layout>
@@ -253,12 +254,12 @@ const Dashboard = ({ userId, userName }) => {
 					<Row gutter={[16, 16]}>
 						{
 							//Display the location data: nivindulakshitha
-							Object.keys(locationTraffic).length > 0 && locationTraffic.map(location => (
-								<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
-									<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].status) }}>{locationTraffic[location].status}</span>}>
-										<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].status)} />
-										<p>{locationTraffic[location].description}</p>
-										<p>Last update was {locationTraffic[location].lastModified}</p>
+							Object.keys(locationTraffic).length > 0 && Object.keys(locationTraffic).map(locationKey => (
+								<Col xs={24} sm={12} md={6} key={locationTraffic[locationKey].id}>
+									<Card title={locationTraffic[locationKey].name} extra={<span style={{ color: getColor(locationTraffic[locationKey].status) }}>{locationTraffic[locationKey].status}</span>}>
+										<Progress type="circle" percent={locationTraffic[locationKey].percent} size={80} strokeColor={getColor(locationTraffic[locationKey].status)} />
+										<p>{locationTraffic[locationKey].description}</p>
+										<p>Last update was {locationTraffic[locationKey].lastModified}</p>
 									</Card>
 								</Col>
 							))
@@ -318,9 +319,11 @@ const Dashboard = ({ userId, userName }) => {
 										I agree that I’m submitting true data only
 									</Checkbox>
 								</div>
-								<Button type="primary" className="submit-button" onClick={handleSubmit}>
-									Submit
-								</Button>
+								<Spin spinning={voteSubmitting}>
+									<Button type="primary" className="submit-button" onClick={handleSubmit}>
+										Submit
+									</Button>
+								</Spin>
 							</Card>
 						</Col>
 						<Col xs={24} md={12}>
@@ -331,19 +334,19 @@ const Dashboard = ({ userId, userName }) => {
 										userTopRankings && Object.keys(userTopRankings).length > 0 && (
 											<>
 												<Col xs={24} sm={8}>
-													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Dining Dynamo" alt="Dining Dynamo" />}>
+													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Dinning Dynamo.png" alt="Dining Dynamo" />}>
 														<Card.Meta title="Dining Dynamo" description={userTopRankings[1] && `${userTopRankings[1].firstName} ${userTopRankings[1].lastName}`} />
 														{userTopRankings[1] && (<Text>{userTopRankings[1].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8} className="hero-card-big">
-													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Canteen Champion" alt="Canteen Champion" />}>
+													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Canteen Champion.png" alt="Canteen Champion" />}>
 														<Card.Meta title="Canteen Champion" description={userTopRankings[0] && `${userTopRankings[0].firstName} ${userTopRankings[0].lastName}`} />
 														{userTopRankings[0] && (<Text>{userTopRankings[0].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8}>
-													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Foodie Forecaster" alt="Foodie Forecaster" />}>
+													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Foodie Forcaster.png" alt="Foodie Forecaster" />}>
 														<Card.Meta title="Foodie Forecaster" description={userTopRankings[2] && `${userTopRankings[2].firstName} ${userTopRankings[2].lastName}`} />
 														{userTopRankings[2] && (<Text>{userTopRankings[2].entries}  Entries in a row</Text>)}
 													</Card>
@@ -395,14 +398,14 @@ const Dashboard = ({ userId, userName }) => {
 												// Some badges are holding true or false values; check for those: nivindulakshitha
 												typeof userBadges.badges[badge] == 'boolean' ? (!userBadges.badges[badge] && (
 													<Col xs={24} sm={8} key={badge}>
-														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${badge}`} alt={badge} />}>
+														<Card cover={<img src={badgeImages[badge]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
 													</Col>
 												)) : (
 													// Display the badges that are not boolean and not null: nivindulakshitha
 													userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
-														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${userBadges.badges[badge]}`} alt={badge} />}>
+														<Card cover={<img src={badgeImages[badge]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
 													</Col>)

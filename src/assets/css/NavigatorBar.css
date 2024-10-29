@@ -17,6 +17,8 @@
 }
 
 .logo {
+position: fixed;
+left: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -38,12 +40,14 @@
 }
 
 .user-section {
+position: fixed;
+right: 20px;
   display: flex;
   align-items: center;
 }
 
 .notification-badge {
-  margin-right: 15px;
+  margin-right: 10px;
 }
 
 .icon {
@@ -90,9 +94,10 @@
   }
 
   .logo {
-    flex: 1;
     display: flex;
-    justify-content: center; /* Center the logo in the available space */
+    justify-content: end; /* Center the logo in the available space */
+    right: 20px;
+    z-index: 0;
   }
 
   .logo img {
@@ -121,6 +126,7 @@
 
   .hamburger-menu {
     display: block; /* Show hamburger menu on smaller screens */
+    z-index: 1;
   }
 }
 

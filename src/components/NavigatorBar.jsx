@@ -3,51 +3,42 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Badge, Avatar } from 'antd';
 import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext.jsx';
-import '../assets/css/NavigatorBar.css'; 
+import '../assets/css/NavigatorBar.css';
 
 const NavigatorBar = ({ userName }) => {
-	const { logout } = useAuth();
+	const { user } = useAuth();
 	const navigate = useNavigate();
 	const [username, setUsername] = useState('');
 	const [notifications, setNotifications] = useState(0);
 	const [avatarUrl, setAvatarUrl] = useState('');
 	const [menuVisible, setMenuVisible] = useState(false);
-	const { user, setUser } = useAuth();
 
-	useEffect(() => {		
-		const fetchUserBio = () => {
-			const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
-			if (storedUserBio) {
-				setUser(storedUserBio);
-				setUsername(`${storedUserBio.firstName} ${storedUserBio.lastName}`);
-				setAvatarUrl(storedUserBio.profileImage);
-			} else {
-				if (Object.hasOwn(user, '_id')) {
-					sessionStorage.setItem('userBio', JSON.stringify(user));
-					setUsername(`${user.firstName} ${user.lastName}`);
-					setAvatarUrl(user.profileImage);
-				} else {
-					window.location.href = '/';
-				}
-			}
-		};
+	useEffect(() => {
+		const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
 
-		fetchUserBio();
+		if (storedUserBio) {
+			setUsername(`${storedUserBio.firstName} ${storedUserBio.lastName}`);
+			setAvatarUrl(storedUserBio.profileImage);
+		} else if (user && user._id) {
+			sessionStorage.setItem('userBio', JSON.stringify(user));
+			setUsername(`${user.firstName} ${user.lastName}`);
+			setAvatarUrl(user.profileImage);
+		} else {
+			window.location.href = '/';
+		}
 	}, [user]);
 
 	const handleLogout = () => {
-		
 		document.cookie.split(';').forEach((cookie) => {
 			const cookieName = cookie.split('=')[0];
 			document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 		});
 
-		localStorage.clear(); 
+		localStorage.clear();
 		sessionStorage.clear();
 
 		navigate('/login');
 	};
-
 
 	const toggleMenu = () => {
 		setMenuVisible(!menuVisible);
@@ -85,21 +76,21 @@ const NavigatorBar = ({ userName }) => {
 			{menuVisible && (
 				<div className={`dropdown-menu ${menuVisible ? 'visible' : ''}`}>
 					<Menu mode="vertical" defaultSelectedKeys={['live-status']}>
-						<Menu.Item key="live-status">
+						<Menu.Item key="live-status" onClick={toggleMenu}>
 							<Link to="/dashboard">Live Status</Link>
 						</Menu.Item>
-						<Menu.Item key="news">
+						<Menu.Item key="news" onClick={toggleMenu}>
 							<Link to="/news">News</Link>
 						</Menu.Item>
-						<Menu.Item key="about-us">
+						<Menu.Item key="about-us" onClick={toggleMenu}>
 							<Link to="/about-us">About Us</Link>
 						</Menu.Item>
-						<Menu.Item key="notifications">
+						<Menu.Item key="notifications" onClick={toggleMenu}>
 							<Badge count={notifications}>
 								<Link to="/notifications">Notifications</Link>
 							</Badge>
 						</Menu.Item>
-						<Menu.Item key="logout">
+						<Menu.Item key="logout" onClick={toggleMenu}>
 							<LogoutOutlined className="icon" onClick={handleLogout} />
 							<span onClick={handleLogout}>Log out</span>
 						</Menu.Item>

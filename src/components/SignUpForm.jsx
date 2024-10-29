@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Row, Col, Radio, Upload, message, Progress } from 'antd';
+import { Input, Button, Row, Col, Radio, Upload, message, Progress, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import '../assets/css/Signup.css';
@@ -50,11 +50,13 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 				const tokenResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
 				console.log(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
 				const { sasUrl, blobUrl } = tokenResponse.data;
-
-				const uploadResponse = await axios.put(sasUrl, info.file.originFileObj, {
+				const fileData = info.file; 
+				console.log(info.file);
+        
+				const uploadResponse = await axios.put(sasUrl, fileData, {
 					headers: {
 						'x-ms-blob-type': 'BlockBlob',
-						'Content-Type': info.file.type,
+						'Content-Type': fileData.type,
 					},
 					onUploadProgress: (progressEvent) => {
 						const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -252,9 +254,11 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 							)}
 						</div>
 
-						<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
-							{registering ? 'Registering...' : 'Register'}
-						</Button>
+						<Spin spinning={registering}>
+							<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
+								{registering ? 'Registering...' : 'Register'}
+							</Button>
+						</Spin>
 					</form>
 					<RegistrationSuccessPopup isVisible={isModalVisible} onClose={handleCloseModal} />
 				</div>
