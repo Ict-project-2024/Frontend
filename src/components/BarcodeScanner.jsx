@@ -38,7 +38,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				if (response) {
 					setcheckInOutUser(response);
 				} else {
-					message.error("User could not be found");
+					message.error(`TE${scanResult} could not be found`);
 				}
 			});
 		}
