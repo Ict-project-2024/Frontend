@@ -14,7 +14,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	const [scanResult, setScanResult] = useState(null); // Store the scanned result
 	const [scanTime, setScanTime] = useState(null); // Store the scan time
 	const [showSuccessScreen, setShowSuccessScreen] = useState(false); // New state to manage success screen
-	const [checkInUser, setCheckInUser] = useState(null);
+	const [checkInOutUser, setcheckInOutUser] = useState(null);
 	const scannerRef = useRef(null);
 	const quaggaInitialized = useRef(false);
 	const [checkedUser, setCheckedUser] = useState({})
@@ -36,7 +36,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				teNumber: `TE${scanResult}`,
 			}).then(response => {
 				if (response) {
-					setCheckInUser(response);
+					setcheckInOutUser(response);
 				} else {
 					message.error("User could not be found");
 				}
@@ -89,7 +89,6 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				}
 				quaggaInitialized.current = true;
 				Quagga.start();
-				console.log("Quagga initialized successfully");
 			}
 		);
 
@@ -97,8 +96,10 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	};
 
 	const stopScanner = () => {
-		if (quaggaInitialized.current) {
+		try {
 			Quagga.stop();
+		} catch (error) {
+			console.log(error)
 		}
 	};
 
@@ -106,8 +107,8 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 		const currentDateTime = new Date();
 		setScanning(false);
 		setScanComplete(true);
-		setScanResult(result.codeResult.code); // Store the result
-		//setScanResult(107802); // Hard code for testing
+		//setScanResult(result.codeResult.code); // Store the result
+		setScanResult(107802); // Hard code for testing
 		setScanTime(currentDateTime); // Store the current date and time
 		stopScanner(); // Pause the camera immediately
 	};
@@ -129,7 +130,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 						setCheckedUser({
 							teNumber: `TE${scanResult}`,
 						});
-						message.error("User could not be found");
+						message.error(`TE${scanResult} could not be found`);
 					}
 				});
 				setScanning(false);
@@ -137,7 +138,6 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				setScanning(false);
 				message.error('Invalid QR code');
 			}
-			setShowSuccessScreen(true);
 		}
 	};
 
@@ -163,11 +163,10 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 			return; // Exit the function if the role is not recognized
 		}
 
-		console.log('URL:', url);
-
 		newApiRequest(url, 'POST', checkedUser).then(response => {
 			if (response && response.success) {
 				message.success('Check-in logging successful');
+				setShowSuccessScreen(true);
 			} else {
 				message.error('Check-in logging failed');
 			}
@@ -200,28 +199,27 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	return (
 		<div className="barcode-scanner-container">
 			<Card className="scanning-card" bordered={false}>
-				<div className="card-content">
-					<div className="camera-container" ref={scannerRef} />
+				<div className={`card-content ${scanning ? '' : 'detach'}`}>
+					<div className={`camera-container`} ref={scannerRef} />
 					<div className="scanning-status">
 						{scanning ? (
 							<>
-								<Spin size="large" />
+								<Spin size="small" style={{ marginRight: '8px' }} />
 								<span>Scanning...</span>
 							</>
-						) : (
-							<span>Scan complete</span>
-						)}
+						) : (<></>)}
 					</div>
 				</div>
 				<div className="scan-result">
 					{scanResult && scanTime && (
 						<div className="result-display">
-							<div className="avatar">
-								<Avatar src={checkInUser ? checkInUser.profileImage : '...'} className="avatar" />
+							<div className="checkinout-avatar">
+								<Avatar src={checkInOutUser ? checkInOutUser.profileImage : '...'} style={{ width: 60, height: 60, border: `${actionType === 'checkin' ? '3px solid #52c41a' : '3px solid #f5222d'}` }} className="checkinout-avatar" />
 							</div>
 							<div className="scan-details">
 								<p><strong>Reg. No:</strong> {`TE${scanResult}`}</p>
-								<p><strong>Name:</strong> {checkInUser? checkInUser.firstName : '...'} </p>
+								<p><strong>Name:</strong> { checkInOutUser ? `${checkInOutUser.firstName} ${checkInOutUser.lastName}` : '...' }</p>
+								<p><strong>Mobile:</strong> {checkInOutUser ? checkInOutUser.mobileNumber : '...'} </p>
 								<p><strong>Time:</strong> {scanTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
 							</div>
 						</div>
