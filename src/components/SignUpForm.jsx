@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Row, Col, Radio, Upload, message, Progress } from 'antd';
+import { Input, Button, Row, Col, Radio, Upload, message, Progress, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import '../assets/css/Signup.css';
@@ -254,9 +254,11 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 							)}
 						</div>
 
-						<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
-							{registering ? 'Registering...' : 'Register'}
-						</Button>
+						<Spin spinning={registering}>
+							<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
+								{registering ? 'Registering...' : 'Register'}
+							</Button>
+						</Spin>
 					</form>
 					<RegistrationSuccessPopup isVisible={isModalVisible} onClose={handleCloseModal} />
 				</div>

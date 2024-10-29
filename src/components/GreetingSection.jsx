@@ -5,7 +5,7 @@ import '../assets/css/GreetingSection.css'; // Ensure you have the correct path
 import { useAuth } from '../context/AuthContext';
 
 const GreetingSection = ({ name }) => {
-	const { user } = useAuth();
+	const { user, isAuthenticated } = useAuth();
 	
 	const [loggedUser, setLoggedUser] = useState({
 		name: name,
@@ -20,10 +20,22 @@ const GreetingSection = ({ name }) => {
 	});
 
 	useEffect(() => {
-		setLoggedUser({
-			name: user.firstName,
-			avatar: user.profileImage
-		})
+		const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
+		if (!isAuthenticated) {
+			if (storedUserBio) {
+				setLoggedUser({
+					name: storedUserBio.firstName,
+					avatar: storedUserBio.profileImage
+				})
+			} else {
+				window.location.href = '/';
+			}
+		} else {
+			setLoggedUser({
+				name: user.firstName,
+				avatar: user.profileImage
+			})
+		}
 
 		// Function to update date, day, and time
 		const updateDateTime = () => {

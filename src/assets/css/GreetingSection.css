@@ -1,188 +1,216 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 .greeting-section {
-  width: 100%; /* Take full width of the page */
-  padding: 20px;
-  background-color: #fff;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: nowrap; /* Prevent wrapping of child elements on larger screens */
+	width: 100%;
+	/* Take full width of the page */
+	padding: 20px;
+	background-color: #fff;
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: nowrap;
+	/* Prevent wrapping of child elements on larger screens */
 }
 
 .flex {
-  display: flex;
-  gap: 24px;
+	display: flex;
+	gap: 24px;
 }
 
 .align-items-center {
-  align-items: center;
+	align-items: center;
 }
 
 .greeting-left {
-  display: flex;
-  align-items: center;
-  flex: 1;
+	display: flex;
+	align-items: center;
+	flex: 1;
 }
 
 .greet-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  margin-right: 15px;
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	margin-right: 15px;
 }
 
 .greeting-text {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
+	display: flex;
+	flex-direction: column;
+	text-align: left;
 }
 
 .greeting-text h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 400;
+	margin: 0;
+	font-size: 24px;
+	font-weight: 400;
 }
 
 .greeting-text p:not(.smallLetters) {
-  margin: 0;
-  font-size: 24px;
-  margin-bottom: 8px;
-  font-weight: 600;
+	margin: 0;
+	font-size: 24px;
+	margin-bottom: 8px;
+	font-weight: 600;
 }
 
 .smallLetters {
-  margin: 0;
-  font-size: 14px;
-  color: #888;
+	margin: 0;
+	font-size: 14px;
+	color: #888;
 }
 
 .quick-links {
-  margin-top: 5px;
-  display: flex;
-  gap: 16px;
+	margin-top: 5px;
+	display: flex;
+	gap: 16px;
 }
 
 .quick-links a {
-  margin-right: 10px;
-  color: #1890ff;
-  display: inline-flex;
-  align-items: center;
-  font-size: 16px;
+	margin-right: 10px;
+	color: #1890ff;
+	display: inline-flex;
+	align-items: center;
+	font-size: 16px;
 }
 
 .quick-links a svg {
-  margin-right: 5px;
+	margin-right: 5px;
 }
 
 .greeting-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	flex: 1;
 }
 
 .date-time {
-  display: flex;
-  gap: 20px;
-  justify-content: flex-end;
-  text-align: right;
+	display: flex;
+	gap: 20px;
+	justify-content: flex-end;
+	text-align: right;
 }
 
 .date-time p {
-  margin: 0;
-  font-size: 16px; /* Increase font size */
+	margin: 0;
+	font-size: 16px;
+	white-space: nowrap;
+	/* Increase font size */
 }
 
 .date-time p strong {
-  display: block;
-  font-size: 16px; /* Increase font size */
-  color: #888;
+	display: block;
+	font-size: 16px;
+	/* Increase font size */
+	color: #888;
 }
 
 .date-time p span:not(.smallLetters) {
-  font-size: 17px; /* Increase font size */
-  color: #000;
+	font-size: 17px;
+	/* Increase font size */
+	color: #000;
 }
 
 .date-time .uppercaseText {
-  text-transform: uppercase;
+	text-transform: uppercase;
 }
 
 .greet-avatar {
-  margin-right: 20px;
+	margin-right: 20px;
 }
 
 @media (max-width: 768px) {
-  .greeting-section {
-    flex-direction: column;
-    align-items: center;
-    padding: 15px; /* Reduce padding for smaller screens */
-  }
+	.greeting-section {
+		flex-direction: column;
+		align-items: center;
+		padding: 15px;
+		/* Reduce padding for smaller screens */
+	}
 
-  .greeting-left {
-    margin-bottom: 15px; /* Adjust spacing for smaller screens */
-    flex-direction: column;
-    text-align: center;
-  }
+	.greeting-left {
+		margin-bottom: 15px;
+		/* Adjust spacing for smaller screens */
+		flex-direction: column;
+		text-align: center;
+	}
 
-  .greeting-section .greet-avatar {
-    width: 60px !important; /* Reduce avatar size for smaller screens */
-    height: 60px !important; /* Reduce avatar size for smaller screens */
-    margin-bottom: 10px;
-    margin-right: 10px;
-  }
+	.greeting-section .greet-avatar {
+		width: 60px !important;
+		/* Reduce avatar size for smaller screens */
+		height: 60px !important;
+		/* Reduce avatar size for smaller screens */
+		margin-bottom: 10px;
+		margin-right: 10px;
+	}
 
-  .greeting-text {
-    text-align: center;
-  }
+	.greeting-text {
+		text-align: center;
+	}
 
-  .greeting-text h2 {
-    font-size: 20px; /* Reduce font size for smaller screens */
-  }
+	.greeting-text h2 {
+		font-size: 20px;
+	}
 
-  .greeting-text p {
-    font-size: 14px; /* Reduce font size for smaller screens */
-  }
+	.greeting-text p {
+		font-size: 14px;
+	}
 
-  .quick-links {
-    margin-top: 5px;
-    gap: 5px;
-    justify-content: center;
-  }
+	.quick-links {
+		margin-top: 5px;
+		gap: 10px !important;
+		justify-content: center;
+		flex-direction: row !important;
+	}
 
-  .quick-links a {
-    font-size: 14px; /* Reduce font size for smaller screens */
-    margin-right: 5px; /* Adjust margin for smaller screens */
-  }
+	.greeting-text div {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
 
-  .quick-links a svg {
-    width: 14px; /* Reduce icon size for smaller screens */
-    height: 14px; /* Reduce icon size for smaller screens */
-    margin-right: 3px;
-  }
 
-  .greeting-right {
-    align-items: center; /* Align to center on smaller screens */
-  }
+	.quick-links a {
+		font-size: 14px;
+		/* Reduce font size for smaller screens */
+		margin-right: 5px;
+		/* Adjust margin for smaller screens */
+	}
 
-  .date-time {
-    gap: 10px; /* Reduce gap for smaller screens */
-    justify-content: center;
-    text-align: center;
-  }
+	.quick-links a svg {
+		width: 14px;
+		/* Reduce icon size for smaller screens */
+		height: 14px;
+		/* Reduce icon size for smaller screens */
+		margin-right: 3px;
+	}
 
-  .date-time p {
-    text-align: center; /* Align text to the center */
-    font-size: 16px; /* Adjust font size */
-  }
+	.greeting-right {
+		align-items: center;
+		/* Align to center on smaller screens */
+	}
 
-  .date-time p strong {
-    font-size: 16px; /* Adjust font size */
-  }
+	.date-time {
+		gap: 30px;
+		/* Reduce gap for smaller screens */
+		justify-content: center;
+		text-align: center;
+	}
 
-  .date-time p span {
-    font-size: 18px; /* Adjust font size */
-  }
+	.date-time p {
+		text-align: center;
+		/* Align text to the center */
+		font-size: 16px;
+		/* Adjust font size */
+	}
+
+	.date-time p strong {
+		font-size: 16px;
+		/* Adjust font size */
+	}
+
+	.date-time p span {
+		font-size: 18px;
+		/* Adjust font size */
+	}
 }
