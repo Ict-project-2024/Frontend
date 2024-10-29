@@ -107,8 +107,8 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 		const currentDateTime = new Date();
 		setScanning(false);
 		setScanComplete(true);
-		//setScanResult(result.codeResult.code); // Store the result
-		setScanResult(107802); // Hard code for testing
+		setScanResult(result.codeResult.code); // Store the result
+		//setScanResult(107802); // Hard code for testing
 		setScanTime(currentDateTime); // Store the current date and time
 		stopScanner(); // Pause the camera immediately
 	};
