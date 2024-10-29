@@ -89,6 +89,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				}
 				quaggaInitialized.current = true;
 				Quagga.start();
+				console.log("Quagga initialized successfully");
 			}
 		);
 
@@ -107,8 +108,8 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 		const currentDateTime = new Date();
 		setScanning(false);
 		setScanComplete(true);
-		//setScanResult(result.codeResult.code); // Store the result
-		setScanResult(107802); // Hard code for testing
+		setScanResult(result.codeResult.code); // Store the result
+		//setScanResult(107802); // Hard code for testing
 		setScanTime(currentDateTime); // Store the current date and time
 		stopScanner(); // Pause the camera immediately
 	};
@@ -162,6 +163,8 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 			message.error('Unknown role, cannot determine URL');
 			return; // Exit the function if the role is not recognized
 		}
+
+		console.log('URL:', url);
 
 		newApiRequest(url, 'POST', checkedUser).then(response => {
 			if (response && response.success) {
