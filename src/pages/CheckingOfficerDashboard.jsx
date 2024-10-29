@@ -25,7 +25,7 @@ const CheckingOfficerDashboard = ({ role }) => {
 	};
 
 	const handleScan = data => {
-		setScanning(false);
+		setScanning(true);
 		setCheckedUser(data);
 	};
 
