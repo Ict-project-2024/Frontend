@@ -26,7 +26,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
         startScanner();
     }
     return () => stopScanner();
-}, [scannerRef.current]);
+}, [scannerRef]);
 
 	useEffect(() => {
 		const teRegex = /^\d{6}$/;
@@ -38,7 +38,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				if (response) {
 					setcheckInOutUser(response);
 				} else {
-					message.error("User could not be found");
+					message.error(`TE${scanResult} could not be found`);
 				}
 			});
 		}
@@ -89,6 +89,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				}
 				quaggaInitialized.current = true;
 				Quagga.start();
+				console.log("Quagga initialized successfully");
 			}
 		);
 
@@ -162,6 +163,8 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 			message.error('Unknown role, cannot determine URL');
 			return; // Exit the function if the role is not recognized
 		}
+
+		console.log('URL:', url);
 
 		newApiRequest(url, 'POST', checkedUser).then(response => {
 			if (response && response.success) {

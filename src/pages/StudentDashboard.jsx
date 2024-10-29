@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message } from 'antd';
+import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message, Spin } from 'antd';
 import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
@@ -72,6 +72,7 @@ const esimateCrowd = (votes) => {
 
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
+	const [voteSubmitting, setVoteSubmitting] = useState(false)
 
 	// User badges data: nivindulakshitha
 	const [userBadges, setUserBadges] = useState({})
@@ -81,6 +82,14 @@ const Dashboard = ({ userId, userName }) => {
 		"dailyContributor": "Daily Contributor",
 		"frequentContributor": "Frequent Contributor",
 		"weeklyWarrior": "Weekly Warrior"
+	}
+	const badgeImages = {
+		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
+		"accuracyStar": "https://unimo.blob.core.windows.net/unimo/Acuracy Star.png",
+		"dailyContributor": "https://unimo.blob.core.windows.net/unimo/Daily Contributer.png",
+		"frequentContributor": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer.png",
+		"weeklyWarrior": "https://unimo.blob.core.windows.net/unimo/Weekly warior.png",
+		"validateContributor": "https://unimo.blob.core.windows.net/unimo/Validated Contributer.png"
 	}
 	const congratulationTexts = {
 		"firstStep": "Congratulations on making your first occupancy update!",
@@ -124,7 +133,7 @@ const Dashboard = ({ userId, userName }) => {
 	// Trigger the fetch every 5 seconds for live updates
 	setInterval(() => {
 		setFetchTrigger(!fetchTrigger)
-	}, 60000)
+	}, 600000)
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
@@ -144,7 +153,7 @@ const Dashboard = ({ userId, userName }) => {
 			const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 			const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
 
-			const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location }));
+			const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location: location }));
 			const responses = await Promise.all(requests);
 
 			const draftData = responses.reduce((acc, response, index) => {
@@ -218,8 +227,10 @@ const Dashboard = ({ userId, userName }) => {
 
 	// Handle form submission
 	const handleSubmit = async () => {
+		setVoteSubmitting(true);
 		if (!canteen || !peopleRange || !agreement) {
 			message.error('Please fill all the fields and agree to the terms.');
+			setVoteSubmitting(false);
 			return;
 		}
 
@@ -228,8 +239,10 @@ const Dashboard = ({ userId, userName }) => {
 		if (request.success) {
 			message.success('Data submitted successfully');
 			setFetchTrigger(!fetchTrigger);
+			setVoteSubmitting(false);
 		} else {
 			message.error('Failed to submit data. Please try again.');
+			setVoteSubmitting(false);
 		}
 	};
 
@@ -306,9 +319,11 @@ const Dashboard = ({ userId, userName }) => {
 										I agree that I’m submitting true data only
 									</Checkbox>
 								</div>
-								<Button type="primary" className="submit-button" onClick={handleSubmit}>
-									Submit
-								</Button>
+								<Spin spinning={voteSubmitting}>
+									<Button type="primary" className="submit-button" onClick={handleSubmit}>
+										Submit
+									</Button>
+								</Spin>
 							</Card>
 						</Col>
 						<Col xs={24} md={12}>
@@ -319,19 +334,19 @@ const Dashboard = ({ userId, userName }) => {
 										userTopRankings && Object.keys(userTopRankings).length > 0 && (
 											<>
 												<Col xs={24} sm={8}>
-													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Dining Dynamo" alt="Dining Dynamo" />}>
+													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Dinning Dynamo.png" alt="Dining Dynamo" />}>
 														<Card.Meta title="Dining Dynamo" description={userTopRankings[1] && `${userTopRankings[1].firstName} ${userTopRankings[1].lastName}`} />
 														{userTopRankings[1] && (<Text>{userTopRankings[1].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8} className="hero-card-big">
-													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Canteen Champion" alt="Canteen Champion" />}>
+													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Canteen Champion.png" alt="Canteen Champion" />}>
 														<Card.Meta title="Canteen Champion" description={userTopRankings[0] && `${userTopRankings[0].firstName} ${userTopRankings[0].lastName}`} />
 														{userTopRankings[0] && (<Text>{userTopRankings[0].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8}>
-													<Card className="hero-card" cover={<img src="https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=Foodie Forecaster" alt="Foodie Forecaster" />}>
+													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Foodie Forcaster.png" alt="Foodie Forecaster" />}>
 														<Card.Meta title="Foodie Forecaster" description={userTopRankings[2] && `${userTopRankings[2].firstName} ${userTopRankings[2].lastName}`} />
 														{userTopRankings[2] && (<Text>{userTopRankings[2].entries}  Entries in a row</Text>)}
 													</Card>
@@ -383,14 +398,14 @@ const Dashboard = ({ userId, userName }) => {
 												// Some badges are holding true or false values; check for those: nivindulakshitha
 												typeof userBadges.badges[badge] == 'boolean' ? (!userBadges.badges[badge] && (
 													<Col xs={24} sm={8} key={badge}>
-														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${badge}`} alt={badge} />}>
+														<Card cover={<img src={badgeImages[badge]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
 													</Col>
 												)) : (
 													// Display the badges that are not boolean and not null: nivindulakshitha
 													userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
-														<Card cover={<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${userBadges.badges[badge]}`} alt={badge} />}>
+														<Card cover={<img src={badgeImages[badge]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
 													</Col>)
