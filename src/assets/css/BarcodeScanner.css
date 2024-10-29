@@ -28,6 +28,10 @@
   padding: 15px;
 }
 
+.card-content.detach {
+  display: none;
+}
+
 .camera-container {
   width: 100%;
   height: auto;
@@ -52,7 +56,7 @@
   align-items: center;
   padding: 0 4px 4px 4px;
   background-color: #f9f9f9;
-  border-top: 1px solid #e8e8e8;
+  border-radius: 5px;
   width: 100%;
   box-sizing: border-box; /* Ensure padding doesn't affect width */
   overflow: hidden; /* Prevent overflow */
@@ -62,19 +66,21 @@
   display: flex;
   align-items: center;
   width: 100%;
+  padding: 10px;
   box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
-.avatar img {
+.checkinout-avatar img {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  padding-top: 12px;
   box-sizing: border-box; /* Ensure padding is included in the element's width */
 }
 
 .scan-details {
   display: flex;
+  flex-direction: column;
+  gap: 5px;
   justify-content: space-between;
   flex-grow: 1;
   margin-left: 15px;
