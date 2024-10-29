@@ -192,7 +192,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 						<Input
 							style={{ marginBottom: '16px' }}
 							name="registrationNumber"
-							placeholder="University registration number (TE218993)"
+							placeholder="University registration number (TE000000)"
 							value={form.registrationNumber}
 							onChange={handleInputChange}
 						/>
