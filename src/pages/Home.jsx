@@ -40,6 +40,7 @@ const Home = () => {
 		}
 	};
 
+
 	return (
 		<div className="home-container">
 			{Object.keys(userBio).length > 0 ? (
