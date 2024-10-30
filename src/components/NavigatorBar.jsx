@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Badge, Avatar } from 'antd';
 import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext.jsx';
-import '../assets/css/NavigatorBar.css'; 
+import '../assets/css/NavigatorBar.css';
 
 const NavigatorBar = ({ userName }) => {
 	const { logout } = useAuth();
@@ -36,7 +36,6 @@ const NavigatorBar = ({ userName }) => {
 	}, [user]);
 
 	const handleLogout = () => {
-		
 		document.cookie.split(';').forEach((cookie) => {
 			const cookieName = cookie.split('=')[0];
 			document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
@@ -47,7 +46,6 @@ const NavigatorBar = ({ userName }) => {
 
 		navigate('/login');
 	};
-
 
 	const toggleMenu = () => {
 		setMenuVisible(!menuVisible);
@@ -72,6 +70,9 @@ const NavigatorBar = ({ userName }) => {
 					<Menu.Item key="about-us">
 						<Link to="/about-us">About Us</Link>
 					</Menu.Item>
+					<Menu.Item key="student-profile">
+						<Link to="/student-profile">Student Profile</Link>
+					</Menu.Item>
 				</Menu>
 			</div>
 			<div className="user-section">
@@ -94,6 +95,9 @@ const NavigatorBar = ({ userName }) => {
 						<Menu.Item key="about-us">
 							<Link to="/about-us">About Us</Link>
 						</Menu.Item>
+						<Menu.Item key="student-profile">
+							<Link to="/student-profile">Student Profile</Link>
+						</Menu.Item>
 						<Menu.Item key="notifications">
 							<Badge count={notifications}>
 								<Link to="/notifications">Notifications</Link>
@@ -109,5 +113,6 @@ const NavigatorBar = ({ userName }) => {
 		</div>
 	);
 };
+
 
 export default NavigatorBar;
