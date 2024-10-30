@@ -11,25 +11,25 @@ import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import StudentProfile from './StudentProfile'; // Ensure this path is correct
 
-
 const Home = () => {
 	const { user, isAuthenticated } = useAuth();
 	const [userBio, setUserBio] = useState({});
 
 	useEffect(() => {
 		const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
-		if (!isAuthenticated) {
-			if (storedUserBio) {
-				setUserBio(storedUserBio);
-			} else {
-				window.location.href = '/';
-			}
-		} else {
+
+		if (isAuthenticated) {
 			setUserBio(user);
+		} else if (storedUserBio) {
+			setUserBio(storedUserBio);
+		} else {
+			window.location.href = '/';
 		}
-	}, []);
+	}, [user, isAuthenticated]);
 
 	const renderDashboard = () => {
+		if (!userBio.roles || userBio.roles.length === 0) return null;
+
 		switch (userBio.roles[0].role) {
 			case 'Admin':
 				return <AdminDashboard userId={userBio._id} userName={{ first: userBio.firstName, last: userBio.lastName }} />;
@@ -41,6 +41,7 @@ const Home = () => {
 				return <StudentDashboard userId={userBio._id} userName={{ first: userBio.firstName, last: userBio.lastName }} />;
 		}
 	};
+
 
 	return (
 		<div className="home-container">

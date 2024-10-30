@@ -25,7 +25,7 @@ const CheckingOfficerDashboard = ({ role }) => {
 	};
 
 	const handleScan = data => {
-		setScanning(false);
+		setScanning(true);
 		setCheckedUser(data);
 	};
 
@@ -107,7 +107,7 @@ const CheckingOfficerDashboard = ({ role }) => {
 						type="primary"
 						icon={<SwapRightOutlined />}
 						onClick={handleCheckIn}
-						style={{ backgroundColor: '#52C41A', borderColor: 'green' }}
+						style={{ backgroundColor: '#52C41A'}}
 						size="large"
 					>
 						Check in
@@ -117,7 +117,7 @@ const CheckingOfficerDashboard = ({ role }) => {
 						type="primary"
 						icon={<SwapRightOutlined />}
 						onClick={handleCheckOut}
-						style={{ backgroundColor: '#F5222D', borderColor: '#F5222D' }}
+						style={{ backgroundColor: '#F5222D'}}
 						size="large"
 					>
 						Check out

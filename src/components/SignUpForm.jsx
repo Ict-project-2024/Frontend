@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Row, Col, Radio, Upload, message, Progress } from 'antd';
+import { Input, Button, Row, Col, Radio, Upload, message, Progress, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import '../assets/css/Signup.css';
@@ -85,7 +85,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 		const { firstName, lastName, gender, registrationNumber, password, confirmPassword, phoneNumber, universityEmail, headshot } = form;
 
-		if (!firstName || !lastName || !gender || !registrationNumber || !password || !confirmPassword || !phoneNumber || !universityEmail || !headshot) {
+		if (!firstName || !lastName || !gender || !registrationNumber || !password || !confirmPassword || !phoneNumber || !universityEmail ) {
 			return 'One or more details you entered were incorrect. Please try again.';
 		} else if (!teRegex.test(registrationNumber)) {
 			return 'Invalid registration number format. It should start with "TE" followed by 6 digits.';
@@ -254,9 +254,11 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 							)}
 						</div>
 
-						<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
-							{registering ? 'Registering...' : 'Register'}
-						</Button>
+						<Spin spinning={registering}>
+							<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
+								{registering ? 'Registering...' : 'Register'}
+							</Button>
+						</Spin>
 					</form>
 					<RegistrationSuccessPopup isVisible={isModalVisible} onClose={handleCloseModal} />
 				</div>
