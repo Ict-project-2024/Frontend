@@ -278,7 +278,7 @@ const Dashboard = ({ userId, userName }) => {
 
 	return (
 		<Layout>
-			<Content style={{ padding: '0 50px', overflow: 'auto' }}>
+			<Content style={{ padding: '0 20px', overflow: 'auto' }}>
 				<GreetingSection name={userName.first} />
 				<div className="site-layout-content">
 					<Row gutter={[16, 16]}>
