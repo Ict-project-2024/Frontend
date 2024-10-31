@@ -1,13 +1,15 @@
 import { Routes, Route } from 'react-router-dom';
-import NavigatorBar from '../components/NavigatorBar';
-import StudentDashboard from './StudentDashboard';
-import AdminDashboard from './AdminDashboard';
-import CheckingOfficerDashboard from './CheckingOfficerDashboard';
-import News from './News';
-import AboutUs from './AboutUs';
-import '../assets/css/Home.css';
+import NavigatorBar from '../components/NavigatorBar'; // Adjust the path as needed
+// import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed.
+import StudentDashboard from './StudentDashboard'; // Adjust the path as needed
+import AdminDashboard from './AdminDashboard'; // Adjust the path as needed
+import CheckingOfficerDashboard from './CheckingOfficerDashboard'; // Adjust the path as needed
+import News from './News'; // Adjust the path as needed
+import AboutUs from './AboutUs'; // Ensure you have the correct path
+import '../assets/css/Home.css'; // Ensure you have the correct path
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
+import StudentProfile from './StudentProfile'; // Ensure this path is correct
 
 const Home = () => {
 	const { user, isAuthenticated } = useAuth();
@@ -40,6 +42,7 @@ const Home = () => {
 		}
 	};
 
+
 	return (
 		<div className="home-container">
 			{Object.keys(userBio).length > 0 ? (
@@ -50,6 +53,7 @@ const Home = () => {
 							<Route path="/dashboard" element={renderDashboard()} />
 							<Route path="/news" element={<News />} />
 							<Route path="/about-us" element={<AboutUs />} />
+							<Route path="/student-profile" element={<StudentProfile />} />
 						</Routes>
 					</div>
 				</>

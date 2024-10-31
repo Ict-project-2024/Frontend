@@ -3,7 +3,9 @@ import '../assets/css/News.css';
 import NewsBox from '../components/NewsBox';
 import { useState } from 'react';
 
-const News = () => {
+
+
+const News = () => {	
 	const [showCount, setShowCount] = useState(3);
 
 	const newsTable = [

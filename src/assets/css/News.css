@@ -1,41 +1,105 @@
+/* General container styling */
 .news-container {
-	display: flex;
-	flex-direction: column;
-	min-height: -webkit-fill-available;
-	justify-content: center;
-	place-items: center;
-	padding: 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    max-width: 800px;
+    margin: auto;
 }
 
+/* Title styling */
 .title {
-	color: #000;
-	text-align: center;
-	font-family: Roboto;
-	font-size: 24px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 32px;
+    color: #000;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 32px;
 }
 
+/* No news message styling */
 .nothing-see {
-	color: rgba(0, 0, 0, 0.45);
-	font-size: 13px;
-	font-style: italic;
-	font-weight: 400;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 400;
+    text-align: center;
 }
 
+/* View more button styling */
 .view-more {
-	display: flex;
-	flex-direction: row;
-	gap: 10px;
-	justify-items: center;
-	align-items: center;
-	cursor: pointer;
-	color: #1890FF;
-	text-align: center;
-	font-family: Roboto;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 22px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #1890FF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    margin-top: 20px;
+}
+
+/* Card styling */
+.news-box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+/* Card image styling */
+.news-box img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Content within each news card */
+.news-box .content {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+}
+
+/* Title and subtitle styling within cards */
+.news-box h4 {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.news-box p {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Responsive adjustments for mobile screens */
+@media (max-width: 768px) {
+    .news-container {
+        padding: 16px;
+    }
+
+    .title {
+        font-size: 20px;
+        line-height: 28px;
+    }
+
+    .news-box {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+
+    .view-more {
+        font-size: 12px;
+    }
 }

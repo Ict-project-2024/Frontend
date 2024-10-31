@@ -63,6 +63,9 @@ const NavigatorBar = ({ userName }) => {
 					<Menu.Item key="about-us">
 						<Link to="/about-us">About Us</Link>
 					</Menu.Item>
+					<Menu.Item key="student-profile">
+						<Link to="/student-profile">Student Profile</Link>
+					</Menu.Item>
 				</Menu>
 			</div>
 			<div className="user-section">
@@ -85,7 +88,10 @@ const NavigatorBar = ({ userName }) => {
 						<Menu.Item key="about-us" onClick={toggleMenu}>
 							<Link to="/about-us">About Us</Link>
 						</Menu.Item>
-						<Menu.Item key="notifications" onClick={toggleMenu}>
+						<Menu.Item key="student-profile">
+							<Link to="/student-profile">Student Profile</Link>
+						</Menu.Item>
+						<Menu.Item key="notifications">
 							<Badge count={notifications}>
 								<Link to="/notifications">Notifications</Link>
 							</Badge>
@@ -100,5 +106,6 @@ const NavigatorBar = ({ userName }) => {
 		</div>
 	);
 };
+
 
 export default NavigatorBar;
