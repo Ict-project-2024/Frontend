@@ -9,10 +9,36 @@ import newApiRequest from '../utils/apiRequests';
 const CheckingOfficerDashboard = ({ role }) => {
 	const [scanning, setScanning] = useState(false);
 	const [actionType, setActionType] = useState(null);
-	const [doctorAvailable, setDoctorAvailable] = useState(true);
+	const [doctorAvailable, setDoctorAvailable] = useState(false);
 	const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 	const [pendingAvailability, setPendingAvailability] = useState(null);
 	const [checkedUser, setCheckedUser] = useState({})
+
+	useEffect(() => {
+		const checkDoctorAvailability = async () => {
+			try {
+				const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
+				if (response.success) {
+					switch (response.data.isAvailable) {
+						case "true" || true: {
+							setDoctorAvailable(true);
+							break;
+						}
+						case "false" || false: {
+							setDoctorAvailable(false);
+							break;
+						}
+					}
+				} else {
+					setDoctorAvailable(false);
+				}
+			} catch (error) {
+				console.error('Error fetching rankings data:', error);
+			}
+		};
+
+		checkDoctorAvailability();
+	}, []);
 
 	const handleCheckIn = () => {
 		setScanning(true);
@@ -39,9 +65,26 @@ const CheckingOfficerDashboard = ({ role }) => {
 		setIsConfirmVisible(true);
 	};
 
-	const handleConfirm = () => {
-		setDoctorAvailable(pendingAvailability);
+	const handleConfirm = async () => {
 		setIsConfirmVisible(false);
+
+		const response = await newApiRequest('/api/medical-center/doctor-availability', 'PUT', { isAvailable: pendingAvailability })
+
+		if (response.status === 200) {
+			message.success('Doctor availability updated successfully');
+			switch (pendingAvailability) {
+				case true:
+					setDoctorAvailable(true);
+					break;
+				case false:
+					setDoctorAvailable(false);
+					break;
+				default:
+					break;
+			}
+		} else {
+			message.error('Doctor availability update failed');
+		}
 	};
 
 	const handleCancelConfirm = () => {

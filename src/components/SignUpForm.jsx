@@ -85,7 +85,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 		const { firstName, lastName, gender, registrationNumber, password, confirmPassword, phoneNumber, universityEmail, headshot } = form;
 
-		if (!firstName || !lastName || !gender || !registrationNumber || !password || !confirmPassword || !phoneNumber || !universityEmail || !headshot) {
+		if (!firstName || !lastName || !gender || !registrationNumber || !password || !confirmPassword || !phoneNumber || !universityEmail ) {
 			return 'One or more details you entered were incorrect. Please try again.';
 		} else if (!teRegex.test(registrationNumber)) {
 			return 'Invalid registration number format. It should start with "TE" followed by 6 digits.';
@@ -192,7 +192,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 						<Input
 							style={{ marginBottom: '16px' }}
 							name="registrationNumber"
-							placeholder="University registration number (TE218993)"
+							placeholder="University registration number (TE000000)"
 							value={form.registrationNumber}
 							onChange={handleInputChange}
 						/>

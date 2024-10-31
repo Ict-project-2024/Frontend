@@ -5,7 +5,7 @@ import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistance, formatDistanceToNow, set } from 'date-fns';
 import RankingBox from '../components/RankingBox';
 import newApiRequest from '../utils/apiRequests';
 
@@ -106,6 +106,9 @@ const Dashboard = ({ userId, userName }) => {
 	// Ranking board data: nivindulakshitha
 	const [rankingBoardData, setRankingBoardData] = useState({})
 
+	// Doctor availability status: nivindulakshitha
+	const [isDoctorAvailable, setIsDoctorAvailable] = useState(false);
+
 	// Calculate the next badge level based on the current badge level: nivindulakshitha
 	const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
 		if (frequentContributorLevel == null) {
@@ -133,7 +136,7 @@ const Dashboard = ({ userId, userName }) => {
 	// Trigger the fetch every 5 seconds for live updates
 	setInterval(() => {
 		setFetchTrigger(!fetchTrigger)
-	}, 600000)
+	}, 60000);
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
@@ -160,9 +163,10 @@ const Dashboard = ({ userId, userName }) => {
 				if (response.success) {
 					const location = locationsList[index];
 					const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+					let dateNow = new Date().setHours(new Date().getHours() + 5, new Date().getMinutes() + 30)
 					acc[location] = {
 						id: index,
-						lastModified: formatDistanceToNow(response.data.lastModified, { addSuffix: true }),
+						lastModified: formatDistance(new Date(response.data.lastModified), dateNow, { addSuffix: true }),
 						percent: percent,
 						status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
 						name: location,
@@ -206,9 +210,32 @@ const Dashboard = ({ userId, userName }) => {
 			}
 		};
 
+		const checkDoctorAvailability = async () => {
+			try {
+				const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
+				if (response.success) {
+					switch (response.data.isAvailable) {
+						case "true" || true: { 
+							setIsDoctorAvailable(true);
+							break;
+						}
+						case "false" || false: {
+							setIsDoctorAvailable(false);
+							break;
+						}
+					}
+				} else {
+					setIsDoctorAvailable(false);
+				}
+			} catch (error) {
+				console.error('Error fetching rankings data:', error);
+			}
+		};
+
 		fetchBadgesData();
 		fetchLocationData();
 		fetchRankingsData();
+		checkDoctorAvailability();
 
 	}, [fetchTrigger]);
 
@@ -240,6 +267,9 @@ const Dashboard = ({ userId, userName }) => {
 			message.success('Data submitted successfully');
 			setFetchTrigger(!fetchTrigger);
 			setVoteSubmitting(false);
+			setCanteen(null);
+			setPeopleRange(null);
+			setAgreement(false);
 		} else {
 			message.error('Failed to submit data. Please try again.');
 			setVoteSubmitting(false);
@@ -259,7 +289,11 @@ const Dashboard = ({ userId, userName }) => {
 									<Card title={locationTraffic[locationKey].name} extra={<span style={{ color: getColor(locationTraffic[locationKey].status) }}>{locationTraffic[locationKey].status}</span>}>
 										<Progress type="circle" percent={locationTraffic[locationKey].percent} size={80} strokeColor={getColor(locationTraffic[locationKey].status)} />
 										<p>{locationTraffic[locationKey].description}</p>
-										<p>Last update was {locationTraffic[locationKey].lastModified}</p>
+										{
+											locationKey === 'Medical Center' &&
+											(<p><span className={`doctor-availability-status ${isDoctorAvailable}`}></span> Doctor is {!isDoctorAvailable ? 'not' : ''} available</p>)
+										}
+										<p>last update was {locationTraffic[locationKey].lastModified}</p>
 									</Card>
 								</Col>
 							))
@@ -373,7 +407,7 @@ const Dashboard = ({ userId, userName }) => {
 										typeof userBadges.badges[badge] == 'boolean' && userBadges.badges[badge] && (
 											<Card className="first-step-card" key={badge}>
 												<div className="first-step-content">
-													<img src={`https://dummyimage.com/400x400/aaaaaa/2b2b2b.png&text=${badgeNames[badge]}`} alt="Placeholder" className="placeholder-image" />
+													<img src={badgeImages[badge]} alt={badgeNames[badge]} className="placeholder-image" />
 													<div className='width-full'>
 														<Title level={4}>{badgeNames[badge]}</Title>
 														<Text>{congratulationTexts[badge]}</Text>
