@@ -3,7 +3,7 @@ import { Layout, Row, Col, Card, Progress, Table, Button, Typography, DatePicker
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistance, formatDistanceToNow } from 'date-fns';
 import CountUp from 'react-countup'
 import locale from 'antd/es/date-picker/locale/en_US';
 import newApiRequest from '../utils/apiRequests';
@@ -118,11 +118,13 @@ const AdminDashboard = ({ userId, userName }) => {
 		for (let location of locationsList) {
 			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
 				.then(response => {
+					let dateNow = new Date().setHours(new Date().getHours() + 5, new Date().getMinutes() + 30)
+
 					if (response.success && response.data) {
 						// Set the data for each location: nivindulakshitha
 						draftData[location] = {}
 						draftData[location].id = locationsList.indexOf(location);
-						draftData[location].lastModified = formatDistanceToNow(response.data.lastModified, { addSuffix: true });
+						draftData[location].lastModified = formatDistance(new Date(response.data.lastModified), dateNow, { addSuffix: true }),
 						draftData[location].percent = response.data.votes != undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
 						draftData[location].status = response.data.votes != undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
 						draftData[location].name = location;
