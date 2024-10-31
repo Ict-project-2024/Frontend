@@ -137,7 +137,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 				setScanning(false);
 			} else {
 				setScanning(false);
-				message.error('Invalid QR code');
+				message.error('Invalid TE number. Rescan the barcode');
 			}
 		}
 	};
