@@ -5,7 +5,7 @@ import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistance, formatDistanceToNow } from 'date-fns';
 import RankingBox from '../components/RankingBox';
 import newApiRequest from '../utils/apiRequests';
 
@@ -160,9 +160,10 @@ const Dashboard = ({ userId, userName }) => {
 				if (response.success) {
 					const location = locationsList[index];
 					const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+					let dateNow = new Date().setHours(new Date().getHours() + 5, new Date().getMinutes() + 30)
 					acc[location] = {
 						id: index,
-						lastModified: formatDistanceToNow(response.data.lastModified, { addSuffix: true }),
+						lastModified: formatDistance(new Date(response.data.lastModified), dateNow, { addSuffix: true }),
 						percent: percent,
 						status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
 						name: location,
