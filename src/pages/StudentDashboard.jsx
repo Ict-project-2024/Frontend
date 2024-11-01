@@ -191,7 +191,7 @@ const Dashboard = ({ userId, userName }) => {
 	setInterval(() => {
 		fetchLocationData();
 		checkDoctorAvailability();
-	}, 15000);
+	}, 60000);
 
 	const [fetchTrigger, setFetchTrigger] = useState(false)
 	// Trigger the fetch every 5 seconds for live updates

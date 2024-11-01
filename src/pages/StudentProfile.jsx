@@ -36,7 +36,7 @@ const StudentProfile = () => {
   ];
 
   return (
-    <div className="student-profile" style={{ padding: '40px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+    <div className="my-profile" style={{ padding: '40px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
       <Row gutter={[16, 16]} align="middle">
         {/* Left Side - Badges */}
         <Col xs={24} md={12}>

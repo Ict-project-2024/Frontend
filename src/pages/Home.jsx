@@ -67,7 +67,7 @@ const Home = () => {
 							<Route path="/dashboard" element={renderDashboard()} />
 							<Route path="/news" element={<News />} />
 							<Route path="/about-us" element={<AboutUs />} />
-							<Route path="/student-profile" element={<StudentProfile />} />
+							<Route path="/my-profile" element={<StudentProfile />} />
 						</Routes>
 					</div>
 				</>
