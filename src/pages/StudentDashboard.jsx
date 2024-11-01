@@ -120,6 +120,13 @@ const Dashboard = ({ userId, userName }) => {
 		}
 	}
 
+	// Check if the current time is within working hours: nivindulakshitha
+	const isWithinWorkingHours = () => {
+		const now = new Date();
+		const currentHour = now.getHours();
+		return currentHour >= 8 && currentHour < 16;
+	};
+
 	// Fetch the badges data for the user: nivindulakshitha
 	useEffect(() => {
 		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
@@ -216,7 +223,7 @@ const Dashboard = ({ userId, userName }) => {
 				if (response.success) {
 					switch (response.data.isAvailable) {
 						case "true" || true: { 
-							setIsDoctorAvailable(true);
+							setIsDoctorAvailable(true && isWithinWorkingHours());
 							break;
 						}
 						case "false" || false: {

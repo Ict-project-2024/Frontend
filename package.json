@@ -2,7 +2,7 @@
 	"homepage": "https://ict-project-2024.github.io/Frontend/",
 	"name": "unimo",
 	"private": true,
-	"version": "0.0.0",
+	"version": "0.0.1-alpha.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite --host",
