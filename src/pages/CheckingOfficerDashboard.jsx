@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, message } from 'antd';
 import { SwapRightOutlined, InfoCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
@@ -14,31 +14,31 @@ const CheckingOfficerDashboard = ({ role }) => {
 	const [pendingAvailability, setPendingAvailability] = useState(null);
 	const [checkedUser, setCheckedUser] = useState({})
 
-	useEffect(() => {
-		const checkDoctorAvailability = async () => {
-			try {
-				const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
-				if (response.success) {
-					switch (response.data.isAvailable) {
-						case "true" || true: {
-							setDoctorAvailable(true);
-							break;
-						}
-						case "false" || false: {
-							setDoctorAvailable(false);
-							break;
-						}
+	const checkDoctorAvailability = async () => {
+		try {
+			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
+			if (response.success) {
+				switch (response.data.isAvailable) {
+					case "true" || true: {
+						setDoctorAvailable(true);
+						break;
 					}
-				} else {
-					setDoctorAvailable(false);
+					case "false" || false: {
+						setDoctorAvailable(false);
+						break;
+					}
 				}
-			} catch (error) {
-				console.error('Error fetching rankings data:', error);
+			} else {
+				setDoctorAvailable(false);
 			}
-		};
+		} catch (error) {
+			console.error('Error fetching rankings data:', error);
+		}
+	};
 
+	setTimeout(() => {
 		checkDoctorAvailability();
-	}, []);
+	}, 60000);
 
 	const handleCheckIn = () => {
 		setScanning(true);

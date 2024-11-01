@@ -23,3 +23,32 @@
 .login-button {
     width: 40%;
 }
+
+@media (max-width: 768px) {
+    .login-form {
+      padding: 0 10px; /* Add padding for mobile screens */
+    }
+  
+    .login-input {
+      width: 100%;
+      margin-bottom: 12px; /* Slightly reduce margin for compactness */
+    }
+  
+    .login-options {
+      flex-direction: column; /* Stack elements vertically */
+      align-items: center; /* Center-align for a balanced look */
+      margin-bottom: 15px;
+    }
+  
+    .forgot-password-link {
+      margin-top: 10px; /* Add spacing between stacked items */
+      color: #1890ff;
+      text-align: center;
+    }
+  
+    .login-button {
+      width: 100%; /* Make the button full-width on mobile */
+      margin-top: 10px; /* Add spacing between button and other elements */
+    }
+  }
+  
