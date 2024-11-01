@@ -139,6 +139,60 @@ const Dashboard = ({ userId, userName }) => {
 			.catch(error => console.error('Error fetching location data:', error));
 	}, [userId]); // Dependency array to re-fetch when userId changes
 
+	
+	const checkDoctorAvailability = async () => {
+		try {
+			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
+			if (response.success) {
+				switch (response.data.isAvailable) {
+					case true: {
+						setIsDoctorAvailable(true && isWithinWorkingHours());
+						break;
+					}
+					case false: {
+						setIsDoctorAvailable(false);
+						break;
+					}
+				}
+			} else {
+				setIsDoctorAvailable(false);
+			}
+		} catch (error) {
+			console.error('Error fetching rankings data:', error);
+		}
+	};
+
+	const fetchLocationData = async () => {
+		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
+		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
+
+		const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location: location }));
+		const responses = await Promise.all(requests);
+
+		const draftData = responses.reduce((acc, response, index) => {
+			if (response.success) {
+				const location = locationsList[index];
+				const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+				let dateNow = new Date().setHours(new Date().getHours() + 5, new Date().getMinutes() + 30)
+				acc[location] = {
+					id: index,
+					lastModified: formatDistance(new Date(response.data.lastModified), dateNow, { addSuffix: true }),
+					percent: percent,
+					status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
+					name: location,
+					description: `${response.data.votes ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`
+				};
+			}
+			return acc;
+		}, {});
+		setLocationTraffic((prev) => ({ ...prev, ...draftData }));
+	};
+
+	setInterval(() => {
+		fetchLocationData();
+		checkDoctorAvailability();
+	}, 15000);
+
 	const [fetchTrigger, setFetchTrigger] = useState(false)
 	// Trigger the fetch every 5 seconds for live updates
 	setInterval(() => {
@@ -157,32 +211,6 @@ const Dashboard = ({ userId, userName }) => {
 			} catch (error) {
 				console.error('Error fetching badges data:', error);
 			}
-		};
-
-		const fetchLocationData = async () => {
-			const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
-			const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
-
-			const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location: location }));
-			const responses = await Promise.all(requests);
-
-			const draftData = responses.reduce((acc, response, index) => {
-				if (response.success) {
-					const location = locationsList[index];
-					const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
-					let dateNow = new Date().setHours(new Date().getHours() + 5, new Date().getMinutes() + 30)
-					acc[location] = {
-						id: index,
-						lastModified: formatDistance(new Date(response.data.lastModified), dateNow, { addSuffix: true }),
-						percent: percent,
-						status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
-						name: location,
-						description: `${response.data.votes ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`
-					};
-				}
-				return acc;
-			}, {});
-			setLocationTraffic((prev) => ({ ...prev, ...draftData }));
 		};
 
 		const fetchRankingsData = async () => {
@@ -217,31 +245,9 @@ const Dashboard = ({ userId, userName }) => {
 			}
 		};
 
-		const checkDoctorAvailability = async () => {
-			try {
-				const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
-				if (response.success) {
-					switch (response.data.isAvailable) {
-						case "true" || true: { 
-							setIsDoctorAvailable(true && isWithinWorkingHours());
-							break;
-						}
-						case "false" || false: {
-							setIsDoctorAvailable(false);
-							break;
-						}
-					}
-				} else {
-					setIsDoctorAvailable(false);
-				}
-			} catch (error) {
-				console.error('Error fetching rankings data:', error);
-			}
-		};
-
 		fetchBadgesData();
-		fetchLocationData();
 		fetchRankingsData();
+		fetchLocationData();
 		checkDoctorAvailability();
 
 	}, [fetchTrigger]);
