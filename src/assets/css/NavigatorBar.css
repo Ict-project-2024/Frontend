@@ -17,8 +17,8 @@
 }
 
 .logo {
-position: fixed;
-left: 20px;
+  position: fixed;
+  left: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -40,8 +40,8 @@ left: 20px;
 }
 
 .user-section {
-position: fixed;
-right: 20px;
+  position: fixed;
+  right: 20px;
   display: flex;
   align-items: center;
 }
@@ -84,7 +84,22 @@ right: 20px;
 #root>div>div>div.navigator-bar>div.user-section>span.ant-badge.notification-badge.css-dev-only-do-not-override-1uq9j6g>sup {
   left: -10px;
   max-width: 30px;
+}
+
+/* Fix the display of nav menu when switching between screen sizes */
+@media (min-width: 769px) {
+  .nav-menu {
+    display: flex !important; /* Ensure nav menu displays as flex on desktop */
   }
+
+  .user-section {
+    display: flex !important; /* Show user section on larger screens */
+  }
+
+  .hamburger-menu {
+    display: none; /* Hide hamburger menu on larger screens */
+  }
+}
 
 @media (max-width: 768px) {
   .navigator-bar {

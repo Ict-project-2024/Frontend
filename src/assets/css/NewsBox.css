@@ -58,3 +58,43 @@
 	width: auto;
 	max-height: 170px;
 }
+
+@media (max-width: 768px) {
+	.news-box {
+	  flex-direction: column; /* Stack content vertically on mobile */
+	  padding: 12px 16px; /* Reduce padding for smaller screens */
+	  gap: 16px; /* Smaller gap between elements */
+	  min-height: auto; /* Allow the box to adjust height based on content */
+	}
+  
+	.content-box h4 {
+	  font-size: 14px; /* Slightly smaller font for mobile */
+	  line-height: 20px;
+	}
+  
+	.content-box p:nth-child(2) {
+	  font-size: 12px; /* Adjust font size for readability on small screens */
+	  line-height: 18px;
+	  margin-top: 8px;
+	  margin-bottom: 12px;
+	}
+  
+	.content-box p:nth-child(3) {
+	  font-size: 13px; /* Slightly smaller font */
+	  line-height: 20px;
+	  margin-bottom: 12px;
+	}
+  
+	.content-box a {
+	  font-size: 13px; /* Slightly smaller font for links */
+	  line-height: 20px;
+	}
+  
+	.news-box img {
+	  width: 100%; /* Make image full width */
+	  max-height: 200px; /* Adjust height limit for mobile */
+	  aspect-ratio: unset; /* Allow image to adjust naturally */
+	  margin-bottom: 10px; /* Space between image and content */
+	}
+  }
+  

@@ -276,4 +276,10 @@ body {
     flex: 1; /* Take the remaining space */
     padding-left: 8px; /* Add some space between image and text */
   }
+  .ant-card-meta-title {
+    font-size: var(--small-font-size); /* Adjust size if needed */
+    white-space: normal !important;  /* Allow text to wrap on mobile */
+    overflow: visible; /* Prevent text clipping */
+    text-overflow: clip; /* Remove ellipsis */
+  }
 }
