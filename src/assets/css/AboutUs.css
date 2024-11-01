@@ -1,0 +1,56 @@
+.about-us-content {
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+    background-color: #ffffff; /* Light background for readability */
+  }
+  
+  .about-us-card {
+    max-width: 800px; /* Limits width for better readability */
+    padding: 24px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Light shadow for a card effect */
+  }
+  
+  .about-us-title {
+    text-align: center;
+    color: #1890ff; /* Primary color to match the app theme */
+  }
+  
+  .about-us-subtitle {
+    color: #333;
+    margin-top: 24px;
+  }
+  
+  .about-us-paragraph {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.75); /* Subtle text color for readability */
+    line-height: 1.6;
+    margin-bottom: 16px;
+    text-align: justify;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .about-us-content {
+      padding: 16px;
+    }
+  
+    .about-us-card {
+      padding: 16px;
+    }
+  
+    .about-us-title {
+      font-size: 24px;
+    }
+  
+    .about-us-subtitle {
+      font-size: 20px;
+    }
+  
+    .about-us-paragraph {
+      font-size: 14px;
+    }
+  }
+  
