@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Progress, Table, Button, Typography, DatePicker,ConfigProvider } from 'antd';
+import { Layout, Row, Col, Card, Progress, Table, Button, Typography, DatePicker, ConfigProvider } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DownloadOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection';
@@ -95,7 +95,9 @@ const AdminDashboard = ({ userId, userName }) => {
 	const [libraryStats, setLibraryStats] = useState({})
 	const [medicalCenterChartData, setMedicalCenterChartData] = useState([])
 	const [medicalCenterStats, setMedicalCenterStats] = useState({})
-	const {user} = useAuth();
+	const { user } = useAuth();
+	const [isDoctorAvailable, setIsDoctorAvailable] = useState(false);
+	const [fetchTrigger, setFetchTrigger] = useState(false);
 	const [logData, setLogData] = useState([
 		{
 			id: 0,
@@ -109,175 +111,205 @@ const AdminDashboard = ({ userId, userName }) => {
 		}
 	])
 
-	// Fetch the required data for each location: nivindulakshitha
-	useEffect(() => {
+	const isWithinWorkingHours = () => {
+		const now = new Date();
+		const currentHour = now.getHours();
+		return currentHour >= 8 && currentHour < 16;
+	};
+
+	const checkDoctorAvailability = async () => {
+		try {
+			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
+			if (response.success) {
+				switch (response.data.isAvailable) {
+					case true: {
+						setIsDoctorAvailable(true && isWithinWorkingHours());
+						break;
+					}
+					case false: {
+						setIsDoctorAvailable(false);
+						break;
+					}
+				}
+			} else {
+				setIsDoctorAvailable(false);
+			}
+		} catch (error) {
+			console.error('Error fetching rankings data:', error);
+		}
+	};
+
+	const fetchLocationData = async () => {
 		const routeFix = { 'Student Canteen': 'canteen', 'Staff Canteen': 'canteen', 'Library': 'library', 'Medical Center': 'medical-center' };
 		const locationsList = ['Student Canteen', 'Staff Canteen', 'Library', 'Medical Center'];
-		let draftData = {};
 
-		for (let location of locationsList) {
-			newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { "location": location })
-				.then(response => {
-					let dateNow = new Date().setHours(new Date().getHours() + 5, new Date().getMinutes() + 30)
+		const requests = locationsList.map(location => newApiRequest(`/api/${routeFix[location]}/status`, 'POST', { location: location }));
+		const responses = await Promise.all(requests);
 
-					if (response.success && response.data) {
-						// Set the data for each location: nivindulakshitha
-						draftData[location] = {}
-						draftData[location].id = locationsList.indexOf(location);
-						draftData[location].lastModified = formatDistance(new Date(response.data.lastModified), dateNow, { addSuffix: true }),
-						draftData[location].percent = response.data.votes != undefined ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
-						draftData[location].status = response.data.votes != undefined ? determineCrowdedness(draftData[location].percent) : determineCrowdedness(response.data.currentOccupancy, location);
-						draftData[location].name = location;
-						draftData[location].description = `${response.data.votes != undefined ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`;
-					}
-				})
-				.catch(error => {
-					console.error('Error fetching location data:', error);
-				})
-				.finally(() => {
-					setLocationTraffic(draftData);
-				});
-		}
-	}, [userId]);
+		const draftData = responses.reduce((acc, response, index) => {
+			if (response.success) {
+				const location = locationsList[index];
+				const percent = response.data.votes ? overallCrowdednessPercentage(response.data.votes) : overallCrowdednessPercentage(response.data.currentOccupancy);
+				let dateNow = new Date().setHours(new Date().getHours() + 5, new Date().getMinutes() + 30)
+				acc[location] = {
+					id: index,
+					lastModified: formatDistance(new Date(response.data.lastModified), dateNow, { addSuffix: true }),
+					percent: percent,
+					status: response.data.votes ? determineCrowdedness(percent) : determineCrowdedness(response.data.currentOccupancy, location),
+					name: location,
+					description: `${response.data.votes ? 'About ' + esimateCrowd(response.data.votes) : 'Exactly ' + response.data.currentOccupancy} people`
+				};
+			}
+			return acc;
+		}, {});
+		setLocationTraffic((prev) => ({ ...prev, ...draftData }));
+	};
+
+	useEffect(() => {
+		fetchLocationData();
+		checkDoctorAvailability();
+		setFetchTrigger(!fetchTrigger);
+	}, []);
+
+	setInterval(() => {
+		fetchLocationData();
+		checkDoctorAvailability();
+		setFetchTrigger(!fetchTrigger);
+	}, 60000);
 
 	// Fetch the required data for library: nivindulakshitha
 	useEffect(() => {
-		// Fetch the required data for each location: nivindulakshitha
-		let draftData = [];
-		let totalEntrances = 0;
-		let totalDays = 0;
+		// Library Data Fetching
+		let libraryDraftData = [];
+		let libraryTotalEntrances = 0;
+		let libraryTotalDays = 0;
 
 		newApiRequest(`/api/library/history`, 'GET', {})
 			.then(response => {
 				if (response.success && response.data) {
-					// Set the data for library: nivindulakshitha
-					response.data.map((data, index) => {
-						draftData[index] = new Object({
-							"Date": data.date,
+					response.data.forEach((data) => {
+						libraryDraftData.push({
+							"Date": new Date(data.date.split('T')[0]).toLocaleDateString('en-US', {
+								month: 'long',
+								day: '2-digit'
+							}),
 							"Students": data.entrances
-						})
-
-						totalEntrances += data.entrances;
-						totalDays++;
-					})
+						});
+						libraryTotalEntrances += data.entrances;
+						libraryTotalDays++;
+					});
 				}
 			})
-			.catch(error => {
-				console.error('Error fetching library data:', error);
-			})
+			.catch(error => console.error('Error fetching library data:', error))
 			.finally(() => {
-				setLibraryChartData(...libraryChartData, draftData);
-				setLibraryStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
+				setLibraryChartData([...libraryDraftData]);
+				setLibraryStats({ visits: libraryTotalEntrances, avgDailyVisits: (libraryTotalEntrances / libraryTotalDays).toFixed(0) });
 			});
-	}, [userId])
 
-	// Fetch the required data for library: nivindulakshitha
-	useEffect(() => {
-		newApiRequest(`/api/library/useraccess`, 'POST', {}) // Time slot should be included
+		// Library User Access Logs
+		newApiRequest(`/api/library/useraccess`, 'POST', {})
 			.then(response => {
 				if (response.success && response.data) {
-					// Set the data for library: nivindulakshitha
-					let index = 0;
-					response.data.map((user) => {
+					const updatedData = response.data.map(async (user) => {
 						const fixedEnterDateTime = fixDateTime(user.entryTime);
 						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
+
 						user.checkIn = fixedEnterDateTime.time;
 						user.date = fixedEnterDateTime.date;
 						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
-						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
-							.then(result => {
-								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
-								response.data[index] = user;
-								index++;
-								response.data.key = response.data._id;
-								logData[0].logs = response.data;
-							});
+						const result = await newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber });
+						user.student = result && user.teNumber ? user.teNumber.toUpperCase() : `${result.firstName} ${result.lastName}`;
+
+						return user;
+					});
+
+					Promise.all(updatedData).then(logs => {
+						setLogData(prevLogData => {
+							const updatedLogs = [...prevLogData];
+							updatedLogs[0].logs = logs;
+							return updatedLogs;
+						});
 					});
 				}
 			})
-			.catch(error => {
-				console.error('Error fetching library data:', error);
-			})
-	}, [userId])
+			.catch(error => console.error('Error fetching library user access data:', error));
 
-	useEffect(() => {
-		newApiRequest(`/api/medical-center/useraccess`, 'POST', {}) // Time slot should be included
-			.then(response => {
-				if (response.success && response.data) {
-					// Set the data for medical center: nivindulakshitha
-					let index = 0;
-					response.data.map((user) => {
-						const fixedEnterDateTime = fixDateTime(user.entryTime);
-						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
-						user.checkIn = fixedEnterDateTime.time;
-						user.date = fixedEnterDateTime.date;
-						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
-
-						newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber })
-							.then(result => {
-								user.student = result !== null && result.firstName && result.lastName ? `${result.firstName} ${result.lastName}` : user.teNumber.toUpperCase();
-								response.data[index] = user;
-								index++;
-								response.data.key = response.data._id;
-								logData[1].logs = response.data;
-							});
-					});
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching library data:', error);
-			})
-	}, [userId])
-
-	// Fetch the required data for medical center: nivindulakshitha
-	useEffect(() => {
-		// Fetch the required data for each location: nivindulakshitha
-		let draftData = [];
-		let totalEntrances = 0;
-		let totalDays = 0;
+		// Medical Center Data Fetching
+		let medicalDraftData = [];
+		let medicalTotalEntrances = 0;
+		let medicalTotalDays = 0;
 
 		newApiRequest(`/api/medical-center/history`, 'GET', {})
 			.then(response => {
 				if (response.success && response.data) {
-					// Set the data for library: nivindulakshitha
-					response.data.map((data, index) => {
-						draftData[index] = new Object({
-							"Date": data.date,
+					response.data.forEach((data) => {
+						medicalDraftData.push({
+							"Date": new Date(data.date.split('T')[0]).toLocaleDateString('en-US', {
+								month: 'long',
+								day: '2-digit'
+							}),
 							"Students": data.entrances
-						})
-
-						totalEntrances += data.entrances;
-						totalDays++;
-					})
+						});
+						medicalTotalEntrances += data.entrances;
+						medicalTotalDays++;
+					});
 				}
 			})
-			.catch(error => {
-				console.error('Error fetching medical center data:', error);
-			})
+			.catch(error => console.error('Error fetching medical center data:', error))
 			.finally(() => {
-				setMedicalCenterChartData(...libraryChartData, draftData);
-				setMedicalCenterStats({ visits: totalEntrances, avgDailyVisits: (totalEntrances / totalDays).toFixed(0) });
+				setMedicalCenterChartData([...medicalDraftData]);
+				setMedicalCenterStats({ visits: medicalTotalEntrances, avgDailyVisits: (medicalTotalEntrances / medicalTotalDays).toFixed(0) });
 			});
-	}, [userId])
 
-    const [visibleCalendars, setVisibleCalendars] = useState({});
+		// Medical Center User Access Logs
+		newApiRequest(`/api/medical-center/useraccess`, 'POST', {})
+			.then(response => {
+				if (response.success && response.data) {
+					const updatedData = response.data.map(async (user) => {
+						const fixedEnterDateTime = fixDateTime(user.entryTime);
+						const fixedExitDateTime = user.exitTime && fixDateTime(user.exitTime);
 
-    const toggleCalendarVisibility = (id) => {
-        setVisibleCalendars((prevState) => ({
-            ...prevState,
-            [id]: !prevState[id]
-        }));
-    };
+						user.checkIn = fixedEnterDateTime.time;
+						user.date = fixedEnterDateTime.date;
+						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
-    const handleDatePickerChange = (id, date, dateString) => {
-        console.log(`Table ${id}:`, date, dateString); // Handle the selected date here
-        setVisibleCalendars((prevState) => ({
-            ...prevState,
-            [id]: false
-        }));  // Close the calendar after selection
+						const result = await newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber });
+						user.student = result && user.teNumber ? user.teNumber.toUpperCase() : `${result.firstName} ${result.lastName}`;
+
+						return user;
+					});
+
+					Promise.all(updatedData).then(logs => {
+						setLogData(prevLogData => {
+							const updatedLogs = [...prevLogData];
+							updatedLogs[1].logs = logs;
+							return updatedLogs;
+						});
+					});
+				}
+			})
+			.catch(error => console.error('Error fetching medical center user access data:', error));
+	}, [fetchTrigger]);
+
+
+	const [visibleCalendars, setVisibleCalendars] = useState({});
+
+	const toggleCalendarVisibility = (id) => {
+		setVisibleCalendars((prevState) => ({
+			...prevState,
+			[id]: !prevState[id]
+		}));
 	};
-	
+
+	const handleDatePickerChange = (id, date, dateString) => {
+		console.log(`Table ${id}:`, date, dateString); // Handle the selected date here
+		setVisibleCalendars((prevState) => ({
+			...prevState,
+			[id]: false
+		}));  // Close the calendar after selection
+	};
+
 	// Download the logs data functionality: nivindulakshitha
 	const downloadLogs = (logId) => {
 		const headers = Object.keys(logData[logId].logs[0]).join(',\t');
@@ -307,12 +339,16 @@ const AdminDashboard = ({ userId, userName }) => {
 				<Row gutter={[16, 16]}>
 					{
 						//Display the location data: nivindulakshitha
-						Object.keys(locationTraffic).map(location => (
-							<Col xs={24} sm={12} md={6} key={locationTraffic[location].id}>
-								<Card title={locationTraffic[location].name} extra={<span style={{ color: getColor(locationTraffic[location].percent) }}>{locationTraffic[location].status}</span>}>
-									<Progress type="circle" percent={locationTraffic[location].percent} size={80} strokeColor={getColor(locationTraffic[location].percent)} />
-									<p>{locationTraffic[location].description}</p>
-									<p>Last update was {locationTraffic[location].lastModified}</p>
+						Object.keys(locationTraffic).map(locationKey => (
+							<Col xs={24} sm={12} md={6} key={locationKey}>
+								<Card title={locationTraffic[locationKey].name} extra={<span style={{ color: getColor(locationTraffic[locationKey].percent) }}>{locationTraffic[locationKey].status}</span>}>
+									<Progress type="circle" percent={locationTraffic[locationKey].percent} size={80} strokeColor={getColor(locationTraffic[locationKey].percent)} />
+									<p>{locationTraffic[locationKey].description}</p>
+									{
+										locationKey === 'Medical Center' &&
+										(<p><span className={`doctor-availability-status ${isDoctorAvailable}`}></span> Doctor is {!isDoctorAvailable ? 'not' : ''} available</p>)
+									}
+									<p>last update was {locationTraffic[locationKey].lastModified}</p>
 								</Card>
 							</Col>
 						))
@@ -357,85 +393,84 @@ const AdminDashboard = ({ userId, userName }) => {
 					</Col>
 				</Row>
 
-                <ConfigProvider locale={locale}>
-            <Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
-                {logData.map(log => (	
-                    <Col xs={24} md={12} key={log.id}>
-                        <Card
-                            title={
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                                    <span>{log.name}</span>
-                                    <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-										<Button type="default" onClick={() => { filterLogs(log.id, undefined, undefined) } } style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>All time</Button>
-										<Button type="default" onClick={() => { filterLogs(log.id, new Date(), new Date()) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>Today</Button>
-                                        <Button
-                                            type="default"
-                                            style={{ marginRight: '8px', fontSize: '14px', padding: '4px 12px' }}
-                                            onClick={() => toggleCalendarVisibility(log.id)}
-                                        >
-                                            Custom range
-                                        </Button>
-										<Button onClick={() => { downloadLogs(log.id) }} type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
-                                            Download log
-                                        </Button>
-                                        {visibleCalendars[log.id] && (
-                                            <DatePicker
-                                                open={true}
-                                                onChange={(date, dateString) => handleDatePickerChange(log.id, date, dateString)}
-                                                dropdownClassName="custom-range-picker-dropdown"
-                                                getPopupContainer={trigger => trigger.parentNode} // Ensure it appears under the button
-                                                onOpenChange={(open) => {
-                                                    if (!open) {
-                                                        setVisibleCalendars((prevState) => ({
-                                                            ...prevState,
-                                                            [log.id]: false
-                                                        }));
-                                                    }
-                                                }}
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                            }
-                            bodyStyle={{ padding: 0 }}
-                            style={{ width: '100%' }}
-                        >
-                            <Table
-                                dataSource={log.logs}
-                                columns={[
-                                    { title: 'Date', dataIndex: 'date', key: 'date', align: 'center' },
-                                    {
-                                        title: 'Student',
-                                        dataIndex: 'student',
-                                        key: 'student',
-                                        align: 'center',
-                                        render: (text) => (
-                                            <span style={{
-                                                color: '#1890ff',
-                                                cursor: 'pointer'
-                                            }}>
-                                                {text}
-                                            </span>
-                                        )
-                                    },
-                                    { title: 'Check in', dataIndex: 'checkIn', _id: 'checkIn', align: 'center' },
-                                    { title: 'Check out', dataIndex: 'checkOut', _id: 'checkOut', align: 'center' }
-                                ]}
-                                pagination={{
-                                    pageSize: 10,
-                                    showSizeChanger: false,
-                                    position: ['bottomCenter'],
-                                    total: log.logs.length,
-                                    showQuickJumper: true
-                                }}
-                                rowClassName="log-table-row"
-                                style={{ width: '100%' }}
-                            />
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-        </ConfigProvider>
+				<ConfigProvider locale={locale}>
+					<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
+						{logData.map(log => (
+							<Col xs={24} md={12} key={log.id}>
+								<Card
+									title={
+										<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+											<span>{log.name}</span>
+											<div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+												<Button type="default" onClick={() => { filterLogs(log.id, undefined, undefined) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>All time</Button>
+												<Button type="default" onClick={() => { filterLogs(log.id, new Date(), new Date()) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>Today</Button>
+												<Button
+													type="default"
+													style={{ marginRight: '8px', fontSize: '14px', padding: '4px 12px' }}
+													onClick={() => toggleCalendarVisibility(log.id)}
+												>
+													Custom range
+												</Button>
+												<Button onClick={() => { downloadLogs(log.id) }} type="primary" icon={<DownloadOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
+													Download log
+												</Button>
+												{visibleCalendars[log.id] && (
+													<DatePicker
+														open={true}
+														onChange={(date, dateString) => handleDatePickerChange(log.id, date, dateString)}
+														dropdownClassName="custom-range-picker-dropdown"
+														getPopupContainer={trigger => trigger.parentNode} // Ensure it appears under the button
+														onOpenChange={(open) => {
+															if (!open) {
+																setVisibleCalendars((prevState) => ({
+																	...prevState,
+																	[log.id]: false
+																}));
+															}
+														}}
+													/>
+												)}
+											</div>
+										</div>
+									}
+									style={{ width: '100%', body: { padding: 0 } }}
+								>
+									<Table
+										dataSource={log.logs}
+										columns={[
+											{ title: 'Date', dataIndex: 'date', key: 'date', align: 'center' },
+											{
+												title: 'Student',
+												dataIndex: 'student',
+												key: 'student',
+												align: 'center',
+												render: (text) => (
+													<span style={{
+														color: '#1890ff',
+														cursor: 'pointer'
+													}}>
+														{text}
+													</span>
+												)
+											},
+											{ title: 'Check in', dataIndex: 'checkIn', _id: 'checkIn', align: 'center' },
+											{ title: 'Check out', dataIndex: 'checkOut', _id: 'checkOut', align: 'center' }
+										]}
+										pagination={{
+											pageSize: 10,
+											showSizeChanger: false,
+											position: ['bottomCenter'],
+											total: log.logs.length,
+											showQuickJumper: true
+										}}
+										rowClassName="log-table-row"
+										style={{ width: '100%' }}
+									/>
+								</Card>
+							</Col>
+						))}
+					</Row>
+				</ConfigProvider>
 			</Content>
 		</Layout>
 	)

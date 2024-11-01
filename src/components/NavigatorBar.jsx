@@ -75,11 +75,11 @@ const NavigatorBar = ({ userName }) => {
 						<Menu.Item key="news">
 							<Link to="/news">News</Link>
 						</Menu.Item>
+						<Menu.Item key="my-profile">
+							<Link to="/my-profile">My Profile</Link>
+						</Menu.Item>
 						<Menu.Item key="about-us">
 							<Link to="/about-us">About Us</Link>
-						</Menu.Item>
-						<Menu.Item key="student-profile">
-							<Link to="/student-profile">Student Profile</Link>
 						</Menu.Item>
 					</Menu>
 				</div>
@@ -103,11 +103,11 @@ const NavigatorBar = ({ userName }) => {
 						<Menu.Item key="news" onClick={toggleMenu}>
 							<Link to="/news">News</Link>
 						</Menu.Item>
+						<Menu.Item key="my-profile" onClick={toggleMenu}>
+							<Link to="/my-profile">My Profile</Link>
+						</Menu.Item>
 						<Menu.Item key="about-us" onClick={toggleMenu}>
 							<Link to="/about-us">About Us</Link>
-						</Menu.Item>
-						<Menu.Item key="student-profile" onClick={toggleMenu}>
-							<Link to="/student-profile">Student Profile</Link>
 						</Menu.Item>
 						<Menu.Item key="notifications" onClick={toggleMenu}>
 							<Badge count={notifications}>
