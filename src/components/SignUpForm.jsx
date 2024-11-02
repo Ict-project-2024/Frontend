@@ -103,7 +103,6 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log('Form Data:', form);
 
 		const validationError = validateForm();
 		if (validationError) {
@@ -115,6 +114,13 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 			setErrorMessage('Please upload a profile picture before submitting.');
 			return;
 		}
+
+		// Refine the form data before sending to the server
+		form.firstName = form.firstName.trim().charAt(0).toUpperCase() + form.firstName.trim().slice(1).toLowerCase();
+		form.lastName = form.lastName.trim().charAt(0).toUpperCase() + form.lastName.trim().slice(1).toLowerCase();
+		form.registrationNumber = form.registrationNumber.trim().toLowerCase();
+		form.universityEmail = form.universityEmail.trim().toLowerCase();
+
 
 		setErrorMessage('');
 		setRegistering(true); // Start the registration loading indicator
