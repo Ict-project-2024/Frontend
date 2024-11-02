@@ -4,10 +4,12 @@ import { LeftOutlined, RightOutlined, LockOutlined, EditOutlined } from '@ant-de
 import '../assets/css/MyProfile.css'; // Ensure you have the correct path.
 import FooterComponent from '../components/FooterComponent';
 import newApiRequest from '../utils/apiRequests';
+import { useAuth } from '../context/AuthContext';
 
 const MyProfile = ({ userId }) => {
 	// User badges data: nivindulakshitha
 	const [userBadges, setUserBadges] = useState({})
+	const { user } = useAuth();
 
 	const badgeImages = {
 		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
@@ -79,10 +81,10 @@ const MyProfile = ({ userId }) => {
 				<Col xs={24} md={12}>
 					<Row align="middle">
 						<Col>
-							<Avatar size={80} src="src/assets/images/avatar.png" />
+							<Avatar size={80} src={user.profileImage} />
 						</Col>
 						<Col style={{ marginLeft: '16px' }}>
-							<h2>Serati Ma</h2>
+							<h2>{user.firstName} {user.lastName}</h2>
 						</Col>
 					</Row>
 					<h3>Your badges</h3>
@@ -105,10 +107,10 @@ const MyProfile = ({ userId }) => {
 				{/* Right Side - User Details */}
 				<Col xs={24} md={12}>
 					<div className="profile-info">
-						<p><strong>Name</strong>: Serati Ma</p>
-						<p><strong>University registration number</strong>: TE2190756</p>
-						<p><strong>University email</strong>: serati@university.com</p>
-						<p><strong>Gender</strong>: Male</p>
+						<p><strong>Name</strong>: {user.firstName} {user.lastName}</p>
+						<p><strong>University registration number</strong>: {user.teNumber.toUpperCase()}</p>
+						<p><strong>University email</strong>: {user.email.toLowerCase()}</p>
+						<p><strong>Gender</strong>: {user.gender}</p>
 						<div className="profile-actions">
 							<Button type="link" icon={<LockOutlined />}>Change password</Button>
 							<Button type="link" icon={<EditOutlined />}>Edit details</Button>
