@@ -416,7 +416,7 @@ const Dashboard = ({ userId, userName }) => {
 								userBadges && userBadges.badges ? (
 									Object.keys(userBadges.badges).map(badge => (
 										// Some badges are holding true or false values; check for those: nivindulakshitha
-										typeof userBadges.badges[badge] == 'boolean' && userBadges.badges[badge] && (
+										typeof userBadges.badges[badge] == 'boolean' && userBadges.badges[badge] ? (
 											<Card className="first-step-card" key={badge}>
 												<div className="first-step-content">
 													<img src={badgeImages[badge]} alt={badgeNames[badge]} className="placeholder-image" />
@@ -427,6 +427,20 @@ const Dashboard = ({ userId, userName }) => {
 													</div>
 												</div>
 											</Card>
+										) : (
+											// Display the badges that are not boolean and not null: nivindulakshitha
+												typeof userBadges.badges[badge] != 'boolean' && userBadges.badges[badge] !== null && (
+												<Card className="first-step-card" key={badge}>
+													<div className="first-step-content">
+															<img src={userBadges.badges[badge] === "Silver" ? badgeImages[badge] : userBadges.badges[badge] === "Bronze" ? "https://placehold.co/400/cd7f32/white" : "https://placehold.co/400/gold/white"} alt={badgeNames[badge]} className="placeholder-image" />
+														<div className='width-full'>
+															<Title level={4}>{badgeNames[badge]}</Title>
+															<Text>{congratulationTexts[badge]}</Text>
+															<Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
+														</div>
+													</div>
+												</Card>
+											)
 										)
 
 									))) : (
@@ -450,11 +464,11 @@ const Dashboard = ({ userId, userName }) => {
 													</Col>
 												)) : (
 													// Display the badges that are not boolean and not null: nivindulakshitha
-													userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
-														<Card cover={<img src={badgeImages[badge]} alt={badge} />}>
+													<Col xs={24} sm={8} key={badge}>
+															<Card cover={<img src={userBadges.badges[badge] === null ? "https://placehold.co/400/silver/black" : userBadges.badges[badge] === "Silver" ? "https://placehold.co/400/cd7f32/white" : "https://placehold.co/400/gold/white" } alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
-													</Col>)
+													</Col>
 												)
 											))
 										) : (

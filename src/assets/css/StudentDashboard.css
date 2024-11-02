@@ -135,6 +135,7 @@ body {
 .first-step-card {
   text-align: center;
   height: auto;
+  width: 100% !important;
 }
 
 .badge-card .ant-progress {
