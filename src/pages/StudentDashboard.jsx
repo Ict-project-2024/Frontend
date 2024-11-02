@@ -69,7 +69,6 @@ const esimateCrowd = (votes) => {
 	return estimatedCount.toFixed(0);
 }
 
-
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 	const [voteSubmitting, setVoteSubmitting] = useState(false)
@@ -110,13 +109,15 @@ const Dashboard = ({ userId, userName }) => {
 	const [isDoctorAvailable, setIsDoctorAvailable] = useState(false);
 
 	// Calculate the next badge level based on the current badge level: nivindulakshitha
-	const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
-		if (frequentContributorLevel == null) {
-			setNextBadgeLevel(10 * currentVotes);
-		} else if (frequentContributorLevel == "Bronze") {
-			setNextBadgeLevel(2 * currentVotes);
+	const prepareNextBadge = (currentVotes) => {
+		if (currentVotes <= 6) {
+			setNextBadgeLevel(currentVotes * 100 / 7);
+		} else if (currentVotes <= 29) {
+			setNextBadgeLevel(currentVotes * 100 / 30);
+		} else if (currentVotes <= 89) {
+			setNextBadgeLevel(currentVotes * 100 / 90);
 		} else {
-			setNextBadgeLevel(1 * currentVotes);
+			setNextBadgeLevel(100);
 		}
 	}
 
@@ -127,19 +128,6 @@ const Dashboard = ({ userId, userName }) => {
 		return currentHour >= 8 && currentHour < 16;
 	};
 
-	// Fetch the badges data for the user: nivindulakshitha
-	useEffect(() => {
-		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
-			.then(response => {
-				if (response.success && response.data) {
-					setUserBadges(response);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
-				}
-			})
-			.catch(error => console.error('Error fetching location data:', error));
-	}, [userId]); // Dependency array to re-fetch when userId changes
-
-	
 	const checkDoctorAvailability = async () => {
 		try {
 			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
@@ -188,25 +176,26 @@ const Dashboard = ({ userId, userName }) => {
 		setLocationTraffic((prev) => ({ ...prev, ...draftData }));
 	};
 
-	setInterval(() => {
-		fetchLocationData();
-		checkDoctorAvailability();
-	}, 60000);
-
 	const [fetchTrigger, setFetchTrigger] = useState(false)
-	// Trigger the fetch every 5 seconds for live updates
-	setInterval(() => {
-		setFetchTrigger(!fetchTrigger)
-	}, 60000);
+	useEffect(() => {
+		setInterval(() => {
+			fetchLocationData();
+			checkDoctorAvailability();
+		}, 60000);
 
-	// Fetch the required data for each location: nivindulakshitha
+		// Trigger the fetch every 5 seconds for live updates
+		setInterval(() => {
+			setFetchTrigger(!fetchTrigger)
+		}, 60000);
+	}, []);
+
 	useEffect(() => {
 		const fetchBadgesData = async () => {
 			try {
 				const response = await newApiRequest(`/api/votes/get`, 'POST', { userId });
 				if (response.success) {
 					setUserBadges(response.data);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+					prepareNextBadge(response.data.consecutiveDays);
 				}
 			} catch (error) {
 				console.error('Error fetching badges data:', error);
@@ -311,6 +300,16 @@ const Dashboard = ({ userId, userName }) => {
 								</Col>
 							))
 						}
+
+						{
+							(!Object.keys(locationTraffic).includes("Medical Center")) && (
+								<Col xs={24} sm={12} md={6} key={0}>
+									<Card title="Medical Center">
+										<p><span className={`doctor-availability-status ${isDoctorAvailable}`}></span> Doctor is {!isDoctorAvailable ? 'not' : ''} available</p>
+									</Card>
+								</Col>
+							)
+						}
 					</Row>
 					<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
 						<Col xs={24} md={12}>
@@ -409,7 +408,7 @@ const Dashboard = ({ userId, userName }) => {
 						<Col xs={24} md={12}>
 							<Card className="badge-card">
 								<Text>How close you are to your next badge?</Text>
-								<Progress percent={nextBadgeLevel} />
+								<Progress percent={Math.round(nextBadgeLevel)} />
 								<Link href="/profile" className="profile-link">See your badges in profile</Link>
 							</Card>
 							{

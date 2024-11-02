@@ -9,7 +9,7 @@ import AboutUs from './AboutUs';
 import '../assets/css/Home.css';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
-import StudentProfile from './StudentProfile';
+import MyProfile from './MyProfile';
 
 const Home = () => {
 	const { user, isAuthenticated } = useAuth();
@@ -67,7 +67,7 @@ const Home = () => {
 							<Route path="/dashboard" element={renderDashboard()} />
 							<Route path="/news" element={<News />} />
 							<Route path="/about-us" element={<AboutUs />} />
-							<Route path="/my-profile" element={<StudentProfile />} />
+							<Route path="/my-profile" element={<MyProfile userId={userBio._id} />} />
 						</Routes>
 					</div>
 				</>
