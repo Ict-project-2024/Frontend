@@ -69,7 +69,6 @@ const esimateCrowd = (votes) => {
 	return estimatedCount.toFixed(0);
 }
 
-
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 	const [voteSubmitting, setVoteSubmitting] = useState(false)
@@ -110,13 +109,15 @@ const Dashboard = ({ userId, userName }) => {
 	const [isDoctorAvailable, setIsDoctorAvailable] = useState(false);
 
 	// Calculate the next badge level based on the current badge level: nivindulakshitha
-	const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
-		if (frequentContributorLevel == null) {
-			setNextBadgeLevel(10 * currentVotes);
-		} else if (frequentContributorLevel == "Bronze") {
-			setNextBadgeLevel(2 * currentVotes);
+	const prepareNextBadge = (currentVotes) => {
+		if (currentVotes <= 6) {
+			setNextBadgeLevel(currentVotes * 100 / 7);
+		} else if (currentVotes <= 29) {
+			setNextBadgeLevel(currentVotes * 100 / 30);
+		} else if (currentVotes <= 89) {
+			setNextBadgeLevel(currentVotes * 100 / 90);
 		} else {
-			setNextBadgeLevel(1 * currentVotes);
+			setNextBadgeLevel(100);
 		}
 	}
 
@@ -126,19 +127,6 @@ const Dashboard = ({ userId, userName }) => {
 		const currentHour = now.getHours();
 		return currentHour >= 8 && currentHour < 16;
 	};
-
-	// Fetch the badges data for the user: nivindulakshitha
-	useEffect(() => {
-		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
-			.then(response => {
-				if (response.success && response.data) {
-					setUserBadges(response);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
-				}
-			})
-			.catch(error => console.error('Error fetching location data:', error));
-	}, [userId]); // Dependency array to re-fetch when userId changes
-
 
 	const checkDoctorAvailability = async () => {
 		try {
@@ -201,14 +189,13 @@ const Dashboard = ({ userId, userName }) => {
 		}, 60000);
 	}, []);
 
-	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {
 		const fetchBadgesData = async () => {
 			try {
 				const response = await newApiRequest(`/api/votes/get`, 'POST', { userId });
 				if (response.success) {
 					setUserBadges(response.data);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+					prepareNextBadge(response.data.consecutiveDays);
 				}
 			} catch (error) {
 				console.error('Error fetching badges data:', error);
@@ -421,7 +408,7 @@ const Dashboard = ({ userId, userName }) => {
 						<Col xs={24} md={12}>
 							<Card className="badge-card">
 								<Text>How close you are to your next badge?</Text>
-								<Progress percent={nextBadgeLevel} />
+								<Progress percent={Math.round(nextBadgeLevel)} />
 								<Link href="/profile" className="profile-link">See your badges in profile</Link>
 							</Card>
 							{
