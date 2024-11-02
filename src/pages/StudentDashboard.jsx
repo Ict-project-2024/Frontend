@@ -139,7 +139,7 @@ const Dashboard = ({ userId, userName }) => {
 			.catch(error => console.error('Error fetching location data:', error));
 	}, [userId]); // Dependency array to re-fetch when userId changes
 
-	
+
 	const checkDoctorAvailability = async () => {
 		try {
 			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
@@ -188,16 +188,18 @@ const Dashboard = ({ userId, userName }) => {
 		setLocationTraffic((prev) => ({ ...prev, ...draftData }));
 	};
 
-	setInterval(() => {
-		fetchLocationData();
-		checkDoctorAvailability();
-	}, 60000);
-
 	const [fetchTrigger, setFetchTrigger] = useState(false)
-	// Trigger the fetch every 5 seconds for live updates
-	setInterval(() => {
-		setFetchTrigger(!fetchTrigger)
-	}, 60000);
+	useEffect(() => {
+		setInterval(() => {
+			fetchLocationData();
+			checkDoctorAvailability();
+		}, 60000);
+
+		// Trigger the fetch every 5 seconds for live updates
+		setInterval(() => {
+			setFetchTrigger(!fetchTrigger)
+		}, 60000);
+	}, []);
 
 	// Fetch the required data for each location: nivindulakshitha
 	useEffect(() => {

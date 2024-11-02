@@ -169,13 +169,13 @@ const AdminDashboard = ({ userId, userName }) => {
 		fetchLocationData();
 		checkDoctorAvailability();
 		setFetchTrigger(!fetchTrigger);
-	}, []);
 
-	setInterval(() => {
-		fetchLocationData();
-		checkDoctorAvailability();
-		setFetchTrigger(!fetchTrigger);
-	}, 60000);
+		setInterval(() => {
+			fetchLocationData();
+			checkDoctorAvailability();
+			setFetchTrigger(!fetchTrigger);
+		}, 60000);
+	}, []);
 
 	// Fetch the required data for library: nivindulakshitha
 	useEffect(() => {
@@ -423,8 +423,8 @@ const AdminDashboard = ({ userId, userName }) => {
 												<Button
 													type="default"
 													style={{ marginRight: '8px', fontSize: '14px', padding: '4px 12px' }}
-													onClick={() => {toggleCalendarVisibility(log.id); console.log(filterLogs(log.id, new Date("2024-10-22"), new Date("2024-10-29")))}}
-													
+													onClick={() => { toggleCalendarVisibility(log.id); console.log(filterLogs(log.id, new Date("2024-10-22"), new Date("2024-10-29"))) }}
+
 												>
 													Custom range
 												</Button>
