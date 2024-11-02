@@ -1,15 +1,15 @@
 import React from 'react';
 import { Avatar, Button, Row, Col, Card, Table } from 'antd';
 import { LeftOutlined, RightOutlined, LockOutlined, EditOutlined } from '@ant-design/icons';
-import '../assets/css/StudentProfile.css'; // Ensure you have the correct path.
+import '../assets/css/StudentProfile.css';
 import FooterComponent from '../components/FooterComponent';
 
 const StudentProfile = () => {
   const badges = [
     { title: 'First Step', description: 'First step as a hero!', imgSrc: 'src/assets/images/badge.png' },
-    { title: 'First Step', description: 'First step as a hero!', imgSrc: 'src/assets/images/badge.png' },
-    { title: 'First Step', description: 'First step as a hero!', imgSrc: 'src/assets/images/badge.png' },
-    { title: 'First Step', description: 'First step as a hero!', imgSrc: 'src/assets/images/badge.png' },
+    { title: 'Achiever', description: 'Reached new heights!', imgSrc: 'src/assets/images/badge.png' },
+    { title: 'Top Performer', description: 'Excels in performance!', imgSrc: 'src/assets/images/badge.png' },
+    { title: 'Dedicated', description: 'Shows dedication!', imgSrc: 'src/assets/images/badge.png' },
   ];
 
   const columns = [
@@ -26,17 +26,11 @@ const StudentProfile = () => {
     { key: '4', date: '2024-08-04', place: 'Present', checkin: '09:05 AM', checkout: '05:00 PM' },
     { key: '5', date: '2024-08-05', place: 'Present', checkin: '09:00 AM', checkout: '05:00 PM' },
     { key: '6', date: '2024-08-06', place: 'Absent', checkin: '-', checkout: '-' },
-    { key: '7', date: '2024-08-01', place: 'Present', checkin: '09:00 AM', checkout: '05:00 PM' },
-    { key: '8', date: '2024-08-02', place: 'Absent', checkin: '-', checkout: '-' },
-    { key: '9', date: '2024-08-03', place: 'Present', checkin: '09:15 AM', checkout: '05:10 PM' },
-    { key: '10', date: '2024-08-04', place: 'Present', checkin: '09:05 AM', checkout: '05:00 PM' },
-    { key: '11', date: '2024-08-05', place: 'Present', checkin: '09:00 AM', checkout: '05:00 PM' },
-    { key: '12', date: '2024-08-06', place: 'Absent', checkin: '-', checkout: '-' },
-    // Add more data as needed
+    // Add as many entries as needed for detailed data.
   ];
 
   return (
-    <div className="my-profile" style={{ padding: '40px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+    <div className="my-profile">
       <Row gutter={[16, 16]} align="middle">
         {/* Left Side - Badges */}
         <Col xs={24} md={12}>
@@ -67,12 +61,12 @@ const StudentProfile = () => {
 
         {/* Right Side - User Details */}
         <Col xs={24} md={12}>
-          <div style={{ textAlign: 'left' }}>
+          <div className="profile-info">
             <p><strong>Name</strong>: Serati Ma</p>
             <p><strong>University registration number</strong>: TE2190756</p>
-            <p><strong>University email</strong>: TE2190756</p>
+            <p><strong>University email</strong>: serati@university.com</p>
             <p><strong>Gender</strong>: Male</p>
-            <div style={{ marginTop: '16px' }}>
+            <div className="profile-actions">
               <Button type="link" icon={<LockOutlined />}>Change password</Button>
               <Button type="link" icon={<EditOutlined />}>Edit details</Button>
             </div>
@@ -81,14 +75,15 @@ const StudentProfile = () => {
       </Row>
 
       {/* Attendance Log Section */}
-      <div className="attendance-log" style={{ marginTop: '80px' }}>
+      <div className="attendance-log">
         <h3 className="centered-text">Places you visited</h3>
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 5, position: ['bottomCenter'] }} // Pagination at top and bottom center
+          pagination={{ pageSize: 5, position: ['bottomCenter'] }}
         />
       </div>
+      <FooterComponent />
     </div>
   );
 };
