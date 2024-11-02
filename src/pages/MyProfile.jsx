@@ -73,7 +73,7 @@ const MyProfile = ({ userId }) => {
 	];
 
 	return (
-		<div className="my-profile" style={{ padding: '40px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+		<div className="my-profile">
 			<Row gutter={[16, 16]} align="middle">
 				{/* Left Side - Badges */}
 				<Col xs={24} md={12}>
@@ -104,12 +104,12 @@ const MyProfile = ({ userId }) => {
 
 				{/* Right Side - User Details */}
 				<Col xs={24} md={12}>
-					<div style={{ textAlign: 'left' }}>
+					<div className="profile-info">
 						<p><strong>Name</strong>: Serati Ma</p>
 						<p><strong>University registration number</strong>: TE2190756</p>
-						<p><strong>University email</strong>: TE2190756</p>
+						<p><strong>University email</strong>: serati@university.com</p>
 						<p><strong>Gender</strong>: Male</p>
-						<div style={{ marginTop: '16px' }}>
+						<div className="profile-actions">
 							<Button type="link" icon={<LockOutlined />}>Change password</Button>
 							<Button type="link" icon={<EditOutlined />}>Edit details</Button>
 						</div>
@@ -118,14 +118,15 @@ const MyProfile = ({ userId }) => {
 			</Row>
 
 			{/* Attendance Log Section */}
-			<div className="attendance-log" style={{ marginTop: '80px' }}>
+			<div className="attendance-log">
 				<h3 className="centered-text">Places you visited</h3>
 				<Table
 					columns={columns}
 					dataSource={data}
-					pagination={{ pageSize: 5, position: ['bottomCenter'] }} // Pagination at top and bottom center
+					pagination={{ pageSize: 5, position: ['bottomCenter'] }}
 				/>
 			</div>
+			<FooterComponent />
 		</div>
 	);
 };
