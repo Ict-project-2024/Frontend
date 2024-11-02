@@ -311,6 +311,16 @@ const Dashboard = ({ userId, userName }) => {
 								</Col>
 							))
 						}
+
+						{
+							(!Object.keys(locationTraffic).includes("Medical Center")) && (
+								<Col xs={24} sm={12} md={6} key={0}>
+									<Card title="Medical Center">
+										<p><span className={`doctor-availability-status ${isDoctorAvailable}`}></span> Doctor is {!isDoctorAvailable ? 'not' : ''} available</p>
+									</Card>
+								</Col>
+							)
+						}
 					</Row>
 					<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
 						<Col xs={24} md={12}>
