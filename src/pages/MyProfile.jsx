@@ -15,7 +15,11 @@ const MyProfile = ({ userId }) => {
 		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
 		"accuracyStar": "https://unimo.blob.core.windows.net/unimo/Acuracy Star.png",
 		"dailyContributor": "https://unimo.blob.core.windows.net/unimo/Daily Contributer.png",
-		"frequentContributor": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer.png",
+		"frequentContributor": {
+			"Silver": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Silvar.png",
+			"Bronze": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Bronze.png",
+			"Gold": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Gold.png"
+		},
 		"weeklyWarrior": "https://unimo.blob.core.windows.net/unimo/Weekly warior.png",
 		"validateContributor": "https://unimo.blob.core.windows.net/unimo/Validated Contributer.png"
 	}
@@ -94,7 +98,7 @@ const MyProfile = ({ userId }) => {
 							((typeof badgeData === 'boolean' && badgeData) || typeof badgeData === 'string') && <Card
 								key={index}
 								hoverable
-								cover={<img alt={badgeNames[badgeName]} src={badgeImages[badgeName]} style={{ width: '130px' }} />}
+								cover={<img alt={badgeNames[badgeName]} src={typeof badgeData === 'boolean' ? badgeImages[badgeName] : badgeImages[badgeName][badgeData]} style={{ width: '130px' }} />}
 								style={{ width: 130, margin: '0 8px' }}
 							>
 								<Card.Meta title={badgeNames[badgeName]} description={badgeDescriptions[badgeName]} />

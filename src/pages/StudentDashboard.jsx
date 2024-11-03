@@ -441,9 +441,9 @@ const Dashboard = ({ userId, userName }) => {
 												typeof userBadges.badges[badge] !== "boolean" &&
 												userBadges.badges[badge] !== null && (
 													<Card className="badge-card" key={badge}>
-															<div className="badge-card-content">
+														<div className="badge-card-content">
 															<img
-																	src={badgeImages.frequentContributor[userBadges.badges[badge]]}
+																src={badgeImages.frequentContributor[userBadges.badges[badge]]}
 																alt={badgeNames[badge]}
 																className="badge-image"
 															/>
@@ -483,7 +483,7 @@ const Dashboard = ({ userId, userName }) => {
 												)) : (
 													// Display the badges that are not boolean and not null: nivindulakshitha
 													<Col xs={24} sm={8} key={badge}>
-															<Card cover={<img src={userBadges.badges[badge] === null ? badgeImages.frequentContributor["Silver"] : userBadges.badges[badge] === "Silver" ? badgeImages.frequentContributor["Bronze"] : badgeImages.frequentContributor["Gold"]} alt={badge} />}>
+														<Card cover={<img src={userBadges.badges[badge] === null ? badgeImages.frequentContributor["Silver"] : userBadges.badges[badge] === "Silver" ? badgeImages.frequentContributor["Bronze"] : badgeImages.frequentContributor["Gold"]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
 													</Col>
