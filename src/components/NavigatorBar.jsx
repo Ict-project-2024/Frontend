@@ -68,7 +68,7 @@ const NavigatorBar = ({ userName }) => {
 			</div>
 			{!isMobile && (
 				<div className="nav-menu">
-					<Menu className='menu' mode="horizontal" defaultSelectedKeys={['dashboard']} selectedKeys={[window.location.pathname.slice(1)]}>
+					<Menu className='menu' mode="horizontal" selectedKeys={[window.location.pathname.slice(1)]}>
 						<Menu.Item key="dashboard">
 							<Link to="/dashboard">Live Status</Link>
 						</Menu.Item>
@@ -96,7 +96,7 @@ const NavigatorBar = ({ userName }) => {
 			)}
 			{menuVisible && isMobile && (
 				<div className={`dropdown-menu ${menuVisible ? 'visible' : ''}`}>
-					<Menu className='menu' mode="vertical" defaultSelectedKeys={['dashboard']} selectedKeys={[window.location.pathname.slice(1)]}>
+					<Menu className='menu' mode="vertical" selectedKeys={[window.location.pathname.slice(1)]}>
 						<Menu.Item key="dashboard" onClick={toggleMenu}>
 							<Link to="/dashboard">Live Status</Link>
 						</Menu.Item>
