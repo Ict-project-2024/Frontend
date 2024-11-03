@@ -86,7 +86,11 @@ const Dashboard = ({ userId, userName }) => {
 		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
 		"accuracyStar": "https://unimo.blob.core.windows.net/unimo/Acuracy Star.png",
 		"dailyContributor": "https://unimo.blob.core.windows.net/unimo/Daily Contributer.png",
-		"frequentContributor": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer.png",
+		"frequentContributor": {
+			"Silver": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Silvar.png",
+			"Bronze": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Bronze.png",
+			"Gold": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Gold.png"
+		},
 		"weeklyWarrior": "https://unimo.blob.core.windows.net/unimo/Weekly warior.png",
 		"validateContributor": "https://unimo.blob.core.windows.net/unimo/Validated Contributer.png"
 	}
@@ -437,15 +441,9 @@ const Dashboard = ({ userId, userName }) => {
 												typeof userBadges.badges[badge] !== "boolean" &&
 												userBadges.badges[badge] !== null && (
 													<Card className="badge-card" key={badge}>
-														<div className="badge-card-content">
+															<div className="badge-card-content">
 															<img
-																src={
-																	userBadges.badges[badge] === "Silver"
-																		? badgeImages[badge]
-																		: userBadges.badges[badge] === "Bronze"
-																			? "https://placehold.co/400/cd7f32/white"
-																			: "https://placehold.co/400/gold/white"
-																}
+																	src={badgeImages.frequentContributor[userBadges.badges[badge]]}
 																alt={badgeNames[badge]}
 																className="badge-image"
 															/>
@@ -485,7 +483,7 @@ const Dashboard = ({ userId, userName }) => {
 												)) : (
 													// Display the badges that are not boolean and not null: nivindulakshitha
 													<Col xs={24} sm={8} key={badge}>
-														<Card cover={<img src={userBadges.badges[badge] === null ? "https://placehold.co/400/silver/black" : userBadges.badges[badge] === "Silver" ? "https://placehold.co/400/cd7f32/white" : "https://placehold.co/400/gold/white"} alt={badge} />}>
+															<Card cover={<img src={userBadges.badges[badge] === null ? badgeImages.frequentContributor["Silver"] : userBadges.badges[badge] === "Silver" ? badgeImages.frequentContributor["Bronze"] : badgeImages.frequentContributor["Gold"]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
 													</Col>
