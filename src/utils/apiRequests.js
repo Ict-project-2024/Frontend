@@ -12,7 +12,7 @@ const newApiRequest = async (url, method, data,
             data,
             headers
         });
-        //console.log(`🟢 ${response.status}: ${url} ${method} ${JSON.stringify(data)}`, response);
+        console.log(`🟢 ${response.status}: ${url} ${method} ${JSON.stringify(data)}`, response);
         return response.data;
 
     } catch (error) {
