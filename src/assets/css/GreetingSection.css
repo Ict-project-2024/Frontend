@@ -214,3 +214,60 @@
 		/* Adjust font size */
 	}
 }
+@media (max-width: 576px) {
+	/* Greeting Section for Smaller Mobile Devices */
+	.greeting-section {
+	  flex-direction: column;
+	  align-items: center;
+	  text-align: center;
+	  padding: 10px;
+	}
+  
+	/* Greeting Text Adjustments */
+	.greeting-text h2 {
+	  font-size: 18px; /* Reduce size for smaller screens */
+	}
+  
+	.greeting-text p {
+	  font-size: 16px; /* Adjust the "Good afternoon Dakshana!" text size */
+	  margin-bottom: 8px;
+	}
+  
+	/* Quick Links Section Adjustments */
+	.quick-links {
+	  gap: 8px; /* Reduce space between the links */
+	  flex-direction: row;
+	  justify-content: center;
+	  flex-wrap: wrap; /* Allow wrapping of links to fit on smaller screens */
+	  margin-top: 10px;
+	}
+  
+	.quick-links a {
+	  font-size: 14px; /* Reduce link size for readability on smaller devices */
+	  margin-right: 6px;
+	  padding: 6px 10px; /* Adjust padding for better visibility */
+	}
+  
+	.quick-links a svg {
+	  width: 12px; /* Reduce icon size */
+	  height: 12px;
+	  margin-right: 4px;
+	}
+	
+	/* Date Time Section Adjustments */
+	.date-time {
+	  flex-wrap: wrap; /* Allow wrapping of date-time elements */
+	  justify-content: center;
+	  gap: 12px; /* Reduce spacing for smaller screens */
+	}
+  
+	.date-time p {
+	  font-size: 14px; /* Reduce font size for date and time display */
+	  margin-bottom: 4px;
+	}
+  
+	.date-time p strong {
+	  font-size: 14px; /* Adjust size for bold text */
+	}
+  }
+  
