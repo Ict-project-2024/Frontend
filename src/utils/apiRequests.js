@@ -10,8 +10,15 @@ const newApiRequest = async (url, method, data,
             url: `${import.meta.env.VITE_BASE_URL}${url}`,
             method,
             data,
-            headers
+            headers,
+            withCredentials: true,
         });
+        
+            const cookie = response.headers.get('set-cookie');
+            console.log('Cookie set:', cookie); 
+        if (response.headers.get('set-cookie') !== undefined) {
+            document.cookie = cookie;
+        }
         //console.log(`🟢 ${response.status}: ${url} ${method} ${JSON.stringify(data)}`, response);
         return response.data;
 
