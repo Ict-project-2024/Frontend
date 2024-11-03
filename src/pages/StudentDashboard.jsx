@@ -86,7 +86,11 @@ const Dashboard = ({ userId, userName }) => {
 		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
 		"accuracyStar": "https://unimo.blob.core.windows.net/unimo/Acuracy Star.png",
 		"dailyContributor": "https://unimo.blob.core.windows.net/unimo/Daily Contributer.png",
-		"frequentContributor": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer.png",
+		"frequentContributor": {
+			"Silver": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Silvar.png",
+			"Bronze": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Bronze.png",
+			"Gold": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Gold.png"
+		},
 		"weeklyWarrior": "https://unimo.blob.core.windows.net/unimo/Weekly warior.png",
 		"validateContributor": "https://unimo.blob.core.windows.net/unimo/Validated Contributer.png"
 	}
@@ -409,62 +413,56 @@ const Dashboard = ({ userId, userName }) => {
 							<Card className="badge-card">
 								<Text>How close you are to your next badge?</Text>
 								<Progress percent={Math.round(nextBadgeLevel)} />
-								<Link href="/profile" className="profile-link">See your badges in profile</Link>
+								<Link href="/my-profile" className="profile-link">See your badges in profile</Link>
 							</Card>
 							{
 								// Display the claimed badges: nivindulakshitha
 								<div className="badge-cards-container">
-  {userBadges && userBadges.badges ? (
-    Object.keys(userBadges.badges).map((badge) =>
-      typeof userBadges.badges[badge] === "boolean" && userBadges.badges[badge] ? (
-        <Card className="badge-card" key={badge}>
-          <div className="badge-card-content">
-            <img
-              src={badgeImages[badge]}
-              alt={badgeNames[badge]}
-              className="badge-image"
-            />
-            <div className="badge-details">
-              <Title level={4}>{badgeNames[badge]}</Title>
-              <Text>{congratulationTexts[badge]}</Text>
-              <Button type="primary" icon={<TrophyOutlined />} disabled>
-                Claim now!
-              </Button>
-            </div>
-          </div>
-        </Card>
-      ) : (
-        typeof userBadges.badges[badge] !== "boolean" &&
-        userBadges.badges[badge] !== null && (
-          <Card className="badge-card" key={badge}>
-            <div className="badge-card-content">
-              <img
-                src={
-                  userBadges.badges[badge] === "Silver"
-                    ? badgeImages[badge]
-                    : userBadges.badges[badge] === "Bronze"
-                    ? "https://placehold.co/400/cd7f32/white"
-                    : "https://placehold.co/400/gold/white"
-                }
-                alt={badgeNames[badge]}
-                className="badge-image"
-              />
-              <div className="badge-details">
-                <Title level={4}>{badgeNames[badge]}</Title>
-                <Text>{congratulationTexts[badge]}</Text>
-                <Button type="primary" icon={<TrophyOutlined />} disabled>
-                  Claim now!
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )
-      )
-    )
-  ) : (
-    <p className="smallLetters">No claimed badges available right now</p>
-  )}
-</div>
+									{userBadges && userBadges.badges ? (
+										Object.keys(userBadges.badges).map((badge) =>
+											typeof userBadges.badges[badge] === "boolean" && userBadges.badges[badge] ? (
+												<Card className="badge-card" key={badge}>
+													<div className="badge-card-content">
+														<img
+															src={badgeImages[badge]}
+															alt={badgeNames[badge]}
+															className="badge-image"
+														/>
+														<div className="badge-details">
+															<Title level={4}>{badgeNames[badge]}</Title>
+															<Text>{congratulationTexts[badge]}</Text>
+															{/* <Button type="primary" icon={<TrophyOutlined />} disabled>
+																Claim now!
+															</Button> */}
+														</div>
+													</div>
+												</Card>
+											) : (
+												typeof userBadges.badges[badge] !== "boolean" &&
+												userBadges.badges[badge] !== null && (
+													<Card className="badge-card" key={badge}>
+														<div className="badge-card-content">
+															<img
+																src={badgeImages.frequentContributor[userBadges.badges[badge]]}
+																alt={badgeNames[badge]}
+																className="badge-image"
+															/>
+															<div className="badge-details">
+																<Title level={4}>{badgeNames[badge]}</Title>
+																<Text>{congratulationTexts[badge]}</Text>
+																{/* <Button type="primary" icon={<TrophyOutlined />} disabled>
+																	Claim now!
+																</Button> */}
+															</div>
+														</div>
+													</Card>
+												)
+											)
+										)
+									) : (
+										<p className="smallLetters">No claimed badges available right now</p>
+									)}
+								</div>
 
 							}
 						</Col>
@@ -485,7 +483,7 @@ const Dashboard = ({ userId, userName }) => {
 												)) : (
 													// Display the badges that are not boolean and not null: nivindulakshitha
 													<Col xs={24} sm={8} key={badge}>
-															<Card cover={<img src={userBadges.badges[badge] === null ? "https://placehold.co/400/silver/black" : userBadges.badges[badge] === "Silver" ? "https://placehold.co/400/cd7f32/white" : "https://placehold.co/400/gold/white" } alt={badge} />}>
+														<Card cover={<img src={userBadges.badges[badge] === null ? badgeImages.frequentContributor["Silver"] : userBadges.badges[badge] === "Silver" ? badgeImages.frequentContributor["Bronze"] : badgeImages.frequentContributor["Gold"]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
 													</Col>
