@@ -169,13 +169,13 @@ const AdminDashboard = ({ userId, userName }) => {
 		fetchLocationData();
 		checkDoctorAvailability();
 		setFetchTrigger(!fetchTrigger);
-	}, []);
 
-	setInterval(() => {
-		fetchLocationData();
-		checkDoctorAvailability();
-		setFetchTrigger(!fetchTrigger);
-	}, 60000);
+		setInterval(() => {
+			fetchLocationData();
+			checkDoctorAvailability();
+			setFetchTrigger(!fetchTrigger);
+		}, 60000);
+	}, []);
 
 	// Fetch the required data for library: nivindulakshitha
 	useEffect(() => {
@@ -219,7 +219,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
 						const result = await newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber });
-						user.student = result && user.teNumber ? user.teNumber.toUpperCase() : `${result.firstName} ${result.lastName}`;
+						user.student = result !== null ? user.teNumber ? user.teNumber.toUpperCase() : `${result.firstName} ${result.lastName}` : 'Unknown';
 
 						return user;
 					});
@@ -275,7 +275,7 @@ const AdminDashboard = ({ userId, userName }) => {
 						user.checkOut = fixedExitDateTime ? fixedExitDateTime.time : "--:--";
 
 						const result = await newApiRequest(`/api/user/`, 'POST', { "teNumber": user.teNumber });
-						user.student = result && user.teNumber ? user.teNumber.toUpperCase() : `${result.firstName} ${result.lastName}`;
+						user.student = result !== null ? user.teNumber ? user.teNumber.toUpperCase() : `${result.firstName} ${result.lastName}` : 'Unknown';
 
 						return user;
 					});
@@ -323,13 +323,19 @@ const AdminDashboard = ({ userId, userName }) => {
 		window.URL.revokeObjectURL(url);
 	}
 
-	const filterLogs = (key, start, end) => {
-		console.log(key, start, end)
+	const filterLogs = (key, startDate, endDate) => {
+		if (startDate === undefined && endDate === undefined) {
+			return logData[key].logs;
+		} else if (startDate !== undefined && endDate !== undefined) {
+			return logData[key].logs.filter(log => {
+				return new Date(log.date).toDateString() >= new Date(startDate).toDateString(), new Date(log.date).toDateString() <= new Date(endDate).toDateString();
+			})
+		}
 	}
 
 	return (
 		<Layout>
-			<Content style={{ padding: '0 50px', overflow: 'auto' }}>
+			<Content style={{ padding: '0 20px', overflow: 'auto' }}>
 				{/* Greeting Section */}
 				<div style={{ marginBottom: '20px' }}>
 					<GreetingSection name={userName.first ? userName.first : user.firstName} />
@@ -352,6 +358,16 @@ const AdminDashboard = ({ userId, userName }) => {
 								</Card>
 							</Col>
 						))
+					}
+
+					{
+						(!Object.keys(locationTraffic).includes("Medical Center")) && (
+							<Col xs={24} sm={12} md={6} key={0}>
+								<Card title="Medical Center">
+									<p><span className={`doctor-availability-status ${isDoctorAvailable}`}></span> Doctor is {!isDoctorAvailable ? 'not' : ''} available</p>
+								</Card>
+							</Col>
+						)
 					}
 				</Row>
 
@@ -402,12 +418,13 @@ const AdminDashboard = ({ userId, userName }) => {
 										<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 											<span>{log.name}</span>
 											<div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-												<Button type="default" onClick={() => { filterLogs(log.id, undefined, undefined) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>All time</Button>
-												<Button type="default" onClick={() => { filterLogs(log.id, new Date(), new Date()) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>Today</Button>
+												<Button type="default" onClick={() => { console.log(filterLogs(log.id, undefined, undefined)) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>All time</Button>
+												<Button type="default" onClick={() => { console.log(filterLogs(log.id, new Date(), new Date())) }} style={{ marginRight: '2px', fontSize: '14px', padding: '4px 12px' }}>Today</Button>
 												<Button
 													type="default"
 													style={{ marginRight: '8px', fontSize: '14px', padding: '4px 12px' }}
-													onClick={() => toggleCalendarVisibility(log.id)}
+													onClick={() => { toggleCalendarVisibility(log.id); console.log(filterLogs(log.id, new Date("2024-10-22"), new Date("2024-10-29"))) }}
+
 												>
 													Custom range
 												</Button>

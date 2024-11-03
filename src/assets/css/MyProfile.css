@@ -1,0 +1,124 @@
+.my-profile {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Profile Header Section */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.profile-header h2 {
+  margin: 0;
+}
+
+/* Badges Section */
+.badge-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.badge-card {
+  width: 120px;
+  margin: 0 8px;
+  text-align: center;
+}
+
+.badge-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.badge-navigation {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* User Info Section */
+.profile-info {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info p {
+  margin: 8px 0;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Attendance Log Section */
+.attendance-log {
+  margin-top: 30px;
+}
+
+.centered-text {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+}
+
+/* Responsive Table Styling */
+.ant-table {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+/* Pagination Styling */
+.ant-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+
+  .profile-header,
+  .profile-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-info {
+    width: 100%;
+  }
+
+  .badge-section {
+    flex-direction: column;
+  }
+
+  .badge-navigation {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-profile {
+    padding: 10px;
+  }
+
+  .badge-card {
+    width: 80px;
+    margin: 8px 0;
+  }
+
+  .centered-text {
+    font-size: 1.2rem;
+  }
+}

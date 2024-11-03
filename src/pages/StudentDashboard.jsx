@@ -69,7 +69,6 @@ const esimateCrowd = (votes) => {
 	return estimatedCount.toFixed(0);
 }
 
-
 const Dashboard = ({ userId, userName }) => {
 	const [locationTraffic, setLocationTraffic] = useState({});
 	const [voteSubmitting, setVoteSubmitting] = useState(false)
@@ -87,7 +86,11 @@ const Dashboard = ({ userId, userName }) => {
 		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
 		"accuracyStar": "https://unimo.blob.core.windows.net/unimo/Acuracy Star.png",
 		"dailyContributor": "https://unimo.blob.core.windows.net/unimo/Daily Contributer.png",
-		"frequentContributor": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer.png",
+		"frequentContributor": {
+			"Silver": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Silvar.png",
+			"Bronze": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Bronze.png",
+			"Gold": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Gold.png"
+		},
 		"weeklyWarrior": "https://unimo.blob.core.windows.net/unimo/Weekly warior.png",
 		"validateContributor": "https://unimo.blob.core.windows.net/unimo/Validated Contributer.png"
 	}
@@ -110,13 +113,15 @@ const Dashboard = ({ userId, userName }) => {
 	const [isDoctorAvailable, setIsDoctorAvailable] = useState(false);
 
 	// Calculate the next badge level based on the current badge level: nivindulakshitha
-	const prepareNextBadge = (frequentContributorLevel, currentVotes) => {
-		if (frequentContributorLevel == null) {
-			setNextBadgeLevel(10 * currentVotes);
-		} else if (frequentContributorLevel == "Bronze") {
-			setNextBadgeLevel(2 * currentVotes);
+	const prepareNextBadge = (currentVotes) => {
+		if (currentVotes <= 6) {
+			setNextBadgeLevel(currentVotes * 100 / 7);
+		} else if (currentVotes <= 29) {
+			setNextBadgeLevel(currentVotes * 100 / 30);
+		} else if (currentVotes <= 89) {
+			setNextBadgeLevel(currentVotes * 100 / 90);
 		} else {
-			setNextBadgeLevel(1 * currentVotes);
+			setNextBadgeLevel(100);
 		}
 	}
 
@@ -127,19 +132,6 @@ const Dashboard = ({ userId, userName }) => {
 		return currentHour >= 8 && currentHour < 16;
 	};
 
-	// Fetch the badges data for the user: nivindulakshitha
-	useEffect(() => {
-		newApiRequest(`/api/votes/get`, 'POST', { "userId": userId })
-			.then(response => {
-				if (response.success && response.data) {
-					setUserBadges(response);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
-				}
-			})
-			.catch(error => console.error('Error fetching location data:', error));
-	}, [userId]); // Dependency array to re-fetch when userId changes
-
-	
 	const checkDoctorAvailability = async () => {
 		try {
 			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
@@ -188,25 +180,26 @@ const Dashboard = ({ userId, userName }) => {
 		setLocationTraffic((prev) => ({ ...prev, ...draftData }));
 	};
 
-	setInterval(() => {
-		fetchLocationData();
-		checkDoctorAvailability();
-	}, 60000);
-
 	const [fetchTrigger, setFetchTrigger] = useState(false)
-	// Trigger the fetch every 5 seconds for live updates
-	setInterval(() => {
-		setFetchTrigger(!fetchTrigger)
-	}, 60000);
+	useEffect(() => {
+		setInterval(() => {
+			fetchLocationData();
+			checkDoctorAvailability();
+		}, 60000);
 
-	// Fetch the required data for each location: nivindulakshitha
+		// Trigger the fetch every 5 seconds for live updates
+		setInterval(() => {
+			setFetchTrigger(!fetchTrigger)
+		}, 60000);
+	}, []);
+
 	useEffect(() => {
 		const fetchBadgesData = async () => {
 			try {
 				const response = await newApiRequest(`/api/votes/get`, 'POST', { userId });
 				if (response.success) {
 					setUserBadges(response.data);
-					prepareNextBadge(response.data.badges.frequentContributor, response.data.votes);
+					prepareNextBadge(response.data.consecutiveDays);
 				}
 			} catch (error) {
 				console.error('Error fetching badges data:', error);
@@ -311,6 +304,16 @@ const Dashboard = ({ userId, userName }) => {
 								</Col>
 							))
 						}
+
+						{
+							(!Object.keys(locationTraffic).includes("Medical Center")) && (
+								<Col xs={24} sm={12} md={6} key={0}>
+									<Card title="Medical Center">
+										<p><span className={`doctor-availability-status ${isDoctorAvailable}`}></span> Doctor is {!isDoctorAvailable ? 'not' : ''} available</p>
+									</Card>
+								</Col>
+							)
+						}
 					</Row>
 					<Row gutter={[16, 16]} style={{ marginTop: '20px' }}>
 						<Col xs={24} md={12}>
@@ -409,30 +412,58 @@ const Dashboard = ({ userId, userName }) => {
 						<Col xs={24} md={12}>
 							<Card className="badge-card">
 								<Text>How close you are to your next badge?</Text>
-								<Progress percent={nextBadgeLevel} />
-								<Link href="/profile" className="profile-link">See your badges in profile</Link>
+								<Progress percent={Math.round(nextBadgeLevel)} />
+								<Link href="/my-profile" className="profile-link">See your badges in profile</Link>
 							</Card>
 							{
 								// Display the claimed badges: nivindulakshitha
-								userBadges && userBadges.badges ? (
-									Object.keys(userBadges.badges).map(badge => (
-										// Some badges are holding true or false values; check for those: nivindulakshitha
-										typeof userBadges.badges[badge] == 'boolean' && userBadges.badges[badge] && (
-											<Card className="first-step-card" key={badge}>
-												<div className="first-step-content">
-													<img src={badgeImages[badge]} alt={badgeNames[badge]} className="placeholder-image" />
-													<div className='width-full'>
-														<Title level={4}>{badgeNames[badge]}</Title>
-														<Text>{congratulationTexts[badge]}</Text>
-														<Button type="primary" icon={<TrophyOutlined />} disabled>Claim now!</Button>
+								<div className="badge-cards-container">
+									{userBadges && userBadges.badges ? (
+										Object.keys(userBadges.badges).map((badge) =>
+											typeof userBadges.badges[badge] === "boolean" && userBadges.badges[badge] ? (
+												<Card className="badge-card" key={badge}>
+													<div className="badge-card-content">
+														<img
+															src={badgeImages[badge]}
+															alt={badgeNames[badge]}
+															className="badge-image"
+														/>
+														<div className="badge-details">
+															<Title level={4}>{badgeNames[badge]}</Title>
+															<Text>{congratulationTexts[badge]}</Text>
+															{/* <Button type="primary" icon={<TrophyOutlined />} disabled>
+																Claim now!
+															</Button> */}
+														</div>
 													</div>
-												</div>
-											</Card>
+												</Card>
+											) : (
+												typeof userBadges.badges[badge] !== "boolean" &&
+												userBadges.badges[badge] !== null && (
+													<Card className="badge-card" key={badge}>
+														<div className="badge-card-content">
+															<img
+																src={badgeImages.frequentContributor[userBadges.badges[badge]]}
+																alt={badgeNames[badge]}
+																className="badge-image"
+															/>
+															<div className="badge-details">
+																<Title level={4}>{badgeNames[badge]}</Title>
+																<Text>{congratulationTexts[badge]}</Text>
+																{/* <Button type="primary" icon={<TrophyOutlined />} disabled>
+																	Claim now!
+																</Button> */}
+															</div>
+														</div>
+													</Card>
+												)
+											)
 										)
+									) : (
+										<p className="smallLetters">No claimed badges available right now</p>
+									)}
+								</div>
 
-									))) : (
-									<p className='smallLetters'>No claimed badges available right now</p>
-								)
 							}
 						</Col>
 						<Col xs={24} md={12}>
@@ -451,11 +482,11 @@ const Dashboard = ({ userId, userName }) => {
 													</Col>
 												)) : (
 													// Display the badges that are not boolean and not null: nivindulakshitha
-													userBadges.badges[badge] !== null && (<Col xs={24} sm={8} key={badge}>
-														<Card cover={<img src={badgeImages[badge]} alt={badge} />}>
+													<Col xs={24} sm={8} key={badge}>
+														<Card cover={<img src={userBadges.badges[badge] === null ? badgeImages.frequentContributor["Silver"] : userBadges.badges[badge] === "Silver" ? badgeImages.frequentContributor["Bronze"] : badgeImages.frequentContributor["Gold"]} alt={badge} />}>
 															<Card.Meta title={badgeNames[badge]} />
 														</Card>
-													</Col>)
+													</Col>
 												)
 											))
 										) : (

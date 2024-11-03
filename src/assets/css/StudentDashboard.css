@@ -135,8 +135,13 @@ body {
 .first-step-card {
   text-align: center;
   height: auto;
+  width: 100% !important;
 }
 
+.badge-image{
+  height: 100px;
+  width: 100px !important;
+}
 .badge-card .ant-progress {
   margin: 16px 0;
 }
@@ -187,6 +192,10 @@ body {
 .last-row-card .ant-card-meta-title {
   font-size: var(--smaller-font-size);
 }
+/* .badge-image{
+  height: 100px;
+  width: 100px !important;
+} */
 
 @media (max-width: 768px) {
   .site-layout-content {
@@ -281,5 +290,10 @@ body {
     white-space: normal !important;  /* Allow text to wrap on mobile */
     overflow: visible; /* Prevent text clipping */
     text-overflow: clip; /* Remove ellipsis */
+  }
+
+  .badge-image{
+    height: 250px;
+    width: 250px !important;
   }
 }

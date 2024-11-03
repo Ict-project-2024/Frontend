@@ -3,8 +3,6 @@ import '../assets/css/News.css';
 import NewsBox from '../components/NewsBox';
 import { useState } from 'react';
 
-
-
 const News = () => {	
 	const [showCount, setShowCount] = useState(3);
 
@@ -16,29 +14,7 @@ const News = () => {
 			image: 'https://via.placeholder.com/300x170',
 			link: 'https://www.google.com',
 			date: '2024-10-01',
-		},
-		{
-			title: 'News 2 - A random title',
-			subtitle: 'News 2 subtitle- A random subtitle',
-			content: 'News 2 content: dolar sit amet, consectetur adipiscing elit. Nulla nec odio nec urna posuere lacinia. Nullam',
-			image: 'https://via.placeholder.com/300x170',
-			date: '2024-10-01',
-		},
-		{
-			title: 'News 3 - A random title',
-			subtitle: 'News 3 subtitle- A random subtitle',
-			content: 'News 3 content: dolar sit amet, consectetur adipiscing elit. Nulla nec odio nec urna posuere lacinia. Nullam ',
-			image: 'https://via.placeholder.com/300x170',
-			link: 'https://www.google.com',
-			date: '2024-09-01',
-		},
-		{
-			title: 'News 4 - A random title',
-			subtitle: 'News 4 subtitle- A random subtitle',
-			content: 'News 4 content: dolar sit amet, consectetur adipiscing elit. Nulla nec odio nec urna posuere lacinia. Nullam',
-			image: 'https://via.placeholder.com/300x170',
-			date: '2024-10-11',
-		},
+		}
 	];
 
 	const newsSections = () => {

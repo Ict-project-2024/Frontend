@@ -27,6 +27,7 @@ const LoginForm = () => {
 
 			if (response.status === 200) {
 				if (response.success) {
+					console.log('Login successful:', response);
 					setUser(response);
 					sessionStorage.setItem('userBio', JSON.stringify(response));
 					navigate('/dashboard', { state: response });
