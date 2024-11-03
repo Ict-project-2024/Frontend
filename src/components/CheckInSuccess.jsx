@@ -13,7 +13,7 @@ const CheckInSuccess = ({ onBackToHome, actionType }) => {
         </div>
       </div>
       <h2>Successfully marked as {isCheckIn ? 'checked in' : 'checked out'}</h2>
-      <Button type="primary" onClick={onBackToHome}>
+      <Button type="primary" onClick={onBackToHome} style={{padding: '10px 0px'}}>
         Back to home
       </Button>
     </div>
