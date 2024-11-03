@@ -335,7 +335,7 @@ const AdminDashboard = ({ userId, userName }) => {
 
 	return (
 		<Layout>
-			<Content style={{ padding: '0 50px', overflow: 'auto' }}>
+			<Content style={{ padding: '0 20px', overflow: 'auto' }}>
 				{/* Greeting Section */}
 				<div style={{ marginBottom: '20px' }}>
 					<GreetingSection name={userName.first ? userName.first : user.firstName} />
