@@ -80,7 +80,13 @@ const MyProfile = ({ userId }) => {
 				minute: '2-digit',
 				hour12: true
 			});
-			accessData.checkout = accessData.exitTime ? new Date(accessData.exitTime).toLocaleTimeString() : '--:--';
+			accessData.checkout = accessData.exitTime ? new Date(accessData.exitTime).toLocaleTimeString('en-US', {
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: true
+			}) : '--:--';
+			const timeSpend = accessData.exitTime ? Math.round((new Date(accessData.exitTime) - new Date(accessData.entryTime)) / 60000) : '--';
+			accessData.timeSpend = timeSpend === '--' ? timeSpend : `${Math.floor(timeSpend / 60) > 0 ? `${Math.floor(timeSpend / 60)} hrs ` : ''}${timeSpend % 60} mins`;
 
 			tempAccessData[accessData.entryTime] = accessData;
 		});
@@ -127,6 +133,7 @@ const MyProfile = ({ userId }) => {
 		{ title: 'Place', dataIndex: 'place', key: 'place' },
 		{ title: 'Check-in Time', dataIndex: 'checkin', key: 'checkin' },
 		{ title: 'Check-out Time', dataIndex: 'checkout', key: 'checkout' },
+		{ title: 'Spend Time', dataIndex: 'timeSpend', key: 'timeSpend' },
 	];
 
 	return (
