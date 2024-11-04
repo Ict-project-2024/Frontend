@@ -12,7 +12,7 @@ const CheckInSuccess = ({ onBackToHome, actionType, TeNumber }) => {
           <i className="checkmark">✓</i>
         </div>
       </div>
-      <h2>Successfully marked as {isCheckIn ? 'checked in' : 'checked out'}</h2>
+      <h2>{TeNumber} marked as {isCheckIn ? 'checked in' : 'checked out'}</h2>
       <Button type="primary" onClick={onBackToHome} style={{padding: '20px 0px'}}>
         Back to home
       </Button>

@@ -196,7 +196,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	};
 
 	if (showSuccessScreen) {
-		return <CheckInSuccess onBackToHome={handleBackToHome} actionType={actionType} TeNumber={scanResult} />;
+		return <CheckInSuccess onBackToHome={handleBackToHome} actionType={actionType} TeNumber={scanResult ? "TE" + scanResult : ""} />;
 	}
 
 	return (
