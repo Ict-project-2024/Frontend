@@ -64,8 +64,11 @@ const NavigatorBar = ({ userName }) => {
 				{menuVisible ? <CloseOutlined /> : <MenuOutlined />}
 			</div>
 			<div className="logo">
+			<a href="/dashboard">
 				<img src="./images/logo.png" alt="Unimo Logo" />
+			</a>
 			</div>
+
 			{!isMobile && (
 				<div className="nav-menu">
 					<Menu mode="horizontal" defaultSelectedKeys={['live-status']}>
@@ -89,7 +92,11 @@ const NavigatorBar = ({ userName }) => {
 					<Badge count={notifications} className="notification-badge">
 						<BellOutlined className="icon" />
 					</Badge>
-					<Avatar src={avatarUrl} className="avatar" />
+					<Avatar
+					src={avatarUrl}
+					className="avatar"
+					onClick={() => navigate('/my-profile')}
+					/>
 					<span className="username">{userName.first} {userName.last}</span>
 					<LogoutOutlined className="icon" onClick={handleLogout} />
 				</div>

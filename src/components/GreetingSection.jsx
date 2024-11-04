@@ -76,7 +76,12 @@ const GreetingSection = ({ name }) => {
 			<Row align="middle" justify="space-between" style={{ width: '100%' }}>
 				<Col xs={24} sm={12}>
 					<div className="greeting-left">
-						<Avatar src={loggedUser.avatar} size={60} className='greet-avatar'/>
+										<Avatar
+						src={loggedUser.avatar}
+						size={60}
+						className='greet-avatar'
+						onClick={() => window.location.href = '/my-profile'}
+    />
 						<div className="greeting-text">
 							<p>Good {dateTime.greeting} {loggedUser.name ? loggedUser.name : user.firstName}!</p>
 							<div className='flex align-items-center'>
