@@ -13,7 +13,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	const [scanComplete, setScanComplete] = useState(false); // Track if scanning is complete
 	const [scanResult, setScanResult] = useState(null); // Store the scanned result
 	const [scanTime, setScanTime] = useState(null); // Store the scan time
-	const [showSuccessScreen, setShowSuccessScreen] = useState(false); // New state to manage success screen
+	const [showSuccessScreen, setShowSuccessScreen] = useState(true); // New state to manage success screen
 	const [checkInOutUser, setcheckInOutUser] = useState(null);
 	const scannerRef = useRef(null);
 	const quaggaInitialized = useRef(false);
@@ -196,7 +196,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	};
 
 	if (showSuccessScreen) {
-		return <CheckInSuccess onBackToHome={handleBackToHome} actionType={actionType} />;
+		return <CheckInSuccess onBackToHome={handleBackToHome} actionType={actionType} TeNumber={scanResult} />;
 	}
 
 	return (
