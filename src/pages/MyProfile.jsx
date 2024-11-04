@@ -5,17 +5,23 @@ import '../assets/css/MyProfile.css'; // Ensure you have the correct path.
 import FooterComponent from '../components/FooterComponent';
 import newApiRequest from '../utils/apiRequests';
 import { useAuth } from '../context/AuthContext';
+import { te } from 'date-fns/locale';
 
 const MyProfile = ({ userId }) => {
 	// User badges data: nivindulakshitha
 	const [userBadges, setUserBadges] = useState({})
 	const { user } = useAuth();
+	const [accessData, setAccessData] = useState({});
 
 	const badgeImages = {
 		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
 		"accuracyStar": "https://unimo.blob.core.windows.net/unimo/Acuracy Star.png",
 		"dailyContributor": "https://unimo.blob.core.windows.net/unimo/Daily Contributer.png",
-		"frequentContributor": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer.png",
+		"frequentContributor": {
+			"Silver": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Silvar.png",
+			"Bronze": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Bronze.png",
+			"Gold": "https://unimo.blob.core.windows.net/unimo/Fequent Contributer - Gold.png"
+		},
 		"weeklyWarrior": "https://unimo.blob.core.windows.net/unimo/Weekly warior.png",
 		"validateContributor": "https://unimo.blob.core.windows.net/unimo/Validated Contributer.png"
 	}
@@ -47,31 +53,87 @@ const MyProfile = ({ userId }) => {
 		}
 	};
 
+	let timestamps = [];
+	let tempAccessData = {};
+
+	const updateAccessData = (data, place) => {
+		timestamps = Object.keys(accessData);
+		tempAccessData = accessData;
+
+		data.forEach(accessData => {
+			if (!timestamps.includes(accessData.entryTime)) {
+				timestamps.push(accessData.entryTime);
+			}
+
+			accessData.key = accessData._id;
+			accessData.date = new Date(accessData.entryTime).toLocaleDateString('en-US', {
+				day: '2-digit',
+				month: 'short',
+				year: 'numeric'
+			});
+			accessData.day = new Date(accessData.entryTime).toLocaleDateString('en-US', {
+				weekday: 'long'
+			});
+			accessData.place = place;
+			accessData.checkin = new Date(accessData.entryTime).toLocaleTimeString('en-US', {
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: true
+			});
+			accessData.checkout = accessData.exitTime ? new Date(accessData.exitTime).toLocaleTimeString('en-US', {
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: true
+			}) : '--:--';
+			const timeSpend = accessData.exitTime ? Math.round((new Date(accessData.exitTime) - new Date(accessData.entryTime)) / 60000) : '--';
+			accessData.timeSpend = timeSpend === '--' ? timeSpend : `${Math.floor(timeSpend / 60) > 0 ? `${Math.floor(timeSpend / 60)} hrs ` : ''}${timeSpend % 60} mins`;
+
+			tempAccessData[accessData.entryTime] = accessData;
+		});
+
+		timestamps.forEach(timestamp => {
+			setAccessData(prevState => ({
+				...prevState,
+				[timestamp]: tempAccessData[timestamp.toString()]
+			}));
+		});
+	};
+
+	const fetchLibraryAccessData = async () => {
+		try {
+			const response = await newApiRequest(`/api/library/useraccess`, 'POST', { teNumber: user.teNumber });
+			if (response.success) {
+				updateAccessData(response.data, 'Library');
+			}
+		} catch (error) {
+			console.error('Error fetching attendance data:', error);
+		}
+	};
+
+	const fetchMedicalCenterAccessData = async () => {
+		try {
+			const response = await newApiRequest(`/api/medical-center/useraccess`, 'POST', { teNumber: user.teNumber });
+			if (response.success) {
+				updateAccessData(response.data, 'Medical Center');
+			}
+		} catch (error) {
+			console.error('Error fetching attendance data:', error);
+		}
+	};
+
 	useEffect(() => {
 		fetchBadgesData();
-	}, [])
+		fetchLibraryAccessData();
+		fetchMedicalCenterAccessData();
+	}, []);
 
 	const columns = [
 		{ title: 'Date', dataIndex: 'date', key: 'date' },
+		{ title: 'Day', dataIndex: 'day', key: 'day' },
 		{ title: 'Place', dataIndex: 'place', key: 'place' },
 		{ title: 'Check-in Time', dataIndex: 'checkin', key: 'checkin' },
 		{ title: 'Check-out Time', dataIndex: 'checkout', key: 'checkout' },
-	];
-
-	const data = [
-		{ key: '1', date: '2024-08-01', place: 'Present', checkin: '09:00 AM', checkout: '05:00 PM' },
-		{ key: '2', date: '2024-08-02', place: 'Absent', checkin: '-', checkout: '-' },
-		{ key: '3', date: '2024-08-03', place: 'Present', checkin: '09:15 AM', checkout: '05:10 PM' },
-		{ key: '4', date: '2024-08-04', place: 'Present', checkin: '09:05 AM', checkout: '05:00 PM' },
-		{ key: '5', date: '2024-08-05', place: 'Present', checkin: '09:00 AM', checkout: '05:00 PM' },
-		{ key: '6', date: '2024-08-06', place: 'Absent', checkin: '-', checkout: '-' },
-		{ key: '7', date: '2024-08-01', place: 'Present', checkin: '09:00 AM', checkout: '05:00 PM' },
-		{ key: '8', date: '2024-08-02', place: 'Absent', checkin: '-', checkout: '-' },
-		{ key: '9', date: '2024-08-03', place: 'Present', checkin: '09:15 AM', checkout: '05:10 PM' },
-		{ key: '10', date: '2024-08-04', place: 'Present', checkin: '09:05 AM', checkout: '05:00 PM' },
-		{ key: '11', date: '2024-08-05', place: 'Present', checkin: '09:00 AM', checkout: '05:00 PM' },
-		{ key: '12', date: '2024-08-06', place: 'Absent', checkin: '-', checkout: '-' },
-		// Add more data as needed
+		{ title: 'Spend Time', dataIndex: 'timeSpend', key: 'timeSpend' },
 	];
 
 	return (
@@ -94,7 +156,7 @@ const MyProfile = ({ userId }) => {
 							((typeof badgeData === 'boolean' && badgeData) || typeof badgeData === 'string') && <Card
 								key={index}
 								hoverable
-								cover={<img alt={badgeNames[badgeName]} src={badgeImages[badgeName]} style={{ width: '130px' }} />}
+								cover={<img alt={badgeNames[badgeName]} src={typeof badgeData === 'boolean' ? badgeImages[badgeName] : badgeImages[badgeName][badgeData]} style={{ width: '130px' }} />}
 								style={{ width: 130, margin: '0 8px' }}
 							>
 								<Card.Meta title={badgeNames[badgeName]} description={badgeDescriptions[badgeName]} />
@@ -124,7 +186,8 @@ const MyProfile = ({ userId }) => {
 				<h3 className="centered-text">Places you visited</h3>
 				<Table
 					columns={columns}
-					dataSource={data}
+					dataSource={Object.values(accessData).sort((a, b) => new Date(b.entryTime) - new Date(a.entryTime))}
+					sortDirections={['descend']}
 					pagination={{ pageSize: 5, position: ['bottomCenter'] }}
 				/>
 			</div>
