@@ -71,16 +71,16 @@ const NavigatorBar = ({ userName }) => {
 
 			{!isMobile && (
 				<div className="nav-menu">
-					<Menu mode="horizontal" defaultSelectedKeys={['live-status']}>
-						<Menu.Item key="live-status">
+					<Menu className='menu' mode="horizontal" selectedKeys={[window.location.pathname.slice(1)]}>
+						<Menu.Item key="dashboard">
 							<Link to="/dashboard">Live Status</Link>
 						</Menu.Item>
 						<Menu.Item key="news">
 							<Link to="/news">News</Link>
 						</Menu.Item>
-						<Menu.Item key="my-profile">
+						{!user.isAdmin && (<Menu.Item key="my-profile">
 							<Link to="/my-profile">My Profile</Link>
-						</Menu.Item>
+						</Menu.Item>)}
 						<Menu.Item key="about-us">
 							<Link to="/about-us">About Us</Link>
 						</Menu.Item>
@@ -103,16 +103,16 @@ const NavigatorBar = ({ userName }) => {
 			)}
 			{menuVisible && isMobile && (
 				<div className={`dropdown-menu ${menuVisible ? 'visible' : ''}`}>
-					<Menu mode="vertical" defaultSelectedKeys={['live-status']}>
-						<Menu.Item key="live-status" onClick={toggleMenu}>
+					<Menu className='menu' mode="vertical" selectedKeys={[window.location.pathname.slice(1)]}>
+						<Menu.Item key="dashboard" onClick={toggleMenu}>
 							<Link to="/dashboard">Live Status</Link>
 						</Menu.Item>
 						<Menu.Item key="news" onClick={toggleMenu}>
 							<Link to="/news">News</Link>
 						</Menu.Item>
-						<Menu.Item key="my-profile" onClick={toggleMenu}>
+						{!user.isAdmin && (<Menu.Item key="my-profile">
 							<Link to="/my-profile">My Profile</Link>
-						</Menu.Item>
+						</Menu.Item>)}
 						<Menu.Item key="about-us" onClick={toggleMenu}>
 							<Link to="/about-us">About Us</Link>
 						</Menu.Item>
