@@ -168,7 +168,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 
 		newApiRequest(url, 'POST', checkedUser).then(response => {
 			if (response && response.success) {
-				message.success('Check-in logging successful');
+				message.success(`Student ${actionType === 'checkin' ? 'checked in' : 'checked out'} successfully`);
 				setShowSuccessScreen(true);
 			} else {
 				message.error('Check-in logging failed');
@@ -196,7 +196,7 @@ const BarcodeScanner = ({ onCancel, actionType }) => {
 	};
 
 	if (showSuccessScreen) {
-		return <CheckInSuccess onBackToHome={handleBackToHome} actionType={actionType} />;
+		return <CheckInSuccess onBackToHome={handleBackToHome} actionType={actionType} TeNumber={scanResult ? "TE" + scanResult : ""} />;
 	}
 
 	return (

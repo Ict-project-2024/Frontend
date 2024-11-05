@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import '../assets/css/CheckInSuccess.css';
 
-const CheckInSuccess = ({ onBackToHome, actionType }) => {
+const CheckInSuccess = ({ onBackToHome, actionType, TeNumber }) => {
   const isCheckIn = actionType === 'checkin';
 
   return (
@@ -12,8 +12,8 @@ const CheckInSuccess = ({ onBackToHome, actionType }) => {
           <i className="checkmark">✓</i>
         </div>
       </div>
-      <h2>Successfully marked as {isCheckIn ? 'checked in' : 'checked out'}</h2>
-      <Button type="primary" onClick={onBackToHome} style={{padding: '10px 0px'}}>
+      <h2>{TeNumber} marked as {isCheckIn ? 'checked in' : 'checked out'}</h2>
+      <Button type="primary" onClick={onBackToHome} style={{padding: '20px 0px'}}>
         Back to home
       </Button>
     </div>
