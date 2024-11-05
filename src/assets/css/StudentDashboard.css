@@ -69,6 +69,14 @@ body {
   justify-content: space-between;
 }
 
+.hero-card-big {
+  transform: scale(1.1);
+}
+
+.hero-card.gold {
+  box-shadow: 0 0 10px 2px rgba(83, 83, 83, 0.1);
+}
+
 .hero-card img {
   height: auto;
   width: 100%;
@@ -240,10 +248,6 @@ body {
     flex-wrap: wrap;
     margin-left: -8px;
     margin-right: -8px;
-  }
-
-  .hero-names * {
-    text-transform: capitalize !important;
   }
 
   .heroes-row .ant-col {

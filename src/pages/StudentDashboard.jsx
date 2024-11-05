@@ -391,7 +391,7 @@ const Dashboard = ({ userId, userName }) => {
 													</Card>
 												</Col>
 												<Col xs={24} sm={8} className="hero-card-big">
-													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Canteen Champion.png" alt="Canteen Champion" />}>
+													<Card className="hero-card gold" cover={<img src="https://unimo.blob.core.windows.net/unimo/Canteen Champion.png" alt="Canteen Champion" />}>
 														<Card.Meta title="Canteen Champion" className='hero-names' description={userTopRankings[0] && `${userTopRankings[0].firstName} ${userTopRankings[0].lastName}`} />
 														{userTopRankings[0] && (<Text>{userTopRankings[0].entries}  Entries in a row</Text>)}
 													</Card>
