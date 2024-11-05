@@ -242,7 +242,7 @@ We extend our gratitude to Ms. Nirasha Kulasooriya, our academic supervisor, and
 ---
 
 **Repository Contributors**  
-<a href="https://github.com/Ict-project-2024/Frontend/graphs/contributors">
+<br><a href="https://github.com/Ict-project-2024/Frontend/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Ict-project-2024/Frontend" />
 </a>
 
