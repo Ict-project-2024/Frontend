@@ -162,7 +162,7 @@ const MyProfile = ({ userId }) => {
 					</Row>
 					<h3>Your badges</h3>
 					<Row align="middle" justify="center" style={{ marginTop: '16px' }}>
-						<LeftOutlined className='badge-navigation' style={{ fontSize: '24px', marginRight: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex + 1 >= totalEarnBadges ? showBadgeIndex : showBadgeIndex + 1)} />
+						<LeftOutlined className='badge-navigation' style={{ fontSize: '24px', marginRight: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex + 1 >= totalEarnBadges ? 0 : showBadgeIndex + 1)} />
 						{Object.entries(userBadges).map(([badgeName, badgeData], index) => (
 							((typeof badgeData === 'boolean' && badgeData) || typeof badgeData === 'string') && <Card
 								key={index}
@@ -174,7 +174,7 @@ const MyProfile = ({ userId }) => {
 								<Card.Meta title={badgeNames[badgeName]} description={badgeDescriptions[badgeName]} />
 							</Card>
 						))}
-						<RightOutlined className='badge-navigation' style={{ fontSize: '24px', marginLeft: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex - 1 < 0 ? 0 : showBadgeIndex - 1)}/>
+						<RightOutlined className='badge-navigation' style={{ fontSize: '24px', marginLeft: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex - 1 < 0 ? totalEarnBadges - 1 : showBadgeIndex - 1)}/>
 					</Row>
 				</Col>
 

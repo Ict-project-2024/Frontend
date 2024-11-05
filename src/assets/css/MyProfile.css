@@ -28,6 +28,7 @@
 }
 
 .badge-card {
+  user-select: none;
   display: none;
 }
 
