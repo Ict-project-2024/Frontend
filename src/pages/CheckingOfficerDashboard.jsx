@@ -16,14 +16,14 @@ const CheckingOfficerDashboard = ({ role }) => {
 
 	const checkDoctorAvailability = async () => {
 		try {
-			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});
+			const response = await newApiRequest(`/api/medical-center/doctor-availability`, 'GET', {});	
 			if (response.success) {
 				switch (response.data.isAvailable) {
-					case "true" || true: {
+					case true: {
 						setDoctorAvailable(true);
 						break;
 					}
-					case "false" || false: {
+					case false: {
 						setDoctorAvailable(false);
 						break;
 					}
@@ -39,6 +39,8 @@ const CheckingOfficerDashboard = ({ role }) => {
 	setTimeout(() => {
 		checkDoctorAvailability();
 	}, 60000);
+
+	checkDoctorAvailability();
 
 	const handleCheckIn = () => {
 		setScanning(true);
