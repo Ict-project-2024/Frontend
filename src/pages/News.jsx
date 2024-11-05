@@ -7,14 +7,14 @@ const News = () => {
 	const [showCount, setShowCount] = useState(3);
 
 	const newsTable = [
-		/* {
+		{
 			title: 'News 1 - A random title',
 			subtitle: 'News 1 subtitle- A random subtitle',
 			content: 'News 1 content: dolar sit amet, consectetur adipiscing elit. Nulla nec odio nec urna posuere lacinia. Nullam',
 			image: 'https://via.placeholder.com/300x170',
 			link: 'https://www.google.com',
 			date: '2024-10-01',
-		} */
+		}
 	];
 
 	const newsSections = () => {

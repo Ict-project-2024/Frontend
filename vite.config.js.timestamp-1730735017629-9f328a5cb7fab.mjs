@@ -1,0 +1,23 @@
+// vite.config.js
+import { defineConfig } from "file:///D:/Progressing/GitHub/Project/Unimo-Frontend/node_modules/vite/dist/node/index.js";
+import react from "file:///D:/Progressing/GitHub/Project/Unimo-Frontend/node_modules/@vitejs/plugin-react/dist/index.mjs";
+var vite_config_default = defineConfig({
+  base: "/",
+  plugins: [react()],
+  build: {
+    outDir: "build",
+    // Output directory for the build
+    chunkSizeWarningLimit: 1e3
+    // Chunk size limit for build warnings
+  },
+  server: {
+    port: 8080,
+    // Change this to match the port ngrok is forwarding to
+    open: true
+    // Automatically open the app in the browser when the server starts
+  }
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcuanMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCJEOlxcXFxQcm9ncmVzc2luZ1xcXFxHaXRIdWJcXFxcUHJvamVjdFxcXFxVbmltby1Gcm9udGVuZFwiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9maWxlbmFtZSA9IFwiRDpcXFxcUHJvZ3Jlc3NpbmdcXFxcR2l0SHViXFxcXFByb2plY3RcXFxcVW5pbW8tRnJvbnRlbmRcXFxcdml0ZS5jb25maWcuanNcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfaW1wb3J0X21ldGFfdXJsID0gXCJmaWxlOi8vL0Q6L1Byb2dyZXNzaW5nL0dpdEh1Yi9Qcm9qZWN0L1VuaW1vLUZyb250ZW5kL3ZpdGUuY29uZmlnLmpzXCI7aW1wb3J0IHsgZGVmaW5lQ29uZmlnIH0gZnJvbSAndml0ZSc7XHJcbmltcG9ydCByZWFjdCBmcm9tICdAdml0ZWpzL3BsdWdpbi1yZWFjdCc7XHJcblxyXG5leHBvcnQgZGVmYXVsdCBkZWZpbmVDb25maWcoe1xyXG4gIGJhc2U6ICcvJyxcclxuICBwbHVnaW5zOiBbcmVhY3QoKV0sXHJcbiAgYnVpbGQ6IHtcclxuICAgIG91dERpcjogJ2J1aWxkJywgLy8gT3V0cHV0IGRpcmVjdG9yeSBmb3IgdGhlIGJ1aWxkXHJcbiAgICBjaHVua1NpemVXYXJuaW5nTGltaXQ6IDEwMDAsIC8vIENodW5rIHNpemUgbGltaXQgZm9yIGJ1aWxkIHdhcm5pbmdzXHJcbiAgfSxcclxuICBzZXJ2ZXI6IHtcclxuICAgIHBvcnQ6IDgwODAsIC8vIENoYW5nZSB0aGlzIHRvIG1hdGNoIHRoZSBwb3J0IG5ncm9rIGlzIGZvcndhcmRpbmcgdG9cclxuICAgIG9wZW46IHRydWUsIC8vIEF1dG9tYXRpY2FsbHkgb3BlbiB0aGUgYXBwIGluIHRoZSBicm93c2VyIHdoZW4gdGhlIHNlcnZlciBzdGFydHNcclxuICB9LFxyXG59KTtcclxuIl0sCiAgIm1hcHBpbmdzIjogIjtBQUFnVSxTQUFTLG9CQUFvQjtBQUM3VixPQUFPLFdBQVc7QUFFbEIsSUFBTyxzQkFBUSxhQUFhO0FBQUEsRUFDMUIsTUFBTTtBQUFBLEVBQ04sU0FBUyxDQUFDLE1BQU0sQ0FBQztBQUFBLEVBQ2pCLE9BQU87QUFBQSxJQUNMLFFBQVE7QUFBQTtBQUFBLElBQ1IsdUJBQXVCO0FBQUE7QUFBQSxFQUN6QjtBQUFBLEVBQ0EsUUFBUTtBQUFBLElBQ04sTUFBTTtBQUFBO0FBQUEsSUFDTixNQUFNO0FBQUE7QUFBQSxFQUNSO0FBQ0YsQ0FBQzsiLAogICJuYW1lcyI6IFtdCn0K
