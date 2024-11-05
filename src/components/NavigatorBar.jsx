@@ -5,6 +5,7 @@ import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-
 import { useAuth } from '../context/AuthContext.jsx';
 import '../assets/css/NavigatorBar.css';
 import newApiRequest from '../utils/apiRequests.js';
+import NotificationBox from './NotificationBox.jsx';
 
 const NavigatorBar = ({ userName }) => {
 	const { user } = useAuth();
@@ -14,6 +15,7 @@ const NavigatorBar = ({ userName }) => {
 	const [avatarUrl, setAvatarUrl] = useState('');
 	const [menuVisible, setMenuVisible] = useState(false);
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+	const [notificationList, setNotificationList] = useState([]);
 
 	useEffect(() => {
 		const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
@@ -39,6 +41,7 @@ const NavigatorBar = ({ userName }) => {
 	};
 
 	useEffect(() => {
+		setNotificationList([])
 		window.addEventListener('resize', handleResize);
 
 		newApiRequest('/api/notification/', 'POST', {
@@ -47,13 +50,13 @@ const NavigatorBar = ({ userName }) => {
 			if (response.success) {
 				setNotifications(response.data.length);
 				response.data.forEach(element => {
-					
+					setNotificationList(prevState => [...prevState, element]);
 				});
 			}
 		});
 
 		return () => window.removeEventListener('resize', handleResize);
-	}, []);
+	}, [notifications]);
 
 	const handleLogout = () => {
 		document.cookie.split(';').forEach((cookie) => {
@@ -73,9 +76,7 @@ const NavigatorBar = ({ userName }) => {
 
 	const [open, setOpen] = useState(false);
 	const showDrawer = () => {
-		if (notifications > 0) {
-			setOpen(true);
-		}
+		setOpen(true);
 	};
 	const onClose = () => {
 		setOpen(false);
@@ -84,9 +85,8 @@ const NavigatorBar = ({ userName }) => {
 	return (
 		<div className="navigator-bar">
 			<Drawer title="Notifications" onClose={onClose} open={open}>
-				<p>Some contents...</p>
-				<p>Some contents...</p>
-				<p>Some contents...</p>
+				{notificationList.map(notification => <NotificationBox key={notification._id} notification={notification} />)}
+				{notifications === 0 && <i><p className="no-notifications">No new notifications</p></i>}
 			</Drawer>
 			<div className="hamburger-menu" onClick={toggleMenu}>
 				{menuVisible ? <CloseOutlined /> : <MenuOutlined />}

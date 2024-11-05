@@ -4,7 +4,7 @@ import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
-import { formatDistance, formatDistanceToNow, set } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import RankingBox from '../components/RankingBox';
 import newApiRequest from '../utils/apiRequests';
 
