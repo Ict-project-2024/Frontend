@@ -4,8 +4,10 @@
   --base-font-size: 16px;
   --small-font-size: 14px;
   --smaller-font-size: 12px;
-  --card-padding: 8px; /* Reduced padding */
-  --card-padding-small: 4px; /* Reduced padding */
+  --card-padding: 8px;
+  /* Reduced padding */
+  --card-padding-small: 4px;
+  /* Reduced padding */
   --primary-color: #1890ff;
   --border-radius: 8px;
 }
@@ -67,6 +69,14 @@ body {
   justify-content: space-between;
 }
 
+.hero-card-big {
+  transform: scale(1.1);
+}
+
+.hero-card.gold {
+  box-shadow: 0 0 10px 2px rgba(83, 83, 83, 0.1);
+}
+
 .hero-card img {
   height: auto;
   width: 100%;
@@ -114,7 +124,8 @@ body {
   text-align: center;
   margin: 0 2px 8px;
   border-radius: var(--border-radius);
-  white-space: normal; /* Allow text to wrap */
+  white-space: normal;
+  /* Allow text to wrap */
   overflow: visible;
   text-overflow: clip;
 }
@@ -138,10 +149,11 @@ body {
   width: 100% !important;
 }
 
-.badge-image{
+.badge-image {
   height: 100px;
   width: 100px !important;
 }
+
 .badge-card .ant-progress {
   margin: 16px 0;
 }
@@ -149,7 +161,7 @@ body {
 .placeholder-image {
   width: 100%;
   height: auto;
-  
+
 }
 
 .profile-link,
@@ -165,18 +177,19 @@ body {
   width: 100%;
 }
 
-.ranking-card .ant-table-thead > tr > th {
+.ranking-card .ant-table-thead>tr>th {
   text-align: left;
 }
 
-.ranking-card .ant-table-tbody > tr > td {
+.ranking-card .ant-table-tbody>tr>td {
   text-align: left;
 }
 
-.ranking-card .ant-table-thead > tr > th,
-.ranking-card .ant-table-tbody > tr > td {
+.ranking-card .ant-table-thead>tr>th,
+.ranking-card .ant-table-tbody>tr>td {
   padding: 12px 16px;
-  white-space: normal; /* Allow text to wrap */
+  white-space: normal;
+  /* Allow text to wrap */
   overflow: visible;
   text-overflow: clip;
 }
@@ -192,6 +205,7 @@ body {
 .last-row-card .ant-card-meta-title {
   font-size: var(--smaller-font-size);
 }
+
 /* .badge-image{
   height: 100px;
   width: 100px !important;
@@ -199,11 +213,13 @@ body {
 
 @media (max-width: 768px) {
   .site-layout-content {
-    padding: 8px 8px; /* Reduced padding */
+    padding: 8px 8px;
+    /* Reduced padding */
   }
 
   .ant-card {
-    width: 100%; /* Make cards fit the screen width */
+    width: 100%;
+    /* Make cards fit the screen width */
   }
 
   .ant-card-head-title {
@@ -216,7 +232,8 @@ body {
 
   .form-item .ant-btn {
     font-size: var(--smaller-font-size);
-    padding: 4px 4px; /* Reduced padding */
+    padding: 4px 4px;
+    /* Reduced padding */
     height: auto;
   }
 
@@ -236,7 +253,8 @@ body {
   .heroes-row .ant-col {
     padding-left: 8px;
     padding-right: 8px;
-    margin-bottom: 8px; /* Reduced margin */
+    margin-bottom: 8px;
+    /* Reduced margin */
   }
 
   .heroes-row .ant-col:first-child {
@@ -255,7 +273,8 @@ body {
   }
 
   .last-row-card .ant-col {
-    padding: 2px; /* Reduced padding */
+    padding: 2px;
+    /* Reduced padding */
   }
 
   .last-row-card .ant-card-meta-title {
@@ -272,27 +291,38 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: row; /* Ensure image and text are side by side */
+    flex-direction: row;
+    /* Ensure image and text are side by side */
   }
 
   .first-step-content img {
-    width: 55%; /* Take half the width */
-    height: 100%; /* Take full height */
-    object-fit: cover; /* Cover the container */
+    width: 55%;
+    /* Take half the width */
+    height: 100%;
+    /* Take full height */
+    object-fit: cover;
+    /* Cover the container */
   }
 
-  .first-step-content > div {
-    flex: 1; /* Take the remaining space */
-    padding-left: 8px; /* Add some space between image and text */
+  .first-step-content>div {
+    flex: 1;
+    /* Take the remaining space */
+    padding-left: 8px;
+    /* Add some space between image and text */
   }
+
   .ant-card-meta-title {
-    font-size: var(--small-font-size); /* Adjust size if needed */
-    white-space: normal !important;  /* Allow text to wrap on mobile */
-    overflow: visible; /* Prevent text clipping */
-    text-overflow: clip; /* Remove ellipsis */
+    font-size: var(--small-font-size);
+    /* Adjust size if needed */
+    white-space: normal !important;
+    /* Allow text to wrap on mobile */
+    overflow: visible;
+    /* Prevent text clipping */
+    text-overflow: clip;
+    /* Remove ellipsis */
   }
 
-  .badge-image{
+  .badge-image {
     height: 250px;
     width: 250px !important;
   }

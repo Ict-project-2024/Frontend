@@ -1,21 +1,23 @@
 import FooterComponent from '../components/FooterComponent';
 import '../assets/css/News.css';
 import NewsBox from '../components/NewsBox';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import newApiRequest from '../utils/apiRequests';
+import { useAuth } from '../context/AuthContext';
+import { set } from 'date-fns';
 
 const News = () => {	
 	const [showCount, setShowCount] = useState(3);
+	const [newsTable, setNewsTable] = useState([]);
+	const {user} = useAuth();
 
-	const newsTable = [
-		{
-			title: 'News 1 - A random title',
-			subtitle: 'News 1 subtitle- A random subtitle',
-			content: 'News 1 content: dolar sit amet, consectetur adipiscing elit. Nulla nec odio nec urna posuere lacinia. Nullam',
-			image: 'https://via.placeholder.com/300x170',
-			link: 'https://www.google.com',
-			date: '2024-10-01',
-		}
-	];
+	useEffect(() => {
+		newApiRequest('/api/news/getall', 'GET').then(response => {
+			if (response.success) {
+				setNewsTable(response.data);
+			}
+		});
+	}, []);
 
 	const newsSections = () => {
 		let latest = [];

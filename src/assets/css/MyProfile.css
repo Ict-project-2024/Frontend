@@ -1,3 +1,7 @@
+* {
+  user-select: none;
+}
+
 .my-profile {
   padding: 20px;
   background: #f9f9f9;
@@ -27,15 +31,24 @@
   margin: 20px 0;
 }
 
-.badge-card {
+.my-profile .badge-card {
+  user-select: none;
+  display: none;
+  max-width: 450px;
+}
+
+.badge-card.selected {
   width: 120px;
   margin: 0 8px;
   text-align: center;
+  display: flex;
 }
 
 .badge-card img {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 0px !important;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
 .badge-navigation {
@@ -43,12 +56,20 @@
   cursor: pointer;
 }
 
+.ant-card-body {
+  width: 100% !important;
+}
+
 /* User Info Section */
 .profile-info {
+  display: flex;
+  width: 100%;
   background-color: #fff;
   padding: 20px;
+  margin: 0px 15px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
 }
 
 .profile-info p {
@@ -64,6 +85,8 @@
 /* Attendance Log Section */
 .attendance-log {
   margin-top: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #f0f0f0;
 }
 
 .centered-text {

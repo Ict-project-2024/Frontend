@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message, Spin } from 'antd';
-import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
-import { formatDistance, formatDistanceToNow, set } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import RankingBox from '../components/RankingBox';
 import newApiRequest from '../utils/apiRequests';
 
@@ -280,7 +279,9 @@ const Dashboard = ({ userId, userName }) => {
 			message.error('Failed to submit data. Please try again.');
 			setVoteSubmitting(false);
 		}
-	};
+	}
+
+	
 
 	return (
 		<Layout>
@@ -385,19 +386,19 @@ const Dashboard = ({ userId, userName }) => {
 											<>
 												<Col xs={24} sm={8}>
 													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Dinning Dynamo.png" alt="Dining Dynamo" />}>
-														<Card.Meta title="Dining Dynamo" description={userTopRankings[1] && `${userTopRankings[1].firstName} ${userTopRankings[1].lastName}`} />
+														<Card.Meta title="Dining Dynamo" className='hero-names' description={userTopRankings[1] && `${userTopRankings[1].firstName} ${userTopRankings[1].lastName}`} />
 														{userTopRankings[1] && (<Text>{userTopRankings[1].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8} className="hero-card-big">
-													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Canteen Champion.png" alt="Canteen Champion" />}>
-														<Card.Meta title="Canteen Champion" description={userTopRankings[0] && `${userTopRankings[0].firstName} ${userTopRankings[0].lastName}`} />
+													<Card className="hero-card gold" cover={<img src="https://unimo.blob.core.windows.net/unimo/Canteen Champion.png" alt="Canteen Champion" />}>
+														<Card.Meta title="Canteen Champion" className='hero-names' description={userTopRankings[0] && `${userTopRankings[0].firstName} ${userTopRankings[0].lastName}`} />
 														{userTopRankings[0] && (<Text>{userTopRankings[0].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
 												<Col xs={24} sm={8}>
 													<Card className="hero-card" cover={<img src="https://unimo.blob.core.windows.net/unimo/Foodie Forcaster.png" alt="Foodie Forecaster" />}>
-														<Card.Meta title="Foodie Forecaster" description={userTopRankings[2] && `${userTopRankings[2].firstName} ${userTopRankings[2].lastName}`} />
+														<Card.Meta title="Foodie Forecaster" className='hero-names' description={userTopRankings[2] && `${userTopRankings[2].firstName} ${userTopRankings[2].lastName}`} />
 														{userTopRankings[2] && (<Text>{userTopRankings[2].entries}  Entries in a row</Text>)}
 													</Card>
 												</Col>
