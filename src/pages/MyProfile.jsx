@@ -151,17 +151,24 @@ const MyProfile = ({ userId }) => {
 	return (
 		<div className="my-profile">
 			<Row gutter={[16, 16]} align="middle">
-				<Col xs={24} md={12}>
-					<Row align="middle">
+				<div className="profile-info">
+					<Row align="left">
 						<Col>
-							<Avatar size={80} src={user.profileImage} />
+							<Avatar size={100} src={user.profileImage} style={{marginTop: "25px", border: "1px solid #d9d9d9"}} />
 						</Col>
-						<Col style={{ marginLeft: '16px' }}>
-							<h2>{user.firstName} {user.lastName}</h2>
+						<Col style={{ marginLeft: '32px' }}>
+							<h1 style={{ textAlign: "left" }} >{user.firstName} {user.lastName}</h1>
+							<p><strong>Registration number</strong>: {user.teNumber.toUpperCase()}</p>
+							<p><strong>University email</strong>: {user.email.toLowerCase()}</p>
+							<p><strong>Gender</strong>: {user.gender}</p>
+							<div className="profile-actions">
+								<Button type="link" icon={<LockOutlined />}>Change password</Button>
+								<Button type="link" icon={<EditOutlined />}>Edit details</Button>
+							</div>
 						</Col>
 					</Row>
-					<h3>Your badges</h3>
-					<Row align="middle" justify="center" style={{ marginTop: '16px' }}>
+
+					<Row align="middle" justify="center" style={{justifyContent: 'end', minWidth: '600px' }}>
 						<LeftOutlined className='badge-navigation' style={{ fontSize: '24px', marginRight: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex + 1 >= totalEarnBadges ? 0 : showBadgeIndex + 1)} />
 						{Object.entries(userBadges).map(([badgeName, badgeData], index) => (
 							((typeof badgeData === 'boolean' && badgeData) || typeof badgeData === 'string') && <Card
@@ -174,23 +181,9 @@ const MyProfile = ({ userId }) => {
 								<Card.Meta title={badgeNames[badgeName]} description={badgeDescriptions[badgeName]} />
 							</Card>
 						))}
-						<RightOutlined className='badge-navigation' style={{ fontSize: '24px', marginLeft: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex - 1 < 0 ? totalEarnBadges - 1 : showBadgeIndex - 1)}/>
+						<RightOutlined className='badge-navigation' style={{ fontSize: '24px', marginLeft: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex - 1 < 0 ? totalEarnBadges - 1 : showBadgeIndex - 1)} />
 					</Row>
-				</Col>
-
-				{/* Right Side - User Details */}
-				<Col xs={24} md={12}>
-					<div className="profile-info">
-						<p><strong>Name</strong>: {user.firstName} {user.lastName}</p>
-						<p><strong>University registration number</strong>: {user.teNumber.toUpperCase()}</p>
-						<p><strong>University email</strong>: {user.email.toLowerCase()}</p>
-						<p><strong>Gender</strong>: {user.gender}</p>
-						<div className="profile-actions">
-							<Button type="link" icon={<LockOutlined />}>Change password</Button>
-							<Button type="link" icon={<EditOutlined />}>Edit details</Button>
-						</div>
-					</div>
-				</Col>
+				</div>
 			</Row>
 
 			{/* Attendance Log Section */}
