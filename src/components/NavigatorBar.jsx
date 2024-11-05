@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Badge, Avatar } from 'antd';
+import { Menu, Badge, Avatar, Drawer } from 'antd';
 import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext.jsx';
 import '../assets/css/NavigatorBar.css';
@@ -71,8 +71,23 @@ const NavigatorBar = ({ userName }) => {
 		setMenuVisible(!menuVisible);
 	};
 
+	const [open, setOpen] = useState(false);
+	const showDrawer = () => {
+		if (notifications > 0) {
+			setOpen(true);
+		}
+	};
+	const onClose = () => {
+		setOpen(false);
+	};
+
 	return (
 		<div className="navigator-bar">
+			<Drawer title="Notifications" onClose={onClose} open={open}>
+				<p>Some contents...</p>
+				<p>Some contents...</p>
+				<p>Some contents...</p>
+			</Drawer>
 			<div className="hamburger-menu" onClick={toggleMenu}>
 				{menuVisible ? <CloseOutlined /> : <MenuOutlined />}
 			</div>
@@ -102,7 +117,7 @@ const NavigatorBar = ({ userName }) => {
 			)}
 			{!isMobile && (
 				<div className="user-section">
-					<Badge count={notifications} className="notification-badge">
+					<Badge count={notifications} className="notification-badge" onClick={showDrawer}>
 						<BellOutlined className="icon" />
 					</Badge>
 					<Avatar

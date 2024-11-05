@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Card, Progress, Typography, Button, Checkbox, message, Spin } from 'antd';
-import { TrophyOutlined } from '@ant-design/icons';
 import GreetingSection from '../components/GreetingSection'; // Adjust the path as needed
 import '../assets/css/StudentDashboard.css'; // Ensure you have the correct path
 import FooterComponent from '../components/FooterComponent'; // Adjust the path as needed
@@ -280,7 +279,9 @@ const Dashboard = ({ userId, userName }) => {
 			message.error('Failed to submit data. Please try again.');
 			setVoteSubmitting(false);
 		}
-	};
+	}
+
+	
 
 	return (
 		<Layout>
