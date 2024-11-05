@@ -4,6 +4,7 @@ import { Menu, Badge, Avatar } from 'antd';
 import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext.jsx';
 import '../assets/css/NavigatorBar.css';
+import newApiRequest from '../utils/apiRequests.js';
 
 const NavigatorBar = ({ userName }) => {
 	const { user } = useAuth();
@@ -39,6 +40,18 @@ const NavigatorBar = ({ userName }) => {
 
 	useEffect(() => {
 		window.addEventListener('resize', handleResize);
+
+		newApiRequest('/api/notification/', 'POST', {
+			userId: user._id
+		}).then(response => {
+			if (response.success) {
+				setNotifications(response.data.length < 10 ? "0" + response.data.length : '9+');
+				response.data.forEach(element => {
+					
+				});
+			}
+		});
+
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
 
