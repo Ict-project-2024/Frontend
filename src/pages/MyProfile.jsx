@@ -5,13 +5,14 @@ import '../assets/css/MyProfile.css'; // Ensure you have the correct path.
 import FooterComponent from '../components/FooterComponent';
 import newApiRequest from '../utils/apiRequests';
 import { useAuth } from '../context/AuthContext';
-import { te } from 'date-fns/locale';
 
 const MyProfile = ({ userId }) => {
 	// User badges data: nivindulakshitha
 	const [userBadges, setUserBadges] = useState({})
 	const { user } = useAuth();
 	const [accessData, setAccessData] = useState({});
+	const [showBadgeIndex, setShowBadgeIndex] = useState(0);
+	const [totalEarnBadges, setTotalEarnBadges] = useState(0);
 
 	const badgeImages = {
 		"firstStep": "https://unimo.blob.core.windows.net/unimo/First Step.png",
@@ -127,6 +128,17 @@ const MyProfile = ({ userId }) => {
 		fetchMedicalCenterAccessData();
 	}, []);
 
+	useEffect(() => {
+		let count = 0;
+		Object.entries(userBadges).forEach(([badgeName, badgeData]) => {
+			if ((typeof badgeData === 'boolean' && badgeData) || typeof badgeData === 'string') {
+				count++;
+			}
+
+			setTotalEarnBadges(count);
+		});
+	}, [userBadges]);
+
 	const columns = [
 		{ title: 'Date', dataIndex: 'date', key: 'date' },
 		{ title: 'Day', dataIndex: 'day', key: 'day' },
@@ -139,7 +151,6 @@ const MyProfile = ({ userId }) => {
 	return (
 		<div className="my-profile">
 			<Row gutter={[16, 16]} align="middle">
-				{/* Left Side - Badges */}
 				<Col xs={24} md={12}>
 					<Row align="middle">
 						<Col>
@@ -151,18 +162,19 @@ const MyProfile = ({ userId }) => {
 					</Row>
 					<h3>Your badges</h3>
 					<Row align="middle" justify="center" style={{ marginTop: '16px' }}>
-						<LeftOutlined style={{ fontSize: '24px', marginRight: '16px' }} />
+						<LeftOutlined className='badge-navigation' style={{ fontSize: '24px', marginRight: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex + 1 >= totalEarnBadges ? showBadgeIndex : showBadgeIndex + 1)} />
 						{Object.entries(userBadges).map(([badgeName, badgeData], index) => (
 							((typeof badgeData === 'boolean' && badgeData) || typeof badgeData === 'string') && <Card
 								key={index}
 								hoverable
 								cover={<img alt={badgeNames[badgeName]} src={typeof badgeData === 'boolean' ? badgeImages[badgeName] : badgeImages[badgeName][badgeData]} style={{ width: '130px' }} />}
 								style={{ width: 130, margin: '0 8px' }}
+								className={`badge-card ${showBadgeIndex === index ? 'selected' : ''}`}
 							>
 								<Card.Meta title={badgeNames[badgeName]} description={badgeDescriptions[badgeName]} />
 							</Card>
 						))}
-						<RightOutlined style={{ fontSize: '24px', marginLeft: '16px' }} />
+						<RightOutlined className='badge-navigation' style={{ fontSize: '24px', marginLeft: '16px' }} onClick={() => setShowBadgeIndex(showBadgeIndex - 1 < 0 ? 0 : showBadgeIndex - 1)}/>
 					</Row>
 				</Col>
 

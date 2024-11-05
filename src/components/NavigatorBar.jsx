@@ -45,7 +45,7 @@ const NavigatorBar = ({ userName }) => {
 			userId: user._id
 		}).then(response => {
 			if (response.success) {
-				setNotifications(response.data.length < 10 ? "0" + response.data.length : '9+');
+				setNotifications(response.data.length);
 				response.data.forEach(element => {
 					
 				});

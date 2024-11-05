@@ -28,14 +28,21 @@
 }
 
 .badge-card {
+  display: none;
+}
+
+.badge-card.selected {
   width: 120px;
   margin: 0 8px;
   text-align: center;
+  display: flex;
 }
 
 .badge-card img {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 0px !important;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
 .badge-navigation {
