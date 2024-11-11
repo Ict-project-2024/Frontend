@@ -257,15 +257,17 @@ body {
     /* Reduced margin */
   }
 
-  .heroes-row .ant-col:first-child {
+  .heroes-row .ant-col:nth-child(2) {
     flex: 0 0 100%;
     max-width: 100%;
+    order: 1;
   }
 
-  .heroes-row .ant-col:nth-child(2),
+  .heroes-row .ant-col:first-child,
   .heroes-row .ant-col:nth-child(3) {
     flex: 0 0 50%;
     max-width: 50%;
+    order: 2;
   }
 
   .last-row-card .ant-card-body {

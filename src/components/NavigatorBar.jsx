@@ -144,9 +144,9 @@ const NavigatorBar = ({ userName }) => {
 						<Menu.Item key="about-us" onClick={toggleMenu}>
 							<Link to="/about-us">About Us</Link>
 						</Menu.Item>
-						<Menu.Item key="notifications" onClick={toggleMenu}>
+						<Menu.Item key="notifications" onClick={showDrawer}>
 							<Badge count={notifications}>
-								<Link to="/notifications">Notifications</Link>
+								<Link>Notifications</Link>
 							</Badge>
 						</Menu.Item>
 						<Menu.Item key="logout" onClick={toggleMenu}>
