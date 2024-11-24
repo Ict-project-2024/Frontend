@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Badge, Avatar } from 'antd';
+import { Menu, Badge, Avatar, Drawer } from 'antd';
 import { MenuOutlined, BellOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext.jsx';
 import '../assets/css/NavigatorBar.css';
+import newApiRequest from '../utils/apiRequests.js';
+import NotificationBox from './NotificationBox.jsx';
 
 const NavigatorBar = ({ userName }) => {
 	const { user } = useAuth();
@@ -13,6 +15,7 @@ const NavigatorBar = ({ userName }) => {
 	const [avatarUrl, setAvatarUrl] = useState('');
 	const [menuVisible, setMenuVisible] = useState(false);
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+	const [notificationList, setNotificationList] = useState([]);
 
 	useEffect(() => {
 		const storedUserBio = JSON.parse(sessionStorage.getItem('userBio'));
@@ -38,9 +41,22 @@ const NavigatorBar = ({ userName }) => {
 	};
 
 	useEffect(() => {
+		setNotificationList([])
 		window.addEventListener('resize', handleResize);
+
+		newApiRequest('/api/notification/', 'POST', {
+			userId: user._id
+		}).then(response => {
+			if (response.success) {
+				setNotifications(response.data.length);
+				response.data.forEach(element => {
+					setNotificationList(prevState => [...prevState, element]);
+				});
+			}
+		});
+
 		return () => window.removeEventListener('resize', handleResize);
-	}, []);
+	}, [notifications]);
 
 	const handleLogout = () => {
 		document.cookie.split(';').forEach((cookie) => {
@@ -58,8 +74,20 @@ const NavigatorBar = ({ userName }) => {
 		setMenuVisible(!menuVisible);
 	};
 
+	const [open, setOpen] = useState(false);
+	const showDrawer = () => {
+		setOpen(true);
+	};
+	const onClose = () => {
+		setOpen(false);
+	};
+
 	return (
 		<div className="navigator-bar">
+			<Drawer title="Notifications" onClose={onClose} open={open}>
+				{notificationList.map(notification => <NotificationBox key={notification._id} notification={notification} />)}
+				{notifications === 0 && <i><p className="no-notifications">No new notifications</p></i>}
+			</Drawer>
 			<div className="hamburger-menu" onClick={toggleMenu}>
 				{menuVisible ? <CloseOutlined /> : <MenuOutlined />}
 			</div>
@@ -89,7 +117,7 @@ const NavigatorBar = ({ userName }) => {
 			)}
 			{!isMobile && (
 				<div className="user-section">
-					<Badge count={notifications} className="notification-badge">
+					<Badge count={notifications} className="notification-badge" onClick={showDrawer}>
 						<BellOutlined className="icon" />
 					</Badge>
 					<Avatar
@@ -116,9 +144,9 @@ const NavigatorBar = ({ userName }) => {
 						<Menu.Item key="about-us" onClick={toggleMenu}>
 							<Link to="/about-us">About Us</Link>
 						</Menu.Item>
-						<Menu.Item key="notifications" onClick={toggleMenu}>
+						<Menu.Item key="notifications" onClick={showDrawer}>
 							<Badge count={notifications}>
-								<Link to="/notifications">Notifications</Link>
+								<Link>Notifications</Link>
 							</Badge>
 						</Menu.Item>
 						<Menu.Item key="logout" onClick={toggleMenu}>
