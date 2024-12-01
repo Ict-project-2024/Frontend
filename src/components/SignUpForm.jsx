@@ -18,6 +18,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 		headshot: null,
 	});
 
+	const [fieldErrors, setFieldErrors] = useState({}); // New state for field-specific errors
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [uploadProgress, setUploadProgress] = useState(0);
@@ -27,6 +28,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
+		setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: '' })); // Clear specific field error
 		setErrorMessage('');
 		setForm((prevForm) => ({
 			...prevForm,
@@ -48,11 +50,9 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 		if (info.file) {
 			try {
 				const tokenResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
-				console.log(`${import.meta.env.VITE_BASE_URL}/api/sas-token/genarate`);
 				const { sasUrl, blobUrl } = tokenResponse.data;
-				const fileData = info.file; 
-				console.log(info.file);
-        
+				const fileData = info.file;
+
 				const uploadResponse = await axios.put(sasUrl, fileData, {
 					headers: {
 						'x-ms-blob-type': 'BlockBlob',
@@ -79,50 +79,43 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 		}
 	};
 
+	// Updated validateForm to track individual field errors
 	const validateForm = () => {
+		const errors = {};
 		const emailRegex = /^[a-z]+[0-9]+@fot\.sjp\.ac\.lk$/;
 		const teRegex = /^TE\d{6}$/i;
 
-		const { firstName, lastName, gender, registrationNumber, password, confirmPassword, phoneNumber, universityEmail, headshot } = form;
-
-		if (!firstName || !lastName || !gender || !registrationNumber || !password || !confirmPassword || !phoneNumber || !universityEmail ) {
-			return 'One or more details you entered were incorrect. Please try again.';
-		} else if (!teRegex.test(registrationNumber)) {
-			return 'Invalid registration number format. It should start with "TE" followed by 6 digits.';
-		} else if (password !== confirmPassword) {
-			return 'Passwords do not match.';
-		} else if (password.length < 6) {
-			return 'Password should be at least 6 characters long.';
-		} else if (phoneNumber.length !== 9) {
-			return 'Invalid phone number. Please enter a valid 0 removed 9-digit phone number.';
-		} else if (!emailRegex.test(universityEmail)) {
-			return 'Invalid email format. Please use your university email.';
+		if (!form.firstName) errors.firstName = 'First name is required.';
+		if (!form.lastName) errors.lastName = 'Last name is required.';
+		if (!teRegex.test(form.registrationNumber)) {
+			errors.registrationNumber = 'Registration number must start with "TE" followed by 6 digits.';
 		}
-		return '';
+		if (form.password.length < 6) {
+			errors.password = 'Password must be at least 6 characters long.';
+		}
+		if (form.password !== form.confirmPassword) {
+			errors.confirmPassword = 'Passwords do not match.';
+		}
+		if (form.phoneNumber.length !== 9) {
+			errors.phoneNumber = 'Phone number must be 9 digits long.';
+		}
+		if (!emailRegex.test(form.universityEmail)) {
+			errors.universityEmail = 'Use your university email (e.g., example@fot.sjp.ac.lk).';
+		}
+		if (!imageUploaded) {
+			errors.headshot = 'Profile picture is required.';
+		}
+
+		setFieldErrors(errors); // Update the state with field-specific errors
+		return Object.keys(errors).length === 0; // Return true if no errors
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const validationError = validateForm();
-		if (validationError) {
-			setErrorMessage(validationError);
-			return;
-		}
+		// Validate the form and display errors if invalid
+		if (!validateForm()) return;
 
-		if (!imageUploaded) {
-			setErrorMessage('Please upload a profile picture before submitting.');
-			return;
-		}
-
-		// Refine the form data before sending to the server
-		form.firstName = form.firstName.trim().charAt(0).toUpperCase() + form.firstName.trim().slice(1).toLowerCase();
-		form.lastName = form.lastName.trim().charAt(0).toUpperCase() + form.lastName.trim().slice(1).toLowerCase();
-		form.registrationNumber = form.registrationNumber.trim().toLowerCase();
-		form.universityEmail = form.universityEmail.trim().toLowerCase();
-
-
-		setErrorMessage('');
 		setRegistering(true); // Start the registration loading indicator
 
 		try {
@@ -133,7 +126,6 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 
 			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/register`, formData);
 
-			// Check for status 200 or 201 and handle accordingly
 			if (response.status === 200) {
 				setIsModalVisible(true); // Show modal only when status is 200
 			} else if (response.status === 201) {
@@ -142,7 +134,6 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 				throw new Error('Registration failed. Status: ' + response.status);
 			}
 		} catch (error) {
-		
 			// Show the backend's error message if available
 			if (error.response && error.response.data && error.response.data.message) {
 				setErrorMessage(error.response.data.message);
@@ -154,7 +145,6 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 		}
 	};
 
-
 	const handleCloseModal = () => {
 		setIsModalVisible(false);
 		onSwitchToLogin();
@@ -165,11 +155,6 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 			<div className="registration-content">
 				<div className="registration-form-container">
 					<form onSubmit={handleSubmit} className="registration-form">
-						{errorMessage && (
-							<div className="error-message">
-								{errorMessage}
-							</div>
-						)}
 						<Row gutter={16} style={{ marginBottom: '16px' }}>
 							<Col span={12}>
 								<Input
@@ -178,6 +163,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 									value={form.firstName}
 									onChange={handleInputChange}
 								/>
+								{fieldErrors.firstName && <div className="error-message">{fieldErrors.firstName}</div>}
 							</Col>
 							<Col span={12}>
 								<Input
@@ -186,6 +172,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 									value={form.lastName}
 									onChange={handleInputChange}
 								/>
+								{fieldErrors.lastName && <div className="error-message">{fieldErrors.lastName}</div>}
 							</Col>
 						</Row>
 						<div style={{ marginBottom: '16px' }}>
@@ -202,13 +189,15 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 							value={form.registrationNumber}
 							onChange={handleInputChange}
 						/>
+						{fieldErrors.registrationNumber && <div className="error-message">{fieldErrors.registrationNumber}</div>}
 						<Input.Password
 							style={{ marginBottom: '16px' }}
 							name="password"
-							placeholder="Password (6 digits at least, case sensitive)"
+							placeholder="Password"
 							value={form.password}
 							onChange={handleInputChange}
 						/>
+						{fieldErrors.password && <div className="error-message">{fieldErrors.password}</div>}
 						<Input.Password
 							style={{ marginBottom: '16px' }}
 							name="confirmPassword"
@@ -216,6 +205,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 							value={form.confirmPassword}
 							onChange={handleInputChange}
 						/>
+						{fieldErrors.confirmPassword && <div className="error-message">{fieldErrors.confirmPassword}</div>}
 						<Input
 							style={{ marginBottom: '16px' }}
 							name="phoneNumber"
@@ -224,6 +214,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 							onChange={handleInputChange}
 							addonBefore="+94"
 						/>
+						{fieldErrors.phoneNumber && <div className="error-message">{fieldErrors.phoneNumber}</div>}
 						<Input
 							style={{ marginBottom: '16px' }}
 							name="universityEmail"
@@ -231,7 +222,7 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 							value={form.universityEmail}
 							onChange={handleInputChange}
 						/>
-
+						{fieldErrors.universityEmail && <div className="error-message">{fieldErrors.universityEmail}</div>}
 						<div className="upload-container" style={{ marginBottom: '16px' }}>
 							<Upload
 								name="headshot"
@@ -248,26 +239,20 @@ const RegistrationComponent = ({ onSwitchToLogin }) => {
 									{uploading ? 'Uploading...' : 'Upload Profile Picture'}
 								</Button>
 							</Upload>
-							<div className="upload-description">
-								This image is a must due to security reasons.
-							</div>
-							{uploading && (
-								<Progress
-									percent={uploadProgress}
-									status={uploadProgress === 100 ? 'success' : 'active'}
-									style={{ marginTop: '8px' }}
-								/>
-							)}
+							{fieldErrors.headshot && <div className="error-message">{fieldErrors.headshot}</div>}
 						</div>
-
-						<Spin spinning={registering}>
-							<Button type="primary" htmlType="submit" className="register-button" block loading={registering}>
-								{registering ? 'Registering...' : 'Register'}
-							</Button>
-						</Spin>
+						{uploadProgress > 0 && <Progress percent={uploadProgress} />}
+						{errorMessage && <div className="error-message">{errorMessage}</div>}
+						<div className="register-button-container">
+							<Spin spinning={registering}>
+								<Button type="primary" htmlType="submit" disabled={uploading || registering}>
+									Register
+								</Button>
+							</Spin>
+						</div>
 					</form>
-					<RegistrationSuccessPopup isVisible={isModalVisible} onClose={handleCloseModal} />
 				</div>
+				<RegistrationSuccessPopup visible={isModalVisible} onClose={handleCloseModal} />
 			</div>
 		</div>
 	);
